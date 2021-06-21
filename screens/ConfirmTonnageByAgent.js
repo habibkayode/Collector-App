@@ -1,252 +1,146 @@
-import React, { useState } from "react";
+import moment from "moment";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   Image,
   StyleSheet,
-  StatusBar,
-  ImageBackground,
   ScrollView,
-  TextInput,
-  TouchableOpacity,
-  Modal,
+  ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
+import { getPendingPayment } from "../Api/api";
 import Bgcover from "../Component/Bg/BackgroundCover";
+import PaymentAccordion from "../Component/PaymentAccordion";
+import { numberWithCommas } from "../helper/helper";
 
-const ConfirmTonnageByAgent = ({ navigation }) => {
+const ConfirmTonnageByAgent = (props) => {
   const [confirm, setConfirm] = useState(false);
   const [notConfirm, setNotCofirm] = useState(false);
+  const [data, setData] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = React.useState(false);
+  const [reload, setRelaod] = useState(false);
 
-  const redirectFunc = () => {
-    navigation.navigate("ProcessPickup");
+  let getPendingPaymentFun = async () => {
+    try {
+      let response = await getPendingPayment();
+      setData(response.data);
+      console.log(false, "kkkk");
+      setLoading(false);
+    } catch (error) {}
   };
+
+  useEffect(() => {
+    setLoading(true);
+    getPendingPaymentFun();
+  }, [reload]);
+
+  React.useEffect(() => {
+    const unsubscribe = props.navigation.addListener("focus", () => {
+      setLoading(true);
+      getPendingPaymentFun().then(() => {
+        //        setLoading(false);
+      });
+    });
+
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [props.navigation]);
+
+  const onRefresh = (async) => {
+    setRefreshing(true);
+    getPendingPayment().then(() => {
+      setRefreshing(false);
+    });
+  };
+
   return (
-    <Bgcover name="Confirm tonnage received by agent">
-      <View style={{ marginHorizontal: 20 }}>
-        <Text
-          style={{
-            fontSize: 12,
-            fontWeight: "bold",
-            textAlign: "right",
-            marginBottom: 10,
-          }}
-        >
-          Tuesday February 10th 2021
-        </Text>
-        <Text style={styles.mainHeading}>Material Types{" & "}Tonnage</Text>
-        <View style={styles.leftWrapper}>
-          <View style={{ flexDirection: "row" }}>
-            <Text>Cartoon:</Text>
-            <Text style={{ marginLeft: 20 }}>15kg</Text>
-          </View>
-          <View style={{ flexDirection: "row" }}>
-            <Text>Cartoon:</Text>
-            <Text style={{ marginLeft: 20 }}>15kg</Text>
-          </View>
-          <View style={{ flexDirection: "row" }}>
-            <Text>Cartoon:</Text>
-            <Text style={{ marginLeft: 20 }}>15kg</Text>
-          </View>
-          <View style={{ flexDirection: "row" }}>
-            <Text>Cartoon:</Text>
-            <Text style={{ marginLeft: 20 }}>15kg</Text>
-          </View>
-          <View style={{ flexDirection: "row" }}>
-            <Text>Cartoon:</Text>
-            <Text style={{ marginLeft: 20 }}>15kg</Text>
-          </View>
-        </View>
-      </View>
-
-      <Text style={([styles.mainHeading], { marginLeft: 20 })}>
-        Total Tonnage
-      </Text>
-      <View style={styles.leftWrapper}>
-        <View style={{ flexDirection: "row" }}>
-          <Text>100kg</Text>
-        </View>
-      </View>
-
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-evenly",
-          marginTop: 30,
-        }}
+    <Bgcover name="Pending Payment">
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        contentContainerStyle={{ minHeight: "100%" }}
       >
-        <TouchableOpacity
-          style={{
-            height: 55,
-            backgroundColor: "#0A956A",
-            borderRadius: 10,
-            justifyContent: "center",
-            paddingHorizontal: 20,
-          }}
-          onPress={() => {
-            setConfirm(true);
-            //  props.navigation.navigate("confirmation");
-          }}
-        >
-          <Text
-            style={{
-              fontSize: 18,
-              fontWeight: "bold",
-              color: "white",
-              textAlign: "center",
-            }}
-          >
-            Input correct
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            height: 55,
-            backgroundColor: "#E50202",
-            borderRadius: 10,
-            justifyContent: "center",
-            paddingHorizontal: 20,
-          }}
-          onPress={() => {
-            setNotCofirm(true);
-            //   props.navigation.navigate("confirmation");
-          }}
-        >
-          <Text
-            style={{
-              fontSize: 18,
-              fontWeight: "bold",
-              color: "white",
-              textAlign: "center",
-            }}
-          >
-            Input Wrong
-          </Text>
-        </TouchableOpacity>
-      </View>
-      <Modal
-        transparent={true}
-        style={[
-          {
-            flex: 1,
-          },
-        ]}
-        onRequestClose={() => {
-          setConfirm(false);
-        }}
-        visible={confirm}
-      >
-        <View
-          style={{
-            backgroundColor: "rgba(0, 0, 0, 0.8)",
-            flex: 1,
-            justifyContent: "center",
-          }}
-        >
+        {loading ? (
           <View
             style={{
-              width: 203,
-              height: 203,
-              borderColor: "#0A956A",
-              borderWidth: 2,
-              marginLeft: "auto",
-              marginRight: "auto",
-              borderRadius: 110,
-              alignItems: "center",
+              flex: 1,
               justifyContent: "center",
-              backgroundColor: "white",
-            }}
-          >
-            <Image
-              style={{ marginTop: 30 }}
-              source={require("../assets/check-big.png")}
-            />
-          </View>
-          <Text
-            style={{
-              marginTop: 20,
-              paddingHorizontal: 30,
-              textAlign: "center",
-              fontSize: 16,
-              lineHeight: 18,
-              color: "white",
-              fontWeight: "bold",
-            }}
-          >
-            Tonnage confirmed with agent input
-          </Text>
-        </View>
-      </Modal>
-
-      <Modal
-        transparent={true}
-        style={[
-          {
-            flex: 1,
-          },
-        ]}
-        onRequestClose={() => {
-          setNotCofirm(false);
-        }}
-        visible={notConfirm}
-      >
-        <View
-          style={{
-            backgroundColor: "rgba(0, 0, 0, 0.8)",
-            flex: 1,
-            justifyContent: "center",
-          }}
-        >
-          <View
-            style={{
-              width: 203,
-              height: 203,
-              borderColor: "#D10B0B",
-              borderWidth: 2,
-              marginLeft: "auto",
-              marginRight: "auto",
-              borderRadius: 110,
               alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "white",
+              height: "100%",
             }}
           >
-            <Image style={{}} source={require("../assets/X.png")} />
+            <ActivityIndicator size="large" color="#F18921" />
           </View>
-          <Text
-            style={{
-              marginTop: 20,
-              paddingHorizontal: 30,
-              textAlign: "center",
-              fontSize: 16,
-              lineHeight: 18,
-              color: "white",
-              fontWeight: "bold",
-            }}
-          >
-            Tonnage not confirmed with agent input{" "}
-          </Text>
+        ) : (
+          <>
+            {Object.keys(data).length === 0 ? (
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
+                }}
+              >
+                <Text
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: 20,
+                    color: "#F18921",
+                  }}
+                >
+                  ... No Pending Payment yet
+                </Text>
+              </View>
+            ) : (
+              <View style={{ marginHorizontal: 20 }}>
+                {Object.keys(data).map((i) => {
+                  let actual = data[i];
 
-          <Text
-            style={{
-              marginTop: 40,
-              paddingHorizontal: 30,
-              textAlign: "center",
-              fontSize: 14,
-              lineHeight: 18,
-              color: "white",
-            }}
-          >
-            *Please sort with agent or call support on 08139122188
-          </Text>
-        </View>
-      </Modal>
+                  return (
+                    <>
+                      <>
+                        <Text style={styles.mainHeading}>Agent Name</Text>
+                        <View style={{ flexDirection: "row", marginTop: 5 }}>
+                          <Text style={{ fontSize: 15 }}>
+                            {actual[0].agent.first_name}{" "}
+                            {actual[0].agent.last_name}
+                          </Text>
+                        </View>
+                        <Text style={styles.mainHeading}>
+                          Agent Phone number
+                        </Text>
+                        <View
+                          style={{ flexDirection: "row", marginVertical: 5 }}
+                        >
+                          <Text>{actual[0].agent.phone}</Text>
+                        </View>
+                      </>
+                      <>
+                        {actual.map((i) => {
+                          return (
+                            <PaymentAccordion {...i} setRelaod={setRelaod} />
+                          );
+                        })}
+                      </>
+                    </>
+                  );
+                })}
+              </View>
+            )}
+          </>
+        )}
+      </ScrollView>
     </Bgcover>
   );
 };
 
 const styles = StyleSheet.create({
-  mainHeading: { fontSize: 15, fontWeight: "bold", marginTop: 20 },
+  mainHeading: { fontSize: 15, fontWeight: "bold" },
   leftWrapper: { marginTop: 10, marginLeft: 20 },
 });
 

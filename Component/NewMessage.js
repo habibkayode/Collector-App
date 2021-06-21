@@ -1,11 +1,25 @@
+import { useNavigation } from "@react-navigation/core";
 import React, { useEffect } from "react";
-import { View, Text, Vibration, StatusBar } from "react-native";
+import {
+  View,
+  Text,
+  Vibration,
+  StatusBar,
+  TouchableOpacity,
+} from "react-native";
 import * as Animatable from "react-native-animatable";
 
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { updateMessageAlert } from "../Redux/actionCreator";
+import { store } from "../Redux/store";
 const NewMessage = () => {
+  let navigation = useNavigation();
   useEffect(() => {
-    //   Vibration.vibrate(10000);
+    Vibration.vibrate([2000, 2000, 2000], true);
+    setTimeout(() => {
+      Vibration.cancel();
+      store.dispatch(updateMessageAlert(false));
+    }, 15000);
   }, []);
 
   return (
@@ -24,26 +38,34 @@ const NewMessage = () => {
         padding: 10,
         position: "absolute",
         alignSelf: "center",
-        flexDirection: "row",
       }}
     >
-      <MaterialCommunityIcons
-        name="message-reply-text"
-        color="rgba(239, 119, 0, 0.87)"
-        size={20}
-      />
-
-      <Text
-        style={{
-          color: "#41CDFA",
-          fontWeight: "bold",
-          fontSize: 15,
-          marginLeft: 5,
-          textAlignVertical: "center",
+      <TouchableOpacity
+        style={{ flexDirection: "row" }}
+        onPress={() => {
+          navigation.navigate("Message");
+          Vibration.cancel();
+          store.dispatch(updateMessageAlert(false));
         }}
       >
-        New Message
-      </Text>
+        <MaterialCommunityIcons
+          name="message-reply-text"
+          color="rgba(239, 119, 0, 0.87)"
+          size={20}
+        />
+
+        <Text
+          style={{
+            color: "#41CDFA",
+            fontWeight: "bold",
+            fontSize: 15,
+            marginLeft: 5,
+            textAlignVertical: "center",
+          }}
+        >
+          New Message
+        </Text>
+      </TouchableOpacity>
     </Animatable.View>
   );
 };

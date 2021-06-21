@@ -9,10 +9,12 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import { connect } from "react-redux";
+import { bulkUpload } from "../Api/api";
 import Bgcover from "../Component/Bg/BackgroundCover";
 
 const mapStateToProps = (state) => {
@@ -32,7 +34,8 @@ const BulkOfTakeScreen = ({ navigation, userData }) => {
   const [contactNumber, setContactNumber] = useState("");
   const [contactName, setContactName] = useState("");
 
-  const submitBulkOffTake = () => {
+  const submitBulkOffTake = async () => {
+    console.log("okkix`x`");
     if (
       address.trim().length < 5 ||
       description.trim().length < 5 ||
@@ -43,23 +46,33 @@ const BulkOfTakeScreen = ({ navigation, userData }) => {
       return;
     }
     let payload = new FormData();
-    payload.append("first_name", userData.first_name);
-    payload.append("last_name", userData.last_name);
-    payload.append("phone", contactName);
+    payload.append("full_name", contactName);
+
+    payload.append("phone", contactNumber);
     payload.append("email", userData.email);
     payload.append("material_location", address);
-    payload.append("material_description", JSON.stringify([description]));
+    payload.append("material_description[]", description);
+    payload.append("collector_id", userData.id);
+
     pickedImage.forEach((i, index) => {
       payload.append(
         "material_images[]",
         {
           uri: i.uri,
           type: i.type,
-          name: i.name,
+          name: i.fileName,
         },
         "item " + index + 1 + "-" + i.name
       );
     });
+
+    try {
+      let response = await bulkUpload(payload);
+      Alert.alert("Success", "Your request was Successfully submited");
+      navigation.navigate("Dashboard");
+    } catch (error) {
+      Alert.alert("Error", error.response?.data.error);
+    }
   };
 
   const pickAnImage = () => {
@@ -108,23 +121,27 @@ const BulkOfTakeScreen = ({ navigation, userData }) => {
               borderStyle: "solid",
               paddingHorizontal: 20,
               borderRadius: 10,
-              marginBottom: 20,
               height: 50,
             }}
           >
             <TextInput
-              placeholder="Address"
+              placeholder="Customer Address"
               value={address}
               onChangeText={(value) => setAddress(value)}
               style={{ fontWeight: "bold", fontSize: 16 }}
             />
           </View>
+          {showError && address.length < 5 && (
+            <Animatable.View animation="fadeInLeft" duration={500} style={{}}>
+              <Text style={styles.errorMsg}>Invalid address</Text>
+            </Animatable.View>
+          )}
 
           <View
             style={{
               flexDirection: "row",
               justifyContent: "space-between",
-              marginBottom: 20,
+              marginVertical: 20,
             }}
           >
             <View
@@ -177,9 +194,15 @@ const BulkOfTakeScreen = ({ navigation, userData }) => {
               multiline={true}
             />
           </View>
+          {showError && description.length < 4 && (
+            <Animatable.View animation="fadeInLeft" duration={500}>
+              <Text style={styles.errorMsg}>Description is required </Text>
+            </Animatable.View>
+          )}
+
           <TouchableOpacity
             disabled={pickedImage.length >= 5}
-            style={{ flexDirection: "row" }}
+            style={{ flexDirection: "row", marginTop: 20 }}
             onPress={() => {
               pickAnImage();
             }}
@@ -216,6 +239,12 @@ const BulkOfTakeScreen = ({ navigation, userData }) => {
               </Text>
             </View>
           </TouchableOpacity>
+
+          {showError && pickedImage.length === 0 && (
+            <Animatable.View animation="fadeInLeft" duration={500}>
+              <Text style={styles.errorMsg}>Image(s) is required</Text>
+            </Animatable.View>
+          )}
           <View style={{ flexDirection: "row", marginBottom: 20 }}>
             {pickedImage.map((ele, index) => (
               <TouchableOpacity
@@ -248,17 +277,22 @@ const BulkOfTakeScreen = ({ navigation, userData }) => {
               borderStyle: "solid",
               paddingHorizontal: 20,
               borderRadius: 10,
-              marginBottom: 20,
               height: 50,
             }}
           >
             <TextInput
-              placeholder="Contact Name"
+              placeholder="Customer Contact Name"
               value={contactName}
               onChangeText={(value) => setContactName(value)}
               style={{ fontWeight: "bold", fontSize: 16 }}
             />
           </View>
+
+          {showError && contactName.length < 4 && (
+            <Animatable.View animation="fadeInLeft" duration={500} s>
+              <Text style={styles.errorMsg}>Invalid name</Text>
+            </Animatable.View>
+          )}
           <View
             style={{
               borderColor: "#F18921",
@@ -266,18 +300,23 @@ const BulkOfTakeScreen = ({ navigation, userData }) => {
               borderStyle: "solid",
               paddingHorizontal: 20,
               borderRadius: 10,
-              marginBottom: 20,
+              marginTop: 20,
               height: 50,
             }}
           >
             <TextInput
-              placeholder="Contact phone no"
+              placeholder="Customer phone no"
               keyboardType="phone-pad"
               value={contactNumber}
               onChangeText={(value) => setContactNumber(value)}
               style={{ fontWeight: "bold", fontSize: 16 }}
             />
           </View>
+          {showError && contactNumber.length !== 11 && (
+            <Animatable.View animation="fadeInLeft" duration={500}>
+              <Text style={styles.errorMsg}>Invalid Phonenumber</Text>
+            </Animatable.View>
+          )}
 
           <TouchableOpacity
             style={{
@@ -290,7 +329,8 @@ const BulkOfTakeScreen = ({ navigation, userData }) => {
               marginTop: 40,
             }}
             onPress={() => {
-              navigation.navigate("Wallet");
+              submitBulkOffTake();
+              // navigation.navigate("Wallet");
             }}
           >
             <Text
@@ -316,8 +356,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingHorizontal: 20,
     borderRadius: 10,
-    marginBottom: 20,
+
     //alignItems: "flex-start",
+  },
+
+  errorMsg: {
+    color: "#FF0000",
+    fontSize: 14,
   },
   textArea: {
     //    height: 150,

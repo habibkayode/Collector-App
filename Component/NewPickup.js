@@ -1,10 +1,25 @@
+import { useNavigation } from "@react-navigation/core";
 import React, { useEffect } from "react";
-import { View, Text, Vibration, StatusBar } from "react-native";
+import {
+  View,
+  Text,
+  Vibration,
+  StatusBar,
+  TouchableOpacity,
+} from "react-native";
 import * as Animatable from "react-native-animatable";
+import { updatePickuAlert } from "../Redux/actionCreator";
+import { store } from "../Redux/store";
 
 const NewPickup = () => {
+  let navigation = useNavigation();
   useEffect(() => {
-    Vibration.vibrate(10000);
+    Vibration.vibrate([2000, 2000, 2000], true);
+
+    setTimeout(() => {
+      store.dispatch(updatePickuAlert(false));
+      Vibration.cancel();
+    }, 15000);
   }, []);
 
   return (
@@ -23,26 +38,36 @@ const NewPickup = () => {
         padding: 10,
         position: "absolute",
         alignSelf: "center",
-        flexDirection: "row",
       }}
     >
-      <Animatable.Image
-        source={require("../assets/bell-2.png")}
-        // duration={10000}
-        //iterationCount={"infinite"}
-        // animation="rubberBand"
-      />
-      <Text
+      <TouchableOpacity
         style={{
-          color: "#41CDFA",
-          fontWeight: "bold",
-          fontSize: 15,
-          marginLeft: 5,
-          textAlignVertical: "center",
+          flexDirection: "row",
+        }}
+        onPress={() => {
+          navigation.navigate("Pickup");
+          Vibration.cancel();
+          store.dispatch(updatePickuAlert(false));
         }}
       >
-        New Request!
-      </Text>
+        <Animatable.Image
+          source={require("../assets/bell-2.png")}
+          // duration={10000}
+          //iterationCount={"infinite"}
+          // animation="rubberBand"
+        />
+        <Text
+          style={{
+            color: "#41CDFA",
+            fontWeight: "bold",
+            fontSize: 15,
+            marginLeft: 5,
+            textAlignVertical: "center",
+          }}
+        >
+          New Pickup request!
+        </Text>
+      </TouchableOpacity>
     </Animatable.View>
   );
 };

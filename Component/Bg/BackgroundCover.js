@@ -33,7 +33,7 @@ const Bgcover = (props) => {
     >
       <StatusBar backgroundColor="#EF7700" barStyle="light-content" />
       {/* <NewPickup /> */}
-      <NewMessage />
+      {/* <NewMessage /> */}
       {/* 
       <TouchableOpacity style={{ marginLeft: 20 }} onPress={() => {}}>
         <MaterialCommunityIcons name="arrow-left" color="#6F6F6F" size={30} />

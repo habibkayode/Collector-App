@@ -36,7 +36,7 @@ const CollectionLogScreen = ({ navigation, ...props }) => {
     try {
       let response = await getAllAcceptedPickupRequst();
       setAllAcceptedPickup(response);
-      console.log(response);
+      console.log(response, "pppkkiooiii000======");
       setData(response);
     } catch (e) {
       console.log(e, "error in all pickup");

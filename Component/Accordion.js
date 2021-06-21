@@ -11,6 +11,7 @@ import {
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { Colors } from "./color";
 import { useNavigation } from "@react-navigation/native";
+import { numberWithCommas } from "../helper/helper";
 
 let Accordion = (props) => {
   let navigation = useNavigation();
@@ -50,7 +51,9 @@ let Accordion = (props) => {
       {expanded && (
         <View style={styles.child}>
           <View style={{ marginHorizontal: 20 }}>
-            <Text style={styles.mainHeading}>Material Types{" & "}Tonnage</Text>
+            <Text style={styles.mainHeading}>
+              Per-kilo Materials {" & "}Tonnage
+            </Text>
             <View style={styles.leftWrapper}>
               {homogenouesMaterial.map((i) => {
                 return (
@@ -67,13 +70,28 @@ let Accordion = (props) => {
               })}
             </View>
 
+            <Text style={styles.mainHeading}>Household Materials</Text>
+            <View style={styles.leftWrapper}>
+              {props.data.composite_materials.map((i) => {
+                return (
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Text>{i.class}:</Text>
+                    <Text>{i.item}</Text>
+                  </View>
+                );
+              })}
+            </View>
+
             <Text style={styles.mainHeading}>Total Tonnage</Text>
             <View style={styles.leftWrapper}>
               <View style={{ flexDirection: "row" }}>
                 <Text>
-                  {homogenouesMaterial.reduce((sum, current) => {
-                    return sum + current.pivot.tonnage;
-                  }, 0)}
+                  {props.data.total_tonnage}
                   kg
                 </Text>
               </View>
@@ -82,24 +100,14 @@ let Accordion = (props) => {
             <Text style={styles.mainHeading}>Estimated Commission</Text>
             <View style={styles.leftWrapper}>
               <View style={{ flexDirection: "row" }}>
-                <Text>
-                  NGN {"  "}
-                  {homogenouesMaterial.reduce((sum, current) => {
-                    return sum + current.collector_commission;
-                  }, 0)}
-                </Text>
+                <Text>{numberWithCommas(props.data.collector_commission)}</Text>
               </View>
             </View>
 
             <Text style={styles.mainHeading}>Estimated Cost of Goods</Text>
             <View style={styles.leftWrapper}>
               <View style={{ flexDirection: "row", marginBottom: 20 }}>
-                <Text>
-                  NGN {"  "}
-                  {homogenouesMaterial.reduce((sum, current) => {
-                    return sum + Number(current.pivot.price);
-                  }, 0)}
-                </Text>
+                <Text>{numberWithCommas(props.data.total_cost)}</Text>
               </View>
             </View>
             {/* <TouchableOpacity
@@ -151,7 +159,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   child: {
-    backgroundColor: Colors.LIGHTGRAY,
+    //backgroundColor: Colors.LIGHTGRAY,
     // padding: 16,
   },
   mainHeading: { fontSize: 15, fontWeight: "bold", marginTop: 20 },

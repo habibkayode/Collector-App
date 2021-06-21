@@ -17,14 +17,13 @@ import RNPickerSelect from "react-native-picker-select";
 import moment from "moment";
 import DateRangePicker from "react-native-daterange-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
-
 import CalendarPicker from "react-native-calendar-picker";
 import { Dropdown } from "react-native-material-dropdown";
 import Modal from "react-native-modal";
-
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { numberWithCommas } from "../helper/helper";
 import HistoryCard from "../Component/HistoryCard";
+import { start } from "react-native-ble-manager";
 
 const mapStateToProps = (state) => {
   return {
@@ -36,17 +35,130 @@ const mapStateToProps = (state) => {
 const CollectionHistory = (props) => {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [allCollection, setAllColleciton] = useState([]);
-  const [stausFilter, setStatusFilter] = useState();
+  const [stausFilter, setStatusFilter] = useState("all");
   const [showDatePicker, setDatePickerShow] = useState(false);
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const [dayDiff, setDayDiff] = useState("all");
+  const [startDate, setStartDate] = useState();
+  const [endDate, setEndDate] = useState();
   const [modalCalender, setModalCalender] = useState(false);
+  const [showProceed, setShowProceed] = useState(false);
+
+  let statusFun = (value, arr) => {
+    let newCollection;
+    if (value === "all") {
+      newCollection = arr;
+    } else if (value === "droppedoff") {
+      newCollection = arr.filter((i) => i.drop_off_status === value);
+    } else {
+      newCollection = arr.filter((i) => i.drop_off_status !== "droppedoff");
+    }
+
+    return newCollection;
+  };
 
   //filter data as allCollection is changing
+  let dateRangeFunc = (begin, end, arry) => {
+    let newData = arry.filter((i) =>
+      moment(i.created_at).isBetween(begin, end)
+    );
+
+    return newData;
+  };
+
+  let byDaysFun = (value, arr) => {
+    let newData;
+    if (value == "all") {
+      newData = arr;
+    } else {
+      let newDate = new Date();
+      newDate.setDate(new Date().getDate() - Number(value));
+      newData = arr.filter((i) => moment(newDate).isBefore(i.created_at));
+    }
+
+    return newData;
+  };
+
+  let filterByDateRange = () => {
+    let newData = dateRangeFunc(startDate, endDate, allCollection);
+    newData = statusFun(stausFilter, newData);
+
+    // if (stausFilter === "all") {
+    //   newData = allCollection.filter((i) =>
+    //     moment(i.created_at).isBetween(startDate, endDate)
+    //   );
+    // } else {
+    //   if (stausFilter === "droppedoff") {
+    //     newData = allCollection.filter(
+    //       (i) =>
+    //         moment(i.created_at).isBetween(startDate, endDate) &&
+    //         i.drop_off_status === "droppedoff"
+    //     );
+    //   } else {
+    //     newData = allCollection.filter(
+    //       (i) =>
+    //         moment(i.created_at).isBetween(startDate, endDate) &&
+    //         i.drop_off_status !== "droppedoff"
+    //     );
+    //   }
+    // }
+
+    setData(newData);
+    setDayDiff("all");
+    setModalCalender(false);
+    //setEndDate();
+    //  setStartDate();
+    setShowProceed(false);
+  };
+  let filterByStatus = (value) => {
+    let newCollection = statusFun(value, allCollection);
+    if (dayDiff !== "all") {
+      newCollection = byDaysFun(dayDiff, newCollection);
+    }
+    if (startDate && endDate) {
+      newCollection = dateRangeFunc(startDate, endDate, newCollection);
+    }
+
+    // setStatusFilter(value);
+    // if (value === "all") {
+    //   newCollection = allCollection;
+    // } else if (value === "droppedoff") {
+    //   newCollection = allCollection.filter((i) => i.drop_off_status === value);
+    // } else {
+    //   newCollection = allCollection.filter(
+    //     (i) => i.drop_off_status !== "droppedoff"
+    //   );
+    // }
+
+    setData(newCollection);
+  };
+
+  let filterByDays = (value) => {
+    let newData = byDaysFun(value, allCollection);
+    newData = statusFun(stausFilter, newData);
+    setStartDate();
+    setEndDate();
+    // if (value == "all") {
+    //   if (stausFilter === "all") {
+    //     setData(allCollection);
+    //   } else {
+    //     filterByStatus(stausFilter);
+    //   }
+    // } else {
+    //   let newDate = new Date();
+    //   newDate.setDate(new Date().getDate() - Number(value));
+    //   let newData = allCollection.filter((i) =>
+    //     moment(newDate).isBefore(i.created_at)
+    //   );
+    //   console.log(newData, "all");
+    //   setData(newData);
+    // }
+
+    setData(newData);
+  };
 
   let getAllCollectionCaller = async () => {
     try {
@@ -57,7 +169,18 @@ const CollectionHistory = (props) => {
         setData(response);
         setAllColleciton(response);
       } else {
-        setData((prev) => [...prev, ...response]);
+        let dataToBeAdded;
+        if (value == "all") {
+          // setData(allCollection);
+          dataToBeAdded = response;
+        } else {
+          let newDate = new Date();
+          newDate.setDate(new Date().getDate() - Number(value));
+          dataToBeAdded = response.filter((i) =>
+            moment(newDate).isBefore(i.created_at)
+          );
+        }
+        setData((prev) => [...prev, ...dataToBeAdded]);
         setAllColleciton((prev) => [...prev, ...response]);
       }
       console.log("her");
@@ -99,6 +222,7 @@ const CollectionHistory = (props) => {
     console.log(date, type, "dates");
     if (type === "END_DATE") {
       setEndDate(date);
+      setShowProceed(true);
     } else {
       setStartDate(date);
     }
@@ -121,7 +245,7 @@ const CollectionHistory = (props) => {
           </Text>
         </View>
       ) : (
-        <View>
+        <View style={{ marginBottom: 100 }}>
           <Text
             style={{
               fontWeight: "bold",
@@ -148,16 +272,7 @@ const CollectionHistory = (props) => {
               placeholderTextColor="gray"
               baseColor="grey"
               onChangeText={(value, index) => {
-                console.log(value);
-                if (value === "all") {
-                  setData((prev) => allCollection);
-                  console.log("i am here", allCollection.length);
-                } else {
-                  let newCollection = allCollection.filter(
-                    (i) => i.drop_off_status === value
-                  );
-                  setData(newCollection);
-                }
+                filterByStatus(value);
               }}
               // textColor="white"
               fontSize={12}
@@ -173,6 +288,7 @@ const CollectionHistory = (props) => {
                 borderBottomColor: "transparent",
                 paddingBottom: 0,
               }}
+              //   onChangeText={(value) => setDateFilter(Number(value))}
               data={[
                 {
                   label: "All ",
@@ -180,11 +296,11 @@ const CollectionHistory = (props) => {
                 },
                 {
                   label: "Dropped",
-                  value: "accepted",
+                  value: "droppedoff",
                 },
                 {
-                  label: "Mismatch",
-                  value: "rejected",
+                  label: "Pending",
+                  value: "peinding",
                 },
               ]}
             />
@@ -196,6 +312,11 @@ const CollectionHistory = (props) => {
               textColor="black"
               //   itemColor="white"
               selectedItemColor="black"
+              value={dayDiff}
+              onChangeText={(value) => {
+                setDayDiff(value);
+                filterByDays(value);
+              }}
               fontSize={12}
               dropdownOffset={{ top: 0, left: 0 }}
               containerStyle={{
@@ -249,6 +370,11 @@ const CollectionHistory = (props) => {
                 {
                   label: "6 month Ago",
                   value: 180,
+                },
+
+                {
+                  label: "1 year Ago",
+                  value: 365,
                 },
               ]}
             />
@@ -403,6 +529,7 @@ const CollectionHistory = (props) => {
             // }}
 
             renderItem={({ item }) => {
+              //     console.log(item);
               return <HistoryCard data={item} />;
             }}
             keyExtractor={(item, index) => {
@@ -452,6 +579,24 @@ const CollectionHistory = (props) => {
                 selectedDayTextColor="#FFFFFF"
                 onDateChange={onDateChange}
               />
+              {startDate && endDate && showProceed && (
+                <TouchableOpacity
+                  onPress={() => {
+                    filterByDateRange();
+                  }}
+                  style={{
+                    padding: 10,
+                    borderRadius: 10,
+                    alignSelf: "center",
+                    backgroundColor: "#F18921",
+                    marginBottom: 20,
+                  }}
+                >
+                  <Text style={{ color: "white", fontWeight: "bold" }}>
+                    Proceed
+                  </Text>
+                </TouchableOpacity>
+              )}
             </View>
           </TouchableWithoutFeedback>
         </TouchableOpacity>

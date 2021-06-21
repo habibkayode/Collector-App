@@ -35,12 +35,12 @@ android_library(
 
 android_build_config(
     name = "build_config",
-    package = "com.collector",
+    package = "com.scrapays.collector",
 )
 
 android_resource(
     name = "res",
-    package = "com.collector",
+    package = "com.scrapays.collector",
     res = "src/main/res",
 )
 

@@ -9,7 +9,7 @@ const Airtime = (props) => {
       style={{
         padding: 20,
         width: "45%",
-        backgroundColor: "#EDD3B9",
+        backgroundColor: props.disable ? "#C4C4C4" : "#EDD3B9",
         borderRadius: 8,
       }}
     >

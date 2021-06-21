@@ -34,23 +34,23 @@ if (
 const EditProfileModal = (props) => {
   let userData = store.getState().normal.userData;
   let coverageZoneObj = store.getState().normal.coverageZone;
+
   let oo = [54, 74, 72];
   let derivedLga;
-  console.log(userData.userable, "plp");
   let userZones = userData.userable.coverage_zone_coordinates;
-
+  // let userZones = [];
   //chage
-  if (userZones.length > 0) {
-    Object.keys(coverageZoneObj).forEach((k) => {
-      let findingLga = coverageZoneObj[k].find((p) => p.id === userZones[0]);
-      console.log(findingLga, "lpoo");
-      if (findingLga) {
-        derivedLga = findingLga.lga;
-        return;
-      }
-    });
-  }
-  console.log(derivedLga);
+  // if (userZones.length > 0) {
+  //   Object.keys(coverageZoneObj).forEach((k) => {
+  //     let findingLga = coverageZoneObj[k].find((p) => p.id === userZones[0]);
+  //     console.log(findingLga, "lpoo");
+  //     if (findingLga) {
+  //       derivedLga = findingLga.lga;
+  //       return;
+  //     }
+  //   });
+  // }
+  // console.log(derivedLga);
   let [firstName, setFirstName] = useState(userData.first_name);
   let [lastName, setLastName] = useState(userData.last_name);
   let [email, setEmail] = useState(userData.email);
@@ -59,10 +59,16 @@ const EditProfileModal = (props) => {
   );
 
   let [profileImage, setProfileImage] = useState(userData.avatar_image);
-  let [lga, setLga] = useState();
-  let [zone, setZone] = useState();
+
+  let [lga, setLga] = useState(userZones[0]?.lga);
+  console.log(
+    userZones.map((i) => i.id),
+    "poiuyyy"
+  );
+  let [zone, setZone] = useState(userZones.map((i) => i.name));
   let [sex, setSex] = useState(userData.userable.sex);
-  let [age, setAge] = useState(age);
+  let [age, setAge] = useState(userData.userable.age);
+
   let [imageResponse, setImageResponse] = useState();
   let [showError, setShowError] = useState(false);
   let [zoneChange, setZoneChange] = useState(false);
@@ -87,6 +93,8 @@ const EditProfileModal = (props) => {
     console.log(lastName, "last Name");
     payload.append("email", email);
     payload.append("sex", sex);
+    payload.append("age", age);
+    console.log(age, sex, "age in payload");
     if (zoneChange) {
       let newZone = zone.map((k) => {
         let actual = coverageZoneObj[lga].find((f) => f.name === k);
@@ -94,13 +102,19 @@ const EditProfileModal = (props) => {
       });
       console.log(newZone, "mkkkk");
       payload.append("collection_coverage_zone", coverageZone);
-      payload.append("coverage_zone_coordinates", JSON.stringify(newZone));
+      newZone.forEach((i) => {
+        payload.append("coverage_zone_coordinates[]", i);
+      });
+
       console.log(zone, "coverage zone");
     } else {
       payload.append("collection_coverage_zone", coverageZone);
+      userZones.forEach((i) => {
+        console.log(i, "poiuy");
+        payload.append("coverage_zone_coordinates[]", i.id);
+      });
 
-      payload.append("coverage_zone_coordinates", JSON.stringify(userZones));
-      console.log(zone, "coverage zone");
+      console.log(coverageZone, "coverage zone");
     }
 
     if (imageResponse) {
@@ -119,7 +133,8 @@ const EditProfileModal = (props) => {
         Alert.alert("Info", "Your profile details have updated successfully");
       })
       .catch((e) => {
-        Alert.alert("Error", e.response.data.error);
+        console.log(e);
+        //   Alert.alert("Error", e.response.data.error);
       });
   };
 
@@ -245,11 +260,15 @@ const EditProfileModal = (props) => {
               }}
               value={age}
               items={[
-                { label: "18 - 22", value: "18-22", color: "black" },
-                { label: "23 - 27", value: "23-27", color: "black" },
-                { label: "28 - 32", value: "28-32", color: "black" },
-                { label: "33 - 40", value: "33-40", color: "black" },
-                { label: "40 and Above", value: "40", color: "black" },
+                { label: "18 - 22", value: "18 - 22", color: "black" },
+                { label: "23 - 27", value: "23 - 27", color: "black" },
+                { label: "28 - 32", value: "28 - 32", color: "black" },
+                { label: "33 - 40", value: "33 - 40", color: "black" },
+                {
+                  label: "40 and Above",
+                  value: "40 and Above",
+                  color: "black",
+                },
               ]}
             />
             <RNPickerSelect
@@ -319,6 +338,7 @@ const EditProfileModal = (props) => {
                 }}
                 onSelectedItemsChange={(items) => {
                   console.log(items, "lga");
+                  setZone([]);
                   setZoneChange(true);
                   setLga(items);
                 }}
@@ -348,7 +368,7 @@ const EditProfileModal = (props) => {
                 styleDropdownMenu={{ height: 50 }}
                 selectedItemIconColor="#F18921"
                 selectedItems={lga}
-                selectText="Select your L.G.A"
+                selectText={`${userZones[0]?.lga || "Select your L.G.A"}`}
                 searchInputPlaceholderText="Search your L.G.A"
                 onChangeInput={(text) => console.log(text)}
                 //          altFontFamily="ProximaNova-Light"
@@ -399,7 +419,7 @@ const EditProfileModal = (props) => {
                 uniqueKey="name"
                 ref={zoneRef}
                 onSelectedItemsChange={(items, ok) => {
-                  console.log(items, "zone", ok);
+                  console.log(items, "zone");
                   if (items.length < 4) setZone(items);
                 }}
                 styleMainWrapper={{

@@ -12,7 +12,7 @@ import {
 import LinearGradient from "react-native-linear-gradient";
 import * as Animatable from "react-native-animatable";
 import SmoothPinCodeInput from "react-native-smooth-pincode-input";
-import { registerCollector } from "../Api/authApi";
+import { registerCollector, changeUserType } from "../Api/authApi";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { connect } from "react-redux";
 import ProcessPickUpScreen from "./ProcessPickUpScreen";
@@ -34,6 +34,42 @@ const SignUpPinScreen = ({ navigation, route, coverageZone }) => {
   const pinInput = React.createRef();
   const pinInputConfirm = React.createRef();
   let data = route.params;
+
+  const handleChangeUserType = async () => {
+    try {
+      let payload = {
+        new_user_type: "Collector",
+        phone: data.phone,
+      };
+      let response = await changeUserType(payload);
+      Alert.alert(
+        "congratulations",
+        "You have change your account type successfully",
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              navigation.navigate("Splash");
+            },
+            style: "cancel",
+          },
+
+          {
+            text: "Cancel",
+            onPress: () => {
+              navigation.navigate("Splash");
+            },
+            style: "cancel",
+          },
+        ],
+        {
+          cancelable: false,
+        }
+      );
+    } catch (error) {
+      Alert.alert("Error", error.response?.data.error);
+    }
+  };
 
   const handleSignUp = async () => {
     // navigation.navigate("CodePin", { phone: data.phone });
@@ -67,8 +103,43 @@ const SignUpPinScreen = ({ navigation, route, coverageZone }) => {
         Alert.alert(resp.error, [{ text: "Okay" }]);
       }
     } catch (e) {
-      Alert.alert("Error", e.response.data.error);
-      navigation.navigate("CodePin", { phone: data.phone });
+      console.log(e.response.data.error);
+      if (
+        e.response &&
+        e.response.data.error.startsWith(
+          "The phone number has been registered as"
+        )
+      ) {
+        let type = e.response.data.error.split(" ").slice(-1);
+        console.log(type);
+        Alert.alert(
+          "Info",
+          `This particular phone number ${data.phone} is already register with scrapays as a(n) ${type} do you want to migrate to a Collector?`,
+          [
+            {
+              text: "Yes",
+              onPress: () => {
+                // navigation.navigate("Splash");
+                handleChangeUserType();
+              },
+              style: "cancel",
+            },
+
+            {
+              text: "No",
+              onPress: () => {
+                navigation.goBack();
+              },
+              style: "cancel",
+            },
+          ],
+          {
+            cancelable: false,
+          }
+        );
+      } else {
+        Alert.alert("Error", e.response.data.error);
+      }
     }
   };
 

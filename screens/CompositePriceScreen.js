@@ -55,7 +55,7 @@ const CompositePriceScreen = (props) => {
   };
 
   return (
-    <Bgcover name="Composite Material Price List ">
+    <Bgcover name="Household Material Price List">
       <ScrollView
         contentContainerStyle={{
           padding: 10,
@@ -309,6 +309,20 @@ let Log = (props) => {
         <Text style={{ fontSize: 18 }}>
           {props.items[selectedValue] &&
             numberWithCommas(props.items[selectedValue].collector_commission)}
+        </Text>
+      </View>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          marginVertical: 10,
+        }}
+      >
+        <Text style={{ fontSize: 15, fontWeight: "700" }}>
+          {props.items[selectedValue] &&
+            (props.items[selectedValue].description
+              ? props.items[selectedValue].description
+              : "Lorem ipsum dolor sit amet, consectetur adipiscing elit")}
         </Text>
       </View>
     </View>

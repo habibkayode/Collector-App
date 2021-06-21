@@ -9,7 +9,7 @@ const BankCard = (props) => {
       style={{
         padding: 20,
         width: "45%",
-        backgroundColor: "#C4C4C4",
+        backgroundColor: props.disable ? "#C4C4C4" : "#EDD3B9",
         borderRadius: 8,
       }}
     >

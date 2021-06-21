@@ -28,6 +28,11 @@ const LOGIN_TYPE = "loginType";
 const NEW_REQUEST_TYPE = "newRequestType";
 const NEW_NOTIFICATION_TYPE = "newNotificationType";
 const SAVEDATA_TYPE = "saveDataType";
+const BANK_TYPE = "bankType";
+const DEVICETOKEN = "deviceToken";
+
+const MESSAGEALERT = "messageAlert";
+const PICkUPALERT = "pickupAlert";
 export {
   NEW_REQUEST_TYPE,
   NETWORKCHANGES,
@@ -59,4 +64,8 @@ export {
   LOGIN_TYPE,
   NEW_NOTIFICATION_TYPE,
   SAVEDATA_TYPE,
+  BANK_TYPE,
+  DEVICETOKEN,
+  PICkUPALERT,
+  MESSAGEALERT,
 };

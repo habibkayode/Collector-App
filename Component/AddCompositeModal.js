@@ -7,10 +7,13 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from "react-native";
 import Modal from "react-native-modal";
 
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
+import { store } from "../Redux/store";
+import { compositeMaterialRequest } from "../Api/api";
 
 const AddComposite = (props) => {
   let [className, setClassName] = useState();
@@ -19,11 +22,30 @@ const AddComposite = (props) => {
   let [image, setImage] = useState();
   let [showError, setShowError] = useState(false);
 
-  let handleSubmit = () => {
-    if (!className || !item || !description) {
+  let handleSubmit = async () => {
+    const { id } = store.getState().normal.userData;
+    if (!className || !item || !description || !image) {
       return setShowError(true);
     }
-    props.handleAddNewModalBackButton();
+
+    let payload = new FormData();
+    payload.append("description", description);
+    payload.append("name", item);
+    payload.append("class_name", className);
+    payload.append("user_id", id);
+    payload.append("image", {
+      uri: image.uri,
+      type: image.type,
+      name: image.fileName,
+    });
+
+    try {
+      let response = await compositeMaterialRequest(payload);
+      props.handleAddNewModalBackButton();
+      Alert.alert("Request sent successfully", "");
+    } catch (error) {
+      Alert.alert("Error", error.response?.data.error);
+    }
   };
 
   const pickAnImage = () => {
@@ -35,7 +57,7 @@ const AddComposite = (props) => {
       }
       if (res.uri) {
         console.log(res.uri);
-        setImage(res.uri);
+        setImage(res);
       }
     });
   };
@@ -50,12 +72,12 @@ const AddComposite = (props) => {
     >
       <ScrollView style={{}} contentContainerStyle={styles.modalContainer}>
         <Text style={{ fontWeight: "bold", fontSize: 18, marginBottom: 20 }}>
-          Add new composite material{" "}
+          Add new household material{" "}
         </Text>
 
         <View style={styles.textInputWrapper}>
           <TextInput
-            placeholder="Composite material class"
+            placeholder="Household material type"
             value={className}
             onChangeText={(value) => setClassName(value)}
             style={{ fontWeight: "bold", fontSize: 16 }}
@@ -72,11 +94,19 @@ const AddComposite = (props) => {
         </View>
 
         {image ? (
-          <TouchableOpacity onPress={() => pickAnImage}>
-            <Image source={{ uri: image }} />
+          <TouchableOpacity onPress={() => pickAnImage()}>
+            <Image
+              source={{ uri: image.uri }}
+              style={{
+                width: 100,
+                height: 100,
+                marginBottom: 20,
+                borderRadius: 10,
+              }}
+            />
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity onPress={() => pickAnImage}>
+          <TouchableOpacity onPress={() => pickAnImage()}>
             <Image source={require("../assets/image.png")} />
           </TouchableOpacity>
         )}

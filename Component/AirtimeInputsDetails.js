@@ -10,85 +10,43 @@ import RNPickerSelect from "react-native-picker-select";
 
 const AirttimeInputDetails = (props) => {
   const [airtimeData, setAirtimeData] = useState({
-    phoneNumber: "",
+    recharge_phone: "",
     amount: "",
-    airtime: "",
   });
 
+  const sendAirtime = () => {
+    props.sendFunc(airtimeData);
+  };
   return (
     <>
-      <RNPickerSelect
-        placeholder={{
-          label: "Phone number",
-          value: "default",
-          color: "black",
-        }}
-        onValueChange={(value) => {
-          setAirtimeData((prev) => {
-            return {
-              ...prev,
-              phoneNumber: value,
-            };
-          });
-        }}
+      <View
         style={{
-          viewContainer: {
-            borderWidth: 1,
-            borderColor: "#F18921",
-            borderStyle: "solid",
-            borderRadius: 10,
-            marginBottom: 20,
-            marginTop: 40,
-          },
-          inputAndroid: {
-            color: "black",
-            fontWeight: "700",
-            fontSize: 18,
-          },
+          borderColor: "#F18921",
+          borderWidth: 1,
+          borderStyle: "solid",
+          paddingHorizontal: 20,
+          borderRadius: 10,
+          // width: "47%",
+          height: 50,
+          marginBottom: 20,
         }}
-        value={airtimeData.phoneNumber}
-        items={[
-          { label: "Composite", value: "Composite", color: "black" },
-          { label: "Composite 1", value: "1", color: "black" },
-          { label: "Composite 2", value: "2", color: "black" },
-        ]}
-      />
+      >
+        <TextInput
+          placeholder="Phone no"
+          keyboardType="phone-pad"
+          value={airtimeData.recharge_phone}
+          onChangeText={(value) => {
+            setAirtimeData((prev) => {
+              return {
+                ...prev,
+                recharge_phone: value,
+              };
+            });
+          }}
+          style={{ fontWeight: "bold", fontSize: 16 }}
+        />
+      </View>
 
-      <RNPickerSelect
-        placeholder={{
-          label: "Airtime",
-          value: "default",
-          color: "black",
-        }}
-        onValueChange={(value) => {
-          setAirtimeData((prev) => {
-            return {
-              ...prev,
-              airtime: value,
-            };
-          });
-        }}
-        style={{
-          viewContainer: {
-            borderWidth: 1,
-            borderColor: "#F18921",
-            borderStyle: "solid",
-            borderRadius: 10,
-            marginBottom: 20,
-          },
-          inputAndroid: {
-            color: "black",
-            fontWeight: "700",
-            fontSize: 18,
-          },
-        }}
-        value={airtimeData.airtime}
-        items={[
-          { label: "Composite", value: "Composite", color: "black" },
-          { label: "Composite 1", value: "1", color: "black" },
-          { label: "Composite 2", value: "2", color: "black" },
-        ]}
-      />
       <View
         style={{
           borderColor: "#F18921",
@@ -120,7 +78,7 @@ const AirttimeInputDetails = (props) => {
       <TouchableOpacity
         style={styles.sendButton}
         onPress={() => {
-          props.sendFunc();
+          sendAirtime();
         }}
       >
         <Text style={styles.sendButtonText}>Send</Text>

@@ -10,8 +10,14 @@ import { numberWithCommas } from "../helper/helper";
 import moment from "moment";
 
 const HistoryCard = ({ data }) => {
-  console.log(moment(data.created_at.split(" ")[0]).fromNow());
   let navigation = useNavigation();
+  let listOfMaterial = [...data.homogeneous_materials];
+
+  let newComposite = data.composite_materials.map((i) => ({ name: i.item }));
+
+  listOfMaterial.push(...newComposite);
+  console.log(moment(data.created_at), "moment");
+
   // let propsDate = JSON.parse(data.schedule);
   //   let propsDate = data.schedule;
 
@@ -52,7 +58,7 @@ const HistoryCard = ({ data }) => {
             overflow: "scroll",
           }}
         >
-          {numberWithCommas(data.total_cost)}
+          {data.producer.last_name} {data.producer.first_name}
         </Text>
         <Text
           style={{
@@ -61,7 +67,7 @@ const HistoryCard = ({ data }) => {
             fontSize: 10,
           }}
         >
-          {moment(data.created_at.split(" ")[0]).fromNow()}
+          {moment(data.created_at).fromNow()}
         </Text>
         {/* <Text
           style={{
@@ -89,24 +95,43 @@ const HistoryCard = ({ data }) => {
         }}
       >
         <Text style={{ color: "white", fontSize: 15, fontWeight: "bold" }}>
-          {data.id}
+          {numberWithCommas(data.producer_commission)}
         </Text>
-        <Text
-          style={{
-            color: "#F18921",
-            alignSelf: "center",
-            fontSize: 12,
-            //  backgroundColor: "#292b2c",
-            paddingHorizontal: 10,
-            fontWeight: "bold",
-            borderRadius: 8,
-            paddingVertical: 5,
-            borderColor: "#F18921",
-            borderWidth: 1,
-          }}
-        >
-          Pending
-        </Text>
+        {data.drop_off_status !== "droppedoff" ? (
+          <Text
+            style={{
+              color: "#F18921",
+              alignSelf: "center",
+              fontSize: 12,
+              //  backgroundColor: "#292b2c",
+              paddingHorizontal: 10,
+              fontWeight: "bold",
+              borderRadius: 8,
+              paddingVertical: 5,
+              borderColor: "#F18921",
+              borderWidth: 1,
+            }}
+          >
+            Pending
+          </Text>
+        ) : (
+          <Text
+            style={{
+              color: "#0A956A",
+              alignSelf: "center",
+              fontSize: 12,
+              //  backgroundColor: "#292b2c",
+              paddingHorizontal: 10,
+              fontWeight: "bold",
+              borderRadius: 8,
+              paddingVertical: 5,
+              borderColor: "#0A956A",
+              borderWidth: 1,
+            }}
+          >
+            Dropoff
+          </Text>
+        )}
       </View>
 
       <View
@@ -123,7 +148,11 @@ const HistoryCard = ({ data }) => {
           contentContainerStyle={{}}
         >
           <View style={{ flexDirection: "row", flex: 1 }}>
-            {data.homogeneous_materials.map((item) => {
+            {/* {data.homogeneous_materials.map((item) => {
+              return <SmallImage data={item} />;
+            })} */}
+            {listOfMaterial.map((item) => {
+              console.log(item.image, "ii");
               return <SmallImage data={item} />;
             })}
           </View>

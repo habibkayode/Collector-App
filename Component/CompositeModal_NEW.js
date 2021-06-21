@@ -21,7 +21,6 @@ const CompositeModal = (props) => {
 
   let handleSubmit = () => {
     if (!props.compositeObj.compositeClass || !props.compositeObj.itemId) {
-      console.log(props.compositeObj, "submit");
       return setShowError(true);
     }
     props.handleSubmit();
@@ -100,13 +99,12 @@ const CompositeModal = (props) => {
 
             let obj =
               props.compositeMaterial[props.compositeObj?.compositeClass];
-            console.log(obj, "obj");
+
             if (obj) {
               let itemFind = obj.find(
                 (ele) => Number(ele.id) === Number(value)
               );
               if (itemFind) {
-                console.log(itemFind, "itemFind");
                 props.setCompositeObj((prev) => ({
                   ...prev,
                   itemId: value,

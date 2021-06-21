@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "544682595073",
+    "project_id": "scrapays-1a03e",
+    "storage_bucket": "scrapays-1a03e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:544682595073:android:ecdee9bf48547dd1af4100",
+        "android_client_info": {
+          "package_name": "com.scrapays.collector"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "544682595073-i6dmqv0bb9dp99d9ihuk3d256500pd94.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfK0NvdWj53bEKrk0UUl_cYmqEiPry4EA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "544682595073-i6dmqv0bb9dp99d9ihuk3d256500pd94.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

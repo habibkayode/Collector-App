@@ -21,18 +21,19 @@ const SmallImage = ({ data }) => {
           borderWidth: 1,
         }}
       >
-        {/* <Image
+        <Image
+          style={{ resizeMode: "cover", width: "80%", height: "90%" }}
           source={{
             uri: `https://api.scrapays.com/storage/material_list_images/${data.image}`,
           }}
-        /> */}
-        <Image
+        />
+        {/* <Image
           style={{ width: 25, height: 25 }}
           source={{
             uri:
               "https://api.scrapays.com/storage/material_list_images/material-boxes (1)_1606817758.png",
           }}
-        />
+        /> */}
       </View>
       <Text
         style={{

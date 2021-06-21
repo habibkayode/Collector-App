@@ -348,12 +348,12 @@ const CollectionHistory = (props) => {
             refreshing={refreshing}
             data={data}
             renderItem={({ item }) => {
-              let newCreate = item.created_at.split(" ");
-              let datePart = newCreate[0];
+              // let newCreate = item.created_at.split(" ");
+              // let datePart = newCreate[0];
               //  datePart[1] = datePart[1] - 1;
               //  let timePart = newCreate[1].split(":");
 
-              let createAt = new Date(datePart);
+              let createAt = new Date(item.created_at);
 
               return (
                 <TouchableOpacity

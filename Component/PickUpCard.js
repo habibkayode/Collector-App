@@ -21,12 +21,13 @@ const PickUpCard = ({ data }) => {
     propsDate.schedule_time
   );
 
-  let newCreate = data.created_at.split(" ");
-  let datePart = newCreate[0].split("-");
-  datePart[1] = datePart[1] - 1;
-  let timePart = newCreate[1].split(":");
+  // let newCreate = data.created_at.split(" ");
+  // let datePart = newCreate[0].split("-");
+  // datePart[1] = datePart[1] - 1;
+  // let timePart = newCreate[1].split(":");
 
-  let createAt = new Date(...datePart, ...timePart);
+  // let createAt = new Date(...datePart, ...timePart);
+  let createAt = new Date(data.created_at);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -87,7 +88,7 @@ const PickUpCard = ({ data }) => {
         >
           {timeDifference(new Date(), createAt)} ago
         </Text> */}
-        <Text
+        {/* <Text
           style={{
             color: "#0A956A",
             alignSelf: "center",
@@ -102,7 +103,7 @@ const PickUpCard = ({ data }) => {
           }}
         >
           scheduled
-        </Text>
+        </Text> */}
       </View>
       <Text
         style={{

@@ -14,9 +14,11 @@ import * as Animatable from "react-native-animatable";
 import { connect } from "react-redux";
 import DashBoardCard from "../Component/DashBoardCard";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { getAllMaterial } from "../Api/api";
+import { getAllMaterial, updateDeviceToken } from "../Api/api";
 import SideBar from "../Component/SideBar";
 import EditProfile from "../Component/EditProfile";
+
+import { Notifications } from "react-native-notifications";
 import Geolocation from "react-native-geolocation-service";
 import { saveLoginLocation } from "../Redux/actionCreator";
 import NewPickup from "../Component/NewPickup";
@@ -26,6 +28,7 @@ const mapStateToProps = (state) => {
   return {
     userData: state.normal.userData,
     materialLoaded: state.normal.materialLoaded,
+    pushToken: state.normal.devicePushToken,
   };
 };
 
@@ -78,6 +81,8 @@ const DashBoard = (props) => {
 
   useEffect(() => {
     if (!props.materialLoaded) getAllMaterial();
+    console.log(props.pushToken);
+    updateDeviceToken(props.pushToken);
     //  getCurrentLocation();
   }, []);
   return (
@@ -193,40 +198,47 @@ const DashBoard = (props) => {
               text="Collection History"
             />
             <DashBoardCard
-              screenName={"Pickup"}
               tab={true}
-              icon={require("../assets/schedule.png")}
-              text="Scheduled Pickup"
+              screenName={"Wallet"}
+              icon={require("../assets/wallet.png")}
+              text="Wallet"
             />
           </View>
           <View style={styles.sectionContainer}>
             <DashBoardCard
               screenName={"CompositePrice"}
               icon={require("../assets/fridge.png")}
-              text="Composite Material Price List"
+              text="Household Material Price List"
             />
             <DashBoardCard
               screenName={"SearchAgent"}
               icon={require("../assets/searching.png")}
-              text="Search for Agent"
+              text="Search Agent"
             />
           </View>
           <View style={styles.sectionContainer}>
             <DashBoardCard
-              tab={true}
-              screenName={"Wallet"}
-              icon={require("../assets/wallet.png")}
-              text="Wallet"
-            />
-            <DashBoardCard
               screenName={"BulkOfTake"}
               icon={require("../assets/request.png")}
-              text="Request Offtake request"
+              text=" Bulk Request Offtake"
+            />
+
+            <DashBoardCard
+              screenName={"ConfirmTonnageByAgent"}
+              icon={require("../assets/purse.png")}
+              text="Pending Payment"
             />
           </View>
+
+          {/* <DashBoardCard
+              screenName={"Pickup"}
+              tab={true}
+              icon={require("../assets/schedule.png")}
+              text="Scheduled Pickup"
+            /> */}
         </ScrollView>
         {/* <NewPickup /> */}
-        <NewMessage />
+        {/* <NewMessage /> */}
       </Animatable.View>
     </ImageBackground>
   );

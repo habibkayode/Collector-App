@@ -31,7 +31,6 @@ const defaultMaterial = {
 };
 
 const mapStateToProps = (state) => {
-  console.log(state.bluetooth.connected, "bluetoothstate");
   return {
     connected: state.bluetooth.connected,
     selectedDevice: state.bluetooth.selecectedDevice,
@@ -45,7 +44,6 @@ const mapDispatchToProps = (dispatch) => {
   console.log("her");
   return {
     updateNetWork: (state) => {
-      console.log(state, "stae 0");
       dispatch(updateNetWork(state));
     },
     savePickAndImage: () => {
@@ -56,7 +54,6 @@ const mapDispatchToProps = (dispatch) => {
 
 const ProcessPickupScreen = (props) => {
   let pickupData = useRoute().params;
-  console.log(pickupData, "pickUpData");
   const [materialName, setMaterialName] = useState("homogenoues");
   const [arrayOfMaterial, setArrayOfMaterial] = useState([]);
   const [refresh, setRefresh] = useState(false);
@@ -198,20 +195,23 @@ const ProcessPickupScreen = (props) => {
           });
         }}
         showAddNewCompositeModal={() => {
-          selectIndex();
+          setSelectIndex();
           setShowCompsiteModal(false);
           setShowAddNewCompositeModal(true);
           console.log(selectIndex, "indd");
         }}
         handleSubmit={() => {
-          console.log("heee", compositeObj, "PPP");
-          if (selectIndex) {
+          //    console.log("heee", compositeObj, "PPP");
+          if (Number(selectIndex + 1)) {
+            console.log(selectIndex, "index selected");
             setArrayOfMaterial((prev) => {
               let newState = prev;
               prev[selectIndex] = compositeObj;
               return newState;
             });
+            setSelectIndex();
           } else {
+            console.log("i am adding new material");
             setArrayOfMaterial((prev) => [...prev, compositeObj]);
           }
 
@@ -240,20 +240,20 @@ const ProcessPickupScreen = (props) => {
           console.log(selectIndex, "indd");
           setHomogenouesObj({
             materialType: "Homogenoues",
-            id: null,
+            id: undefined,
             tonnage: null,
             price: null,
             materialId: null,
           });
         }}
         handleSubmit={() => {
-          console.log(homogenouesObj, "homo");
-          if (selectIndex) {
+          if (Number(selectIndex + 1)) {
             setArrayOfMaterial((prev) => {
               let newState = prev;
               prev[selectIndex] = homogenouesObj;
               return newState;
             });
+            setSelectIndex();
           } else {
             // setArrayOfMaterial((prev) => [...prev, homogenouesObj]);
             setArrayOfMaterial((prev) => [...prev, { ...homogenouesObj }]);
@@ -348,6 +348,7 @@ const ProcessPickupScreen = (props) => {
                           borderColor: "#0A956A",
                         }}
                         onPress={() => {
+                          console.log(index, "index");
                           setSelectIndex(index);
                           setCompositeObj(arrayOfMaterial[index]);
                           setShowCompsiteModal(true);
@@ -374,7 +375,6 @@ const ProcessPickupScreen = (props) => {
                           setArrayOfMaterial((prev) => {
                             let newState = prev;
                             newState.splice(index, 1);
-                            console.log(newState);
                             return newState;
                           });
                           setRefresh(!refresh);
@@ -506,7 +506,7 @@ const ProcessPickupScreen = (props) => {
                 />
               </TouchableOpacity>
               <Text style={{ color: "#F18921", fontWeight: "bold" }}>
-                Add Composite
+                Add Household
               </Text>
             </TouchableOpacity>
 
@@ -540,7 +540,7 @@ const ProcessPickupScreen = (props) => {
                 />
               </TouchableOpacity>
               <Text style={{ color: "#F18921", fontWeight: "bold" }}>
-                Add Perkilo
+                Add Per kilo
               </Text>
             </TouchableOpacity>
           </View>
@@ -570,7 +570,6 @@ const ProcessPickupScreen = (props) => {
             >
               #{" "}
               {arrayOfMaterial.reduce((prev, current) => {
-                console.log(current.price, "price of cuure", prev);
                 return prev + (current.price ? Number(current.price) : 0);
               }, 0)}
             </Text>
@@ -591,7 +590,7 @@ const ProcessPickupScreen = (props) => {
                   materials: arrayOfMaterial,
                   pickupId: pickupData.id,
                   producerData: pickupData.producer,
-                  mode: "wallet",
+                  mode: "Wallet",
                   producerId: pickupData.producer_id,
                 });
               }}
@@ -620,7 +619,7 @@ const ProcessPickupScreen = (props) => {
                   materials: arrayOfMaterial,
                   pickupId: pickupData.id,
                   producerData: pickupData.producer,
-                  mode: "cash",
+                  mode: "Cash",
                   producerId: pickupData.producer_id,
                 });
               }}

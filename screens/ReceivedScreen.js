@@ -84,7 +84,7 @@ const RecievedScreen = ({ navigation }) => {
               textAlign: "center",
             }}
           >
-            Click here to confirm tonnage received by agent
+            Click here to confirm tonnage received by Agent
           </Text>
         </TouchableOpacity>
       </View>

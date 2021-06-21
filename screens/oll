@@ -1,0 +1,251 @@
+ <TouchableOpacity
+                  onPress={() => {
+                    if (currentIndex === 1)
+                      props.navigation.navigate("WithdrawCOG");
+                    if (currentIndex === 0)
+                      props.navigation.navigate("WithdrawComission");
+
+                    if (currentIndex === 2)
+                      props.navigation.navigate("WalletToWallet");
+                  }}
+                  style={{
+                    width: 110,
+                    paddingVertical: 10,
+                    marginHorizontal: 20,
+                    borderRadius: 10,
+                    alignSelf: "flex-start",
+                    backgroundColor: "#F18921",
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: "white",
+                      textAlign: "center",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {buttonText}
+                  </Text>
+                </TouchableOpacity>
+                <View
+                  style={{
+                    marginTop: 10,
+                    marginHorizontal: 20,
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <View>
+                    <Text
+                      style={{
+                        fontWeight: "bold",
+                        fontSize: 14,
+                      }}
+                      onLayout={(e) => {
+                        //setLineWidth(e.nativeEvent.layout.width);
+                      }}
+                    >
+                      Transaction history
+                    </Text>
+                    <View
+                      style={{
+                        width: 70,
+                        backgroundColor: "#0A956A",
+                        height: 3,
+                        marginBottom: 10,
+                      }}
+                    ></View>
+                  </View>
+                  <TouchableOpacity
+                    style={{
+                      marginRight: 20,
+                      justifyContent: "center",
+                      flexDirection: "row",
+                      borderColor: "#F18921",
+                      borderRadius: 10,
+                    }}
+                    onPress={() => {
+                      setModalCalender(true);
+                    }}
+                    //  style={{ flexDirection: "row" }}
+                  >
+                    <MaterialCommunityIcons
+                      name="calendar-range"
+                      color="grey"
+                      size={20}
+                    />
+                    {/* <Text>Date Range</Text> */}
+                  </TouchableOpacity>
+                  <Dropdown
+                    // label="Status"
+                    placeholder="Days"
+                    placeholderTextColor="grey"
+                    onChangeText={(value) => {
+                      if (value !== "all") {
+                        let newDummy = { ...obj };
+                        console.log(newDummy, "llo");
+                        let newDate = new Date();
+                        newDate.setDate(new Date().getDate() - Number(value));
+                        newDate.setHours(0, 0, 0, 0);
+                        Object.keys(newDummy).forEach((ori) => {
+                          console.log(
+                            newDate <= new Date(ori),
+                            "ckcki",
+                            newDate
+                          );
+                          if (newDate >= new Date(ori)) {
+                            console.log(
+                              new Date(ori).toLocaleDateString(),
+                              newDate.toLocaleDateString()
+                            );
+                          } else {
+                            delete newDummy[ori];
+                            console.log(Object.keys(newDummy).length, "lent");
+                          }
+                        });
+                        setVariableObj(newDummy);
+
+                        setRefresh(!refresh);
+                        setDateFilter(Number(value));
+                      } else {
+                        setVariableObj(obj);
+                      }
+                    }}
+                    baseColor="grey"
+                    textColor="black"
+                    //   itemColor="white"
+                    selectedItemColor="black"
+                    fontSize={12}
+                    dropdownOffset={{ top: 0, left: 0 }}
+                    inputContainerStyle={{
+                      borderBottomColor: "transparent",
+                      //   width: 100,
+                    }}
+                    containerStyle={{
+                      width: 95,
+                    }}
+                    data={[
+                      {
+                        label: "All ",
+                        value: "all",
+                      },
+                      {
+                        label: "Today",
+                        value: 0,
+                      },
+
+                      {
+                        label: "Yesterday",
+                        value: 1,
+                      },
+                      {
+                        label: "3 days Ago",
+                        value: 3,
+                      },
+                      {
+                        label: "1 week Ago",
+                        value: 7,
+                      },
+                      {
+                        label: "2 Weeks",
+                        value: 14,
+                      },
+
+                      {
+                        label: "1 month Ago",
+                        value: 30,
+                      },
+
+                      {
+                        label: "2 month Ago",
+                        value: 60,
+                      },
+
+                      {
+                        label: "3 month Ago",
+                        value: 90,
+                      },
+
+                      {
+                        label: "6 month Ago",
+                        value: 180,
+                      },
+                      {
+                        label: "1 year Ago",
+                        value: 365,
+                      },
+                    ]}
+                  />
+                </View>
+                <ScrollView contentContainerStyle={{}}>
+                  {Object.keys(variableObj)
+                    .sort(function (a, b) {
+                      return new Date(b) - new Date(a);
+                    })
+
+                    .map((each) => {
+                      console.log(each, "ppp");
+                      return (
+                        <View
+                          style={{
+                            marginHorizontal: 20,
+                          }}
+                        >
+                          <View
+                            style={{
+                              backgroundColor: "#E8E8E8",
+
+                              padding: 3,
+                            }}
+                          >
+                            <Text style={{ fontWeight: "bold" }}>
+                              {moment(each).format("Do MMM YY")}
+                            </Text>
+                          </View>
+                          <View style={{ marginBottom: 10 }}>
+                            {variableObj[each].map((ele, index) => {
+                              return (
+                                <TouchableOpacity
+                                  onPress={() => {
+                                    props.navigation.navigate(
+                                      "WalletDetail",
+                                      ele
+                                    );
+                                  }}
+                                >
+                                  <ScrollView
+                                    style={{}}
+                                    contentContainerStyle={{}}
+                                  >
+                                    <View
+                                      style={{
+                                        flexDirection: "row",
+                                        justifyContent: "space-between",
+                                        marginVertical: 2,
+                                      }}
+                                    >
+                                      <Text style={{ width: 20 }}>
+                                        {index + 1}
+                                      </Text>
+                                      <Image
+                                        source={require("../assets/money-new.png")}
+                                      />
+                                      <Text>{ele.Beneficiary}</Text>
+                                      <Text
+                                        style={{
+                                          color:
+                                            ele.type == "Cr" ? "green" : "red",
+                                        }}
+                                      >
+                                        {numberWithCommas(ele.amount)}
+                                      </Text>
+                                    </View>
+                                  </ScrollView>
+                                </TouchableOpacity>
+                              );
+                            })}
+                          </View>
+                        </View>
+                      );
+                    })}
+                </ScrollView>

@@ -151,7 +151,7 @@ const BluetoothModal = (props) => {
             <Text
               style={[styles.modalText, { color: "red", fontWeight: "bold" }]}
             >
-              Please On your Bluetooth
+              Please turn on your Bluetooth
             </Text>
           )}
           {props.bluetoothState && props.discoveringStatus && (

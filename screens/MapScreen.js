@@ -89,30 +89,30 @@ const MapScreen = ({ navigation, userLocation }) => {
   //   };
   // }, []);
 
-  // let handleGetDirections = () => {
-  //   const data = {
-  //     source: {
-  //       latitude: startingLocation.latitude,
-  //       longitude: startingLocation.longitude,
-  //     },
-  //     destination: {
-  //       latitude: pickupData.location.lat,
-  //       longitude: pickupData.location.lng,
-  //     },
-  //     params: [
-  //       {
-  //         key: "travelmode",
-  //         value: "walking", // may be "walking", "bicycling" or "transit" as well
-  //       },
-  //       {
-  //         key: "dir_action",
-  //         value: "navigate", // this instantly initializes navigation using the given travel mode
-  //       },
-  //     ],
-  //   };
+  let handleGetDirections = () => {
+    const data = {
+      source: {
+        latitude: Number(startingLocation.latitude),
+        longitude: Number(startingLocation.longitude),
+      },
+      destination: {
+        latitude: Number(pickupData.location.lat),
+        longitude: Number(pickupData.location.lng),
+      },
+      params: [
+        {
+          key: "travelmode",
+          value: "walking", // may be "walking", "bicycling" or "transit" as well
+        },
+        {
+          key: "dir_action",
+          value: "navigate", // this instantly initializes navigation using the given travel mode
+        },
+      ],
+    };
 
-  //   getDirections(data);
-  // };
+    getDirections(data);
+  };
 
   useEffect(() => {
     getCurrentLocation();
@@ -146,7 +146,7 @@ const MapScreen = ({ navigation, userLocation }) => {
                 longitudeDelta: 0.0421,
               }}
             >
-              <Marker
+              {/* <Marker
                 coordinate={{
                   latitude: parseFloat(userLocation.lat),
                   longitude: parseFloat(userLocation.lng),
@@ -165,6 +165,18 @@ const MapScreen = ({ navigation, userLocation }) => {
                     My Location
                   </Text>
                 </Callout>
+              </Marker> */}
+              <Marker
+                coordinate={{
+                  latitude: parseFloat(userLocation.lat),
+                  longitude: parseFloat(userLocation.lng),
+                }}
+                //image={require("../assets/sc.jpg")}
+              >
+                <Image
+                  style={{ width: 30, height: 30 }}
+                  source={require("../assets/srapays-logo.png")}
+                ></Image>
               </Marker>
               <Marker
                 title="Pickup location Location"
@@ -186,12 +198,12 @@ const MapScreen = ({ navigation, userLocation }) => {
                 strokeWidth={10}
                 strokeColor="#F18921"
                 origin={{
-                  latitude: startingLocation.latitude,
-                  longitude: startingLocation.longitude,
+                  latitude: Number(startingLocation.latitude),
+                  longitude: Number(startingLocation.longitude),
                 }}
                 destination={{
-                  latitude: pickupData.location.lat,
-                  longitude: pickupData.location.lng,
+                  latitude: Number(pickupData.location.lat),
+                  longitude: Number(pickupData.location.lng),
                 }}
                 apikey={GOOGLE_MAPS_APIKEY}
                 mode="WALKING"
@@ -201,10 +213,16 @@ const MapScreen = ({ navigation, userLocation }) => {
           {/* <Text>
         {startingLocation.latitude}--{startingLocation.longitude}
       </Text> */}
-          {/* {startingLocation && (
-            <Button onPress={handleGetDirections} title="Get Directions" />
-          )} */}
-          <View style={{ paddingHorizontal: 10, marginTop: 20 }}>
+          {startingLocation && (
+            <View style={{ marginHorizontal: 10, marginTop: 10 }}>
+              <Button
+                title="Get Directions"
+                color="#F18921"
+                onPress={handleGetDirections}
+              />
+            </View>
+          )}
+          <View style={{ paddingHorizontal: 10, marginTop: 10 }}>
             <CollectionLogCard
               data={pickupData}
               buttonName={"Process Pickup"}

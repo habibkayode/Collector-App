@@ -1,3 +1,4 @@
+import { Body } from "native-base";
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -29,9 +30,8 @@ const MessageModal = (props) => {
         >
           <MaterialCommunityIcons name="close" size={20} color="gray" />
         </TouchableOpacity>
-
         <Text style={{ fontWeight: "bold", fontSize: 18, textAlign: "center" }}>
-          {props.data.tile}
+          {props.data.title}
         </Text>
         <View
           style={{
@@ -40,7 +40,7 @@ const MessageModal = (props) => {
             backgroundColor: "#8E67BE",
             marginVertical: 10,
           }}
-        ></View>
+        />
         <Text style={{ color: "#848181", fontWeight: "bold" }}>
           {props.data.body}
         </Text>
@@ -56,8 +56,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     // flex: 1,
     height: "100%",
-    //alignSelf: "center",
-    //justifyContent: "center",
+    // alignSelf: "center",
+    // justifyContent: "center",
     width: "100%",
     paddingHorizontal: 10,
   },
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     width: "100%",
     color: "black",
-    //alignItems: "flex-start",
+    // alignItems: "flex-start",
   },
 });
 

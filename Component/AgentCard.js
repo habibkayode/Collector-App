@@ -7,6 +7,7 @@ import { getDistanceAndTime } from "../Api/locationApi";
 const AgentCard = (props) => {
   //console.log(props, "props in agent card");
   let data = props.data;
+  console.log(data);
   let [timeToLocation, setTimeToLocation] = useState();
   let [currentLocation, setCurrentLocation] = useState({});
   let [distanceApart, setDistanceApart] = useState();
@@ -37,7 +38,7 @@ const AgentCard = (props) => {
         // });
       });
     }
-  }, []);
+  }, [props.data]);
 
   React.useEffect(() => {
     let storeSub;
@@ -45,6 +46,7 @@ const AgentCard = (props) => {
     const unsubscribe = navigation.addListener("focus", () => {
       storeSub = store.subscribe(() => {
         setCurrentLocation(store.getState().location.coordinate);
+        console.log(store.getState().location.coordinate, "lociuuyy6678990");
       });
     });
 
@@ -90,7 +92,7 @@ const AgentCard = (props) => {
           {props.data.first_name} {props.data.last_name}
         </Text>
 
-        <Text
+        {/* <Text
           style={{
             color: "white",
             alignSelf: "center",
@@ -99,7 +101,7 @@ const AgentCard = (props) => {
           }}
         >
           (Agent {props.index + 1})
-        </Text>
+        </Text> */}
       </View>
       <Text
         style={{

@@ -24,10 +24,39 @@ let initialState = {
   loggedIn: false,
   requestPop: false,
   notificationsPop: false,
+  bankList: [],
+  devicePushToken: "",
+
+  showMessageAlert: false,
+  showPickupAlert: false,
 };
 
 const reducerFunc = (state = initialState, action) => {
   switch (action.type) {
+    case TYPES.PICkUPALERT:
+      return {
+        ...state,
+        showPickupAlert: action.payload,
+      };
+
+    case TYPES.MESSAGEALERT:
+      console.log(action.payload, "poopp00");
+      return {
+        ...state,
+        showMessageAlert: action.payload,
+      };
+
+    case TYPES.DEVICETOKEN:
+      return {
+        ...state,
+        devicePushToken: action.payload,
+      };
+
+    case TYPES.BANK_TYPE:
+      return {
+        ...state,
+        bankList: action.payload,
+      };
     case TYPES.SAVEDATA_TYPE:
       return {
         ...state,

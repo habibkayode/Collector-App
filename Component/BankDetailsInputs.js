@@ -1,3 +1,4 @@
+import { objectPrototype } from "mobx/dist/internal";
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -5,22 +6,63 @@ import {
   StyleSheet,
   TouchableOpacity,
   Text,
+  Alert,
 } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
+import { getAccountName } from "../Api/api";
+import { store } from "../Redux/store";
+
+let emptyObj = {
+  name: "",
+  amount: "",
+  accountNumber: "",
+  accountName: "",
+};
 
 const BankDetailsInput = (props) => {
-  const [banksData, setBankData] = useState({
-    name: "",
-    amount: "",
-    accountNumber: "",
-  });
+  const [banksData, setBankData] = useState(emptyObj);
+  let [accountDetails, setAccountDetails] = useState({});
+  let bankList = store.getState().normal.bankList;
+
+  let sendData = () => {
+    let payload = {};
+    payload.amount = banksData.amount;
+    payload.account_number = banksData.accountNumber;
+    payload.account_name = banksData.accountName;
+    payload.bank_code = banksData.name;
+    payload.account_name = accountDetails.account_name;
+    payload.bank_name = bankList.find((k) => k.code === banksData.name).name;
+    console.log(payload, "bank payload");
+
+    props.sendFunc(payload);
+  };
+
+  let getAccountDetail = async () => {
+    try {
+      let response = await getAccountName({
+        bankCode: banksData.name,
+        account: banksData.accountNumber,
+      });
+      setAccountDetails(response.data);
+    } catch (e) {
+      Alert.alert("Error", e.response.data.error);
+    }
+  };
+
+  useEffect(() => {
+    if (banksData.name && banksData.accountNumber.length === 10) {
+      getAccountDetail();
+    } else {
+      setAccountDetails({});
+    }
+  }, [banksData.name, banksData.accountNumber]);
 
   return (
     <>
       <RNPickerSelect
         placeholder={{
           label: "Bank",
-          value: "default",
+          value: "",
           color: "black",
         }}
         onValueChange={(value) => {
@@ -47,11 +89,17 @@ const BankDetailsInput = (props) => {
           },
         }}
         value={banksData.name}
-        items={[
-          { label: "Composite", value: "Composite", color: "black" },
-          { label: "Composite 1", value: "1", color: "black" },
-          { label: "Composite 2", value: "2", color: "black" },
-        ]}
+        // items={[
+        //   { label: "Composite", value: "Composite", color: "black" },
+        //   { label: "Composite 1", value: "1", color: "black" },
+        //   { label: "Composite 2", value: "2", color: "black" },
+        // ]}
+
+        items={bankList.map((i) => ({
+          label: i.name,
+          key: i.code,
+          value: i.code,
+        }))}
       />
       <View
         style={{
@@ -70,16 +118,41 @@ const BankDetailsInput = (props) => {
           keyboardType="numeric"
           value={banksData.accountNumber}
           onChangeText={(value) => {
-            setBankData((prev) => {
-              return {
-                ...prev,
-                accountName: value,
-              };
-            });
+            if (value.length < 11) {
+              setBankData((prev) => {
+                return {
+                  ...prev,
+                  accountNumber: value,
+                };
+              });
+            }
           }}
           style={{ fontWeight: "bold", fontSize: 16 }}
         />
       </View>
+
+      {accountDetails.account_name && (
+        <View
+          style={[
+            {
+              borderColor: "#F18921",
+              borderWidth: 1,
+              borderStyle: "solid",
+              paddingHorizontal: 20,
+              borderRadius: 10,
+              // width: "47%",
+              height: 50,
+              marginBottom: 20,
+            },
+            { justifyContent: "center" },
+          ]}
+        >
+          <Text style={{ textAlignVertical: "center", fontWeight: "bold" }}>
+            {accountDetails.account_name}
+          </Text>
+        </View>
+      )}
+
       <View
         style={{
           borderColor: "#F18921",
@@ -111,7 +184,7 @@ const BankDetailsInput = (props) => {
       <TouchableOpacity
         style={styles.sendButton}
         onPress={() => {
-          props.sendFunc();
+          sendData();
         }}
       >
         <Text style={styles.sendButtonText}>Send</Text>

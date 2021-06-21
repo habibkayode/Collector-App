@@ -120,7 +120,12 @@ const SignInScreen = (props) => {
     } catch (e) {
       console.log(e, "diii");
       Alert.alert("Error", e.response.data.error);
-      navigation.navigate("CodePin", { phone: data.phoneNumber });
+      if (
+        e.response.data.error ===
+        "Your phone number has not been verified, please verify it to login."
+      ) {
+        navigation.navigate("CodePin", { phone: data.phoneNumber });
+      }
     }
   };
 
@@ -221,7 +226,11 @@ const SignInScreen = (props) => {
           </Animatable.View>
         )}
 
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            props.navigation.navigate("ForgetPassword");
+          }}
+        >
           <Text
             style={{
               marginTop: 15,

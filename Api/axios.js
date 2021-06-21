@@ -1,7 +1,26 @@
 import axios from "axios";
 import { store } from "../Redux/store";
-import { updateNetWorkLoading } from "../Redux/actionCreator";
-export let baseURL = "https://staging.scrapays.com/v1";
+import { updateLoggedIn, updateNetWorkLoading } from "../Redux/actionCreator";
+import { Alert } from "react-native";
+
+const baseURL = "https://api.scrapays.com/v1";
+
+let errFun = (error) => {
+  console.log(error);
+  if (
+    error.response.status === 401 &&
+    error.response.data.error === "Invalid token"
+  ) {
+    store.dispatch(updateLoggedIn(false));
+    store.dispatch(updateNetWorkLoading(false));
+    Alert.alert("Session Expired", "Please login again");
+  } else {
+    console.log(error.response.data);
+    store.dispatch(updateNetWorkLoading(false));
+    throw error;
+  }
+};
+
 //export let baseURL = "https://api.scrapays.com/v1";
 let AxiosNormal = axios.create({
   baseURL: baseURL,
@@ -33,11 +52,16 @@ AxiosSecure.interceptors.request.use((config) => {
 AxiosSecure.interceptors.response.use((repons) => {
   store.dispatch(updateNetWorkLoading(false));
   return repons;
-});
+}, errFun);
 
 let AxiosNoLoading = axios.create({
   baseURL,
 });
+
+AxiosNoLoading.interceptors.response.use((repons) => {
+  store.dispatch(updateNetWorkLoading(false));
+  return repons;
+}, errFun);
 
 AxiosNoLoading.interceptors.request.use((config) => {
   let token = store.getState().normal.token;
@@ -45,4 +69,4 @@ AxiosNoLoading.interceptors.request.use((config) => {
   return config;
 });
 
-export { AxiosNormal, AxiosSecure, AxiosNoLoading };
+export { AxiosNormal, AxiosSecure, AxiosNoLoading, baseURL };

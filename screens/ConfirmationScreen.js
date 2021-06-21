@@ -27,6 +27,9 @@ const mapStateToProps = (state) => {
 
 const confirmationScreen = (props) => {
   let requestData = useRoute().params;
+  if (!requestData.producerData.name)
+    requestData.producerData.name = `${requestData.producerData.first_name} ${requestData.producerData.last_name}`;
+
   const [code, setCode] = useState();
   const [disable, setDisable] = useState(true);
 
@@ -34,9 +37,7 @@ const confirmationScreen = (props) => {
 
   let submitRequest = () => {
     let newMaterial = requestData.materials.map((i) => {
-      console.log(i.materialType, "real material");
       if (i.materialType === "Composite") {
-        console.log(i, "comp");
         let obj = {};
         obj.material_type = "Composite";
         obj.material_id = i.itemId;
@@ -52,12 +53,10 @@ const confirmationScreen = (props) => {
     console.log(code);
     let payload = {
       total_cost: requestData.materials.reduce((prev, current) => {
-        console.log(current.price, "price of cuure", prev);
         return prev + (current.price ? Number(current.price) : 0);
       }, 0),
       total_tonnage: requestData.materials.reduce((prev, current) => {
         if (current.materialsType !== "composite") {
-          console.log(current.price, "tonnage of cuure", prev);
           return prev + (current.tonnage ? Number(current.tonnage) : 0);
         }
 
@@ -69,14 +68,14 @@ const confirmationScreen = (props) => {
       materials: newMaterial,
       collector_pin: String(code),
     };
-    console.log(payload);
+
     submitPickup(payload)
       .then(() => {
         props.navigation.navigate("PaymentConfirm");
       })
       .catch((e) => {
-        Alert.alert(e.response.data.error);
-        console.log(e.response.data.error);
+        Alert.alert("Error", e.response.data.error);
+        console.log(e, "pooooo0");
       });
   };
 
@@ -96,12 +95,10 @@ const confirmationScreen = (props) => {
           You are about to pay{" "}
           {numberWithCommas(
             requestData.materials.reduce((prev, current) => {
-              console.log(current.price, "price of cuure", prev);
               return prev + (current.price ? Number(current.price) : 0);
             }, 0)
           )}{" "}
-          to{" "}
-          {`${requestData.producerData.first_name} ${requestData.producerData.last_name}`}
+          to {`${requestData.producerData.name}`}
         </Text>
 
         <Text

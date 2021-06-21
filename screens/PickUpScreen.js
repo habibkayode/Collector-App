@@ -10,11 +10,16 @@ import {
   TextInput,
   FlatList,
   ActivityIndicator,
+  TouchableOpacity,
+  Alert,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
+
+import Modal from "react-native-modal";
 import {
   getSingleCollectorPickUp,
   getAllSingleCollectorPickUp,
+  getProducerDetails,
 } from "../Api/api";
 import PickUpCard from "../Component/PickUpCard";
 import { connect } from "react-redux";
@@ -36,6 +41,12 @@ const PickupScreen = (props) => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [allPickup, setAllPickup] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  let [producerDetails, setProducerDetails] = useState({});
+  let [newRequest, setNewRequest] = useState({
+    name: "",
+    phone: "",
+  });
 
   // useEffect(() => {
   //   setData(props.pickupData);
@@ -43,6 +54,17 @@ const PickupScreen = (props) => {
 
   let getPickup = async () => {
     getSingleCollectorPickUp();
+  };
+
+  let getDetails = async () => {
+    try {
+      let response = await getProducerDetails(newRequest);
+      setProducerDetails(response.data);
+      // setShowModal(false);
+    } catch (e) {
+      console.log(e);
+      Alert.alert("Error", e.response.data.error);
+    }
   };
 
   let getAllPickup = async () => {
@@ -124,7 +146,7 @@ const PickupScreen = (props) => {
               borderRadius: 10,
               flexDirection: "row",
               alignItems: "center",
-              marginBottom: 20,
+              marginBottom: 5,
             }}
           >
             <Image
@@ -138,6 +160,39 @@ const PickupScreen = (props) => {
               onChangeText={handleTextChange}
             />
           </View>
+          <TouchableOpacity
+            style={{
+              flexDirection: "row",
+              marginBottom: 20,
+              alignSelf: "flex-end",
+              marginHorizontal: 20,
+            }}
+            onPress={() => {
+              setShowModal(true);
+            }}
+          >
+            <View
+              style={{
+                backgroundColor: "#F18921",
+                paddingVertical: 2,
+                borderRadius: 10,
+                paddingHorizontal: 3,
+                marginRight: 5,
+                alignSelf: "flex-start",
+                top: 0,
+              }}
+            >
+              <Image
+                style={{ bottom: 0 }}
+                source={require("../assets/addition-thick-symbol.png")}
+              />
+            </View>
+            <Text
+              style={{ color: "black", fontWeight: "bold", marginRight: 5 }}
+            >
+              Add new pickup request
+            </Text>
+          </TouchableOpacity>
           {data.length === 0 && (
             <View
               style={{
@@ -157,7 +212,7 @@ const PickupScreen = (props) => {
                   color: "#F18921",
                 }}
               >
-                ... No Pick Data yet
+                ... No Pickup Data yet
               </Text>
             </View>
           )}
@@ -240,6 +295,104 @@ const PickupScreen = (props) => {
           /> */}
         </>
       )}
+
+      <Modal
+        isVisible={showModal}
+        onBackButtonPress={() => {
+          setShowModal(false);
+          setProducerDetails({});
+          setNewRequest({ name: "", phone: "" });
+        }}
+        style={styles.modal}
+        animationInTiming={600}
+        backdropOpacity={0.5}
+      >
+        <View style={styles.modalContainer}>
+          <Text
+            style={{
+              fontSize: 15,
+              fontWeight: "bold",
+              marginBottom: 30,
+            }}
+          >
+            Add new pickup request
+          </Text>
+
+          <View style={styles.inputWrapper}>
+            <TextInput
+              placeholder="Producer Phone no"
+              value={newRequest.phone}
+              keyboardType="phone-pad"
+              onChangeText={(value) =>
+                setNewRequest((prev) => ({ ...prev, phone: value }))
+              }
+            />
+          </View>
+
+          {producerDetails.Name && (
+            <>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignSelf: "flex-start",
+                  marginTop: 20,
+                }}
+              >
+                <Text style={{ fontWeight: "bold", marginRight: 5 }}>
+                  Name :
+                </Text>
+                <Text style={{ fontWeight: "bold" }}>
+                  {producerDetails.Name}
+                </Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignSelf: "flex-start",
+                  marginTop: 20,
+                }}
+              >
+                <Text style={{ fontWeight: "bold", marginRight: 5 }}>ID :</Text>
+                <Text style={{ fontWeight: "bold" }}>
+                  {producerDetails.producer_id}
+                </Text>
+              </View>
+            </>
+          )}
+
+          {producerDetails.Name ? (
+            <TouchableOpacity
+              style={styles.sendButton}
+              onPress={() => {
+                // getDetails();
+
+                props.navigation.navigate("ProcessPickup", {
+                  producer: {
+                    phone: newRequest.phone,
+                    name: producerDetails.Name,
+                  },
+                  producer_id: producerDetails.producer_id,
+                  producer_name: producerDetails.Name,
+                });
+                setShowModal(false);
+                setProducerDetails({});
+                setNewRequest({ name: "", phone: "" });
+              }}
+            >
+              <Text style={styles.sendButtonText}>Proceed</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={styles.sendButton}
+              onPress={() => {
+                getDetails();
+              }}
+            >
+              <Text style={styles.sendButtonText}>Send</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      </Modal>
     </Bgcover>
   );
 };
@@ -260,5 +413,54 @@ const ListFooterComponent = () => (
     <ActivityIndicator animating size="large" color={"#F18921"} />
   </View>
 );
+
+const styles = StyleSheet.create({
+  sendButton: {
+    height: 55,
+    backgroundColor: "#0A956A",
+    borderRadius: 10,
+    justifyContent: "center",
+    paddingHorizontal: 40,
+    marginHorizontal: 20,
+    marginTop: 40,
+    alignSelf: "center",
+  },
+  sendButtonText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "white",
+    textAlign: "center",
+  },
+  inputWrapper: {
+    borderColor: "#F18921",
+    borderWidth: 1,
+    borderStyle: "solid",
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    // width: "47%",
+    height: 50,
+    width: "100%",
+    // marginBottom: 20,
+  },
+  modal: {
+    justifyContent: "center",
+    margin: 0,
+    position: "absolute",
+    flex: 1,
+    height: "100%",
+    alignSelf: "center",
+    justifyContent: "center",
+    // alignItems: "center",
+    width: "90%",
+  },
+  modalContainer: {
+    backgroundColor: "#fff",
+    padding: 20,
+    alignItems: "center",
+    borderRadius: 20,
+    //alignSelf: "center",
+    width: "100%",
+  },
+});
 
 export default connect(mapStateToProps, null)(PickupScreen);

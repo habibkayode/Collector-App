@@ -7,14 +7,16 @@ import {
   FlatList,
   ActivityIndicator,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 import Bgcover from "../Component/Bg/BackgroundCover";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import MessageModal from "../Component/MessageModal";
-import { getAllNofification } from "../Api/api";
+import { deleteNotification, getAllNofification } from "../Api/api";
 import { connect } from "react-redux";
 let dummyArray = [1, 2, 3, 45, 6, 7, 8];
+import moment from "moment";
 
 const mapStateToProps = (state) => {
   return {
@@ -25,11 +27,42 @@ const mapStateToProps = (state) => {
 const MessageScreen = (props) => {
   let [showMessageModal, setShowMessageModal] = useState(false);
   const [selectedIndex, setSelectIndex] = useState();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [refresh, setRefresh] = useState(false);
+  let [allNotification, setAllNotification] = useState([]);
+  //   useEffect(() => {
+  //       getAllNofification().then(setLoading(false));
+  //   }, []);
 
-  useEffect(() => {
-    getAllNofification().then(setLoading(false));
-  }, []);
+  let getAllNofificationWrapper = async () => {
+    try {
+      let response = await getAllNofification();
+      setAllNotification(response);
+      setLoading(false);
+    } catch (error) {
+      Alert.alert("Error", error.response.data.error);
+    }
+  };
+
+  let deleteNotificationWrapper = async (id) => {
+    try {
+      let response = await deleteNotification(id);
+      Alert.alert("Info", "Message deleted successfully");
+      setRefresh(!refresh);
+    } catch (error) {
+      Alert.alert("Error", error.response.data.error);
+    }
+  };
+
+  React.useEffect(() => {
+    const unsubscribe = props.navigation.addListener("focus", () => {
+      setLoading(true);
+      getAllNofificationWrapper().then(() => {});
+    });
+
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [props.navigation, refresh]);
 
   let handleModalBackButton = () => {
     setShowMessageModal(!showMessageModal);
@@ -45,44 +78,53 @@ const MessageScreen = (props) => {
             <ActivityIndicator size="large" color="#F18921" />
           </View>
         )}
-        {selectedIndex && (
+        {showMessageModal && (
           <MessageModal
             showMessage={showMessageModal}
             handleModalBackButton={handleModalBackButton}
-            data={props.notifications[selectedIndex]}
+            data={allNotification[selectedIndex]}
           />
         )}
+        {allNotification.map((i, index) => (
+          <Message
+            data={i}
+            index={index}
+            setShowMessageModal={setShowMessageModal}
+            setSelectIndex={setSelectIndex}
+            key={i.id}
+            deleteNotificationWrapper={deleteNotificationWrapper}
+          />
+        ))}
 
-        {!loading && props.notifications.length > 0 ? (
-          props.notifications.map((i, index) => <Message data={i} />)
-        ) : (
-          <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          >
-            <Text style={{ fontWeight: "bold", fontSize: 20 }}>
-              No notification yet
-            </Text>
-          </View>
-        )}
+        {/* <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <Text style={{fontWeight: 'bold', fontSize: 20}}>
+            No notification yet
+          </Text>
+        </View> */}
       </ScrollView>
     </Bgcover>
   );
 };
 
-let Message = ({ data }) => {
+let Message = ({
+  data,
+  index,
+  setSelectIndex,
+  setShowMessageModal,
+  deleteNotificationWrapper,
+}) => {
   return (
     <View
       style={{
         //borderStyle: "solid",
-
         //  padding: 20,
         borderColor: "#DCDCDC",
         //  backgroundColor: "#fff",
         borderRadius: 20,
 
-        maxWidth: "100%",
-        //backgroundColor: "white",
-        //borderWidth: 1,
+        width: "100%",
+        borderWidth: 1,
+        marginBottom: 10,
       }}
     >
       <TouchableOpacity
@@ -93,11 +135,12 @@ let Message = ({ data }) => {
         style={{
           flexDirection: "row",
           alignItems: "center",
-          elevation: 3,
+          //  elevation: 3,
           borderColor: "rgba(16, 170, 174, 0.2)",
           paddingHorizontal: 10,
           // height: "auto",
           paddingVertical: 15,
+          width: "100%",
         }}
       >
         <View
@@ -108,40 +151,49 @@ let Message = ({ data }) => {
             marginRight: 10,
           }}
         ></View>
-        <View
-          style={{
-            padding: 4,
-            justifyContent: "center",
-            alignItems: "center",
-            borderWidth: 1,
-            borderColor: "#8E67BE",
-            borderRadius: 10,
-            marginRight: 10,
-          }}
-        >
-          <MaterialCommunityIcons name="exclamation" />
-        </View>
-        <View style={{ maxWidth: "70%" }}>
-          <Text numberOfLines={1} style={{ fontSize: 18, fontWeight: "bold" }}>
-            {data.tile}
-          </Text>
-          <Text
-            numberOfLines={1}
-            style={{
-              marginVertical: 10,
-              fontWeight: "bold",
-              color: "#DCDCDC",
-            }}
+
+        <View style={{ flex: 1, flexDirection: "column" }}>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
-            {data.body}
-          </Text>
-        </View>
-        <View style={{ marginHorizontal: 20 }}>
-          <MaterialCommunityIcons
-            name="trash-can-outline"
-            size={30}
-            color="red"
-          />
+            <Text
+              numberOfLines={1}
+              style={{ fontSize: 14, fontWeight: "bold" }}
+            >
+              {data.title}
+            </Text>
+            <Text style={{ alignSelf: "center", fontSize: 12 }}>
+              {moment(data.created_at).format("ddd, h:m A ,yy")}
+            </Text>
+          </View>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <Text
+              numberOfLines={1}
+              style={{
+                // marginVertical: 10,
+                //fontWeight: "bold",
+                color: "rgba(0,0,0,0.5)",
+                maxWidth: "80%",
+              }}
+            >
+              {data.body}
+            </Text>
+            <TouchableOpacity
+              style={{}}
+              onPress={() => {
+                deleteNotificationWrapper(data.id);
+              }}
+            >
+              <MaterialCommunityIcons
+                name="trash-can-outline"
+                size={20}
+                color="red"
+                //style={{alignSelf: 'flex-end'}}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
       </TouchableOpacity>
     </View>

@@ -16,11 +16,12 @@ const CollectionLogCard = (props) => {
   const navigation = useNavigation();
   let createAt;
   if (!props.agent) {
-    let newCreate = props.data.created_at.split(" ");
-    let datePart = newCreate[0].split("-");
-    datePart[1] = datePart[1] - 1;
-    let timePart = newCreate[1].split(":");
-    createAt = new Date(...datePart, ...timePart);
+    // let newCreate = props.data.created_at.split(" ");
+    // let datePart = newCreate[0].split("-");
+    // datePart[1] = datePart[1] - 1;
+    // let timePart = newCreate[1].split(":");
+    // createAt = new Date(...datePart, ...timePart);
+    createAt = new Date(data.created_at);
   }
 
   useEffect(() => {

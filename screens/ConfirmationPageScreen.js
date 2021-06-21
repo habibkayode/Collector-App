@@ -10,10 +10,11 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { connect } from "react-redux";
-import { getAllPendingCollection } from "../Api/api";
+import { getAllPendingCollection, notifyAgent } from "../Api/api";
 
 import { getDistanceAndTime } from "../Api/locationApi";
 import Accordion from "../Component/Accordion";
@@ -37,6 +38,7 @@ const ConfirmationPageScreen = ({
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [allPendingColleciton, setAllPendingCollection] = useState([]);
 
   let [timeToLocation, setTimeToLocation] = useState();
   let [distanceApart, setDistanceApart] = useState();
@@ -68,7 +70,21 @@ const ConfirmationPageScreen = ({
   }, []);
 
   let getData = async (page = 1, refreshing = false) => {
-    getAllPendingCollection(page, refreshing);
+    try {
+      let response = await getAllPendingCollection(page, refreshing);
+      setAllPendingCollection(response.data);
+    } catch (error) {}
+  };
+
+  const notifyAgentWrapper = async () => {
+    try {
+      let response = await notifyAgent(agentData.id);
+
+      navigation.navigate("AgentMap", agentData);
+    } catch (error) {
+      Alert.alert("Error", error.response?.data.error);
+      navigation.navigate("AgentMap", agentData);
+    }
   };
 
   const handleLoadMore = () => {
@@ -97,38 +113,19 @@ const ConfirmationPageScreen = ({
           <Text style={{ fontSize: 15, fontWeight: "bold", marginBottom: 10 }}>
             Collections List
           </Text>
+
           <FlatList
-            nestedScrollEnabled={true}
-            onRefresh={handleRefresh}
-            refreshing={refreshing}
-            data={pendingCollection}
+            data={allPendingColleciton}
             renderItem={({ item }) => {
-              let newCreate = item.created_at.split(" ");
-              let datePart = newCreate[0].split("-");
-              datePart[1] = datePart[1] - 1;
-              let timePart = newCreate[1].split(":");
-
-              let createAt = new Date(...datePart, ...timePart);
-
               return (
                 <Accordion
-                  title={createAt}
                   data={item}
-                  allMaterial={materialsObj}
-                />
+                  title={`${item.producer.first_name}  ${item.producer.last_name}`}
+                ></Accordion>
               );
             }}
-            keyExtractor={(item, index) => {
-              return index.toString();
-            }}
-            // extraData={props.pickupData}
-            //   onEndReached={handleLoadMore}
-            //onEndReachedThreshold={0.8}
-            initialNumToRender={10}
-            // ListFooterComponent={() =>
-            //   loadingMore ? <ListFooterComponent /> : null
-            // }
-          />
+          ></FlatList>
+
           <View
             style={{
               marginTop: 20,
@@ -156,7 +153,7 @@ const ConfirmationPageScreen = ({
           </View>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate("AgentMap", agentData);
+              notifyAgentWrapper();
             }}
             style={{
               paddingHorizontal: 30,

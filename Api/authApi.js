@@ -39,9 +39,54 @@ let registerCollector = async (payload) => {
     console.log(response.data.error, "errr in then");
   } catch (e) {
     store.dispatch(updateNetWorkLoading(false));
+    console.log(e.response.data.error, "error in catch");
+    throw e;
+  }
+};
+
+let forgetPassword = async (payload) => {
+  try {
+    let url = "/auth/password/forgot";
+    let response = await AxiosNormal.post(url, payload);
+
+    return response.data;
+  } catch (e) {
+    store.dispatch(updateNetWorkLoading(false));
     console.log(e, "error in catch");
     throw e;
   }
 };
 
-export { loginFun, registerCollector };
+let resetPassword = async (payload) => {
+  console.log(payload);
+  try {
+    let url = "/auth/password/reset";
+    let response = await AxiosNormal.post(url, payload);
+    return response.data;
+  } catch (e) {
+    store.dispatch(updateNetWorkLoading(false));
+    console.log(e, "error in catch");
+    throw e;
+  }
+};
+
+let changeUserType = async (payload) => {
+  console.log(payload);
+  try {
+    let url = "/usertype-changes";
+    let response = await AxiosNormal.post(url, payload);
+    return response.data;
+  } catch (e) {
+    store.dispatch(updateNetWorkLoading(false));
+    //console.log(e, "error in catch");
+    throw e;
+  }
+};
+
+export {
+  loginFun,
+  registerCollector,
+  forgetPassword,
+  resetPassword,
+  changeUserType,
+};

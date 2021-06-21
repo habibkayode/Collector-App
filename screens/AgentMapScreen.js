@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   Button,
   ScrollView,
+  Image,
+  Alert,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 import Geolocation from "react-native-geolocation-service";
@@ -20,6 +22,7 @@ import { useRoute } from "@react-navigation/core";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 import MapViewDirections from "react-native-maps-directions";
+import { getDistanceAndTime } from "../Api/locationApi";
 
 const GOOGLE_MAPS_APIKEY = "AIzaSyA3p7z6bSVFZ9qZWSB9BW8kmT6K50QTHb4";
 
@@ -34,6 +37,19 @@ const AgentMapScreen = ({ navigation, agents, userLocation }) => {
   let [distanceApart, setDistanceApart] = useState();
   let agentData = useRoute().params;
   console.log(agentData.location, "agent location");
+
+  useEffect(() => {
+    getDistanceAndTime(userLocation, {
+      lat: agentData.userable.coordinates.lat,
+      lng: agentData.userable.coordinates.lng,
+    }).then((data) => {
+      console.log(
+        data.rows[0].elements[0].distance,
+        data.rows[0].elements[0].duration
+      );
+      setDistanceApart(data.rows[0].elements[0].distance);
+    });
+  }, [userLocation]);
 
   let getCurrentLocation = async () => {
     let granted = await PermissionsAndroid.request(
@@ -83,21 +99,22 @@ const AgentMapScreen = ({ navigation, agents, userLocation }) => {
   //     }
   //   };
   // }, []);
+  console.log(agentData, agentData.location.lng, "ppoooo");
 
   let handleGetDirections = () => {
     const data = {
       source: {
-        latitude: 6.6445417,
-        longitude: 3.363945,
+        latitude: Number(userLocation.lat),
+        longitude: Number(userLocation.lng),
       },
       destination: {
-        latitude: 6.5672,
-        longitude: 3.351153,
+        latitude: Number(agentData.userable.coordinates.lat),
+        longitude: Number(agentData.userable.coordinates.lng),
       },
       params: [
         {
           key: "travelmode",
-          value: "driving", // may be "walking", "bicycling" or "transit" as well
+          value: "walking", // may be "walking", "bicycling" or "transit" as well
         },
         {
           key: "dir_action",
@@ -117,7 +134,7 @@ const AgentMapScreen = ({ navigation, agents, userLocation }) => {
   };
 
   return (
-    <Bgcover name="Collection Log">
+    <Bgcover name="Agent Direction">
       <View style={{ flex: 1 }}>
         {startingLocation.latitude && (
           <MapView
@@ -128,10 +145,11 @@ const AgentMapScreen = ({ navigation, agents, userLocation }) => {
             toolbarEnabled
             region={{}}
             style={{
-              minHeight: "100%",
+              // height: "100%",
               marginHorizontal: 10,
               borderRadius: 60,
-              //              borderWidth: 1,
+              //              borderWidth: 1
+              flex: 1,
             }}
             region={{
               ...{
@@ -148,7 +166,12 @@ const AgentMapScreen = ({ navigation, agents, userLocation }) => {
                 longitude: parseFloat(userLocation.lng),
               }}
             >
-              <MaterialCommunityIcons name="cart" color="blue" size={30} />
+              <Image
+                style={{ width: 30, height: 30 }}
+                source={require("../assets/srapays-logo.png")}
+              ></Image>
+
+              {/* <MaterialCommunityIcons name="cart" color="blue" size={30} />
               <Callout>
                 <Text
                   style={{
@@ -160,40 +183,46 @@ const AgentMapScreen = ({ navigation, agents, userLocation }) => {
                 >
                   My Location
                 </Text>
-              </Callout>
+              </Callout> */}
             </Marker>
             <MapViewDirections
               strokeWidth={10}
               strokeColor="#F18921"
               origin={{
-                latitude: startingLocation.latitude,
-                longitude: startingLocation.longitude,
+                latitude: Number(startingLocation.latitude),
+                longitude: Number(startingLocation.longitude),
               }}
               destination={{
-                latitude: agentData.location.lat,
-                longitude: agentData.location.lng,
+                latitude: Number(agentData.userable.coordinates.lat),
+                longitude: Number(agentData.userable.coordinates.lng),
               }}
               apikey={GOOGLE_MAPS_APIKEY}
               mode="WALKING"
             />
           </MapView>
         )}
-        {/* <Text>
-        {startingLocation.latitude}--{startingLocation.longitude}
-      </Text> */}
-        {/* {startingLocation && (
-            <Button onPress={handleGetDirections} title="Get Directions" />
-          )} */}
+
+        <View style={{ marginHorizontal: 10, marginTop: 10 }}>
+          <Button
+            title="Get Directions"
+            color="#F18921"
+            onPress={handleGetDirections}
+          />
+        </View>
       </View>
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("ConfirmTonnageByAgent");
+          if (distanceApart.value < 5000) {
+            navigation.navigate("Received");
+          } else {
+            Alert.alert("Info", "Please get to Agent location first");
+          }
         }}
         style={{
           paddingHorizontal: 30,
           paddingVertical: 10,
           alignSelf: "flex-end",
-          backgroundColor: "#355089",
+          backgroundColor: "#0A956A",
           borderRadius: 10,
           marginTop: 20,
           marginBottom: 20,

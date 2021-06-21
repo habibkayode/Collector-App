@@ -25,13 +25,10 @@ const SplashScreen = ({ navigation }) => {
             justifyContent: "space-between",
             paddingHorizontal: 20,
           }}
-
-
         >
           <TouchableOpacity
             onPress={() => {
               navigation.goBack();
-              
             }}
           >
             <MaterialCommunityIcons
@@ -60,7 +57,7 @@ const SplashScreen = ({ navigation }) => {
             >
               Scrapays
             </H1>
-            <Text style={{ marginBottom: 40, fontSize: 18 }}>
+            <Text style={{ marginBottom: 40, fontSize: 18, lineHeight: 20 }}>
               Collect and aggregate recyclable and "Out-of-Use" items, make
               money while being environmentally freindly
             </Text>

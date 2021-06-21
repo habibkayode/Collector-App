@@ -26,22 +26,37 @@ const CodePinScreen = ({ navigation, data }) => {
 
   const handleSignUp = async () => {
     //  navigation.navigate("CodePin");
+
     verifyPhone({ phone: phoneNumber, code: values })
       .then(() => {
         Alert.alert(
           "congratulations",
           "You have been registered successfully",
-          {
-            text: "Ok",
-            onPress: () => {
-              navigation.navigate("Splash");
+          [
+            {
+              text: "OK",
+              onPress: () => {
+                navigation.navigate("Splash");
+              },
+              style: "cancel",
             },
-            style: "cancel",
+
+            {
+              text: "Cancel",
+              onPress: () => {
+                navigation.navigate("Splash");
+              },
+              style: "cancel",
+            },
+          ],
+          {
+            cancelable: false,
           }
         );
       })
       .catch((e) => {
         Alert.alert("Error", e.response.data.error);
+        console.log(e.response.data.error);
       });
   };
 
@@ -111,7 +126,7 @@ const CodePinScreen = ({ navigation, data }) => {
                   },
                 ]}
               >
-                Sign Up
+                Confirm
               </Text>
             </LinearGradient>
           </TouchableOpacity>

@@ -1,5 +1,5 @@
 
-package com.collector;
+package com.scrapays.collector;
 import android.os.Bundle; // here 
 import org.devio.rn.splashscreen.SplashScreen; // here 
 import com.facebook.soloader.SoLoader;
@@ -20,6 +20,6 @@ public class MainActivity extends ReactActivity {
    */
   @Override
   protected String getMainComponentName() {
-    return "collector";
+    return "CollectorApp";
   }
 }

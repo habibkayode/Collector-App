@@ -19,9 +19,9 @@ import { updateLoggedIn } from "../Redux/actionCreator";
 
 const SideBar = (props) => {
   let navigation = useNavigation();
+  let userData = store.getState().normal.userData;
 
   let userImageUrl = store.getState().normal.userData.avatar_image;
-
   let logoutAlert = () => {
     Alert.alert(
       "Notice",
@@ -45,7 +45,6 @@ const SideBar = (props) => {
   };
 
   console.log("side");
-  let userData = store.getState().normal.userData;
   return (
     <Modal
       animationIn="slideInRight"
@@ -109,7 +108,7 @@ const SideBar = (props) => {
                   }}
                 >
                   {userData.first_name}
-
+                  {"  "}
                   {userData.last_name}
                 </Text>
                 <Text
@@ -151,7 +150,7 @@ const SideBar = (props) => {
                   }}
                 >
                   {userData.first_name}
-
+                  {"  "}
                   {userData.last_name}
                 </Text>
                 <Text
@@ -212,7 +211,10 @@ const SideBar = (props) => {
                   // justifyContent: "space-between",
                   marginTop: 20,
                 }}
-                onPress={() => navigation.navigate("Message")}
+                onPress={() => {
+                  navigation.navigate("Message");
+                  props.handleModalBackButton();
+                }}
               >
                 <MaterialCommunityIcons
                   name="message-outline"
@@ -225,6 +227,28 @@ const SideBar = (props) => {
                 </Text>
               </TouchableOpacity>
 
+              <TouchableOpacity
+                style={{
+                  flexDirection: "row",
+                  // justifyContent: "space-between",
+                  marginTop: 20,
+                }}
+                onPress={() => {
+                  Linking.openURL(
+                    `whatsapp://send?text=Good day admin, i am ${userData.first_name} ${userData.last_name} Scrapays partner(Collector)   &phone=+2347088592037`
+                  );
+                }}
+              >
+                <MaterialCommunityIcons
+                  name="whatsapp"
+                  size={25}
+                  color="#0A956A"
+                  style={{ marginRight: 20 }}
+                />
+                <Text style={{ fontWeight: "bold", fontSize: 18 }}>
+                  Chat Admin
+                </Text>
+              </TouchableOpacity>
               <TouchableOpacity
                 style={{
                   flexDirection: "row",

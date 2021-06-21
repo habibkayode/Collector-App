@@ -74,14 +74,14 @@ const SearchAgentScreen = ({ navigation, agents, userLocation }) => {
     <Bgcover name=" Search for Agent">
       {!loading && startingLocation && (
         <>
-          <View style={{ paddingHorizontal: 10, marginBottom: 20, flex: 1 }}>
+          <View style={{ marginBottom: 20, flex: 1 }}>
             <MapView
               showsUserLocation
               showsTraffic
               loadingEnabled
               loadingIndicatorColor="#F18921"
               toolbarEnabled
-              style={{ height: "100%", width: "100%" }}
+              style={{ height: "100%" }}
               region={{
                 latitude: startingLocation.latitude,
                 longitude: startingLocation.longitude,
@@ -90,6 +90,17 @@ const SearchAgentScreen = ({ navigation, agents, userLocation }) => {
               }}
             >
               <Marker
+                coordinate={{
+                  latitude: parseFloat(userLocation.lat),
+                  longitude: parseFloat(userLocation.lng),
+                }}
+              >
+                <Image
+                  style={{ width: 30, height: 30 }}
+                  source={require("../assets/srapays-logo.png")}
+                ></Image>
+              </Marker>
+              {/* <Marker
                 coordinate={{
                   latitude: parseFloat(userLocation.lat),
                   longitude: parseFloat(userLocation.lng),
@@ -108,14 +119,14 @@ const SearchAgentScreen = ({ navigation, agents, userLocation }) => {
                     My Location
                   </Text>
                 </Callout>
-              </Marker>
+              </Marker> */}
               {agents.map((i, index) => {
-                console.log(i.userable.coordinates, "agents cordinate");
+                console.log(i, "agents cordinate", `Agent ${index + 1}`);
                 return (
                   <Marker
                     onPress={() => setSelectIndex(index)}
                     key={index}
-                    title={`Agent ${index + 1}`}
+                    title={` ${i.first_name} ${i.last_name} `}
                     coordinate={{
                       latitude: parseFloat(i.userable.coordinates.lat),
                       longitude: parseFloat(i.userable.coordinates.lng),
@@ -126,8 +137,10 @@ const SearchAgentScreen = ({ navigation, agents, userLocation }) => {
               })}
             </MapView>
           </View>
-          <View style={{ paddingHorizontal: 20 }}>
-            <AgentCard data={agents[selectedIndex]} index={selectedIndex} />
+          <View style={{ paddingHorizontal: 10 }}>
+            {agents.length > 0 && (
+              <AgentCard data={agents[selectedIndex]} index={selectedIndex} />
+            )}
           </View>
         </>
       )}

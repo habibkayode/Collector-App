@@ -338,11 +338,15 @@ const SignUpScreen = ({ navigation, coverageZone }) => {
                 }}
                 value={data.age}
                 items={[
-                  { label: "18 - 22", value: "18-22", color: "black" },
-                  { label: "23 - 27", value: "23-27", color: "black" },
-                  { label: "28 - 32", value: "28-32", color: "black" },
-                  { label: "33 - 40", value: "33-40", color: "black" },
-                  { label: "40 and Above", value: "40", color: "black" },
+                  { label: "18 - 22", value: "18 - 22", color: "black" },
+                  { label: "23 - 27", value: "23 - 27", color: "black" },
+                  { label: "28 - 32", value: "28 - 32", color: "black" },
+                  { label: "33 - 40", value: "33 - 40", color: "black" },
+                  {
+                    label: "40 and Above",
+                    value: "40 and Above",
+                    color: "black",
+                  },
                 ]}
               />
 

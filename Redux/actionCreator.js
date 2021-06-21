@@ -156,9 +156,6 @@ const updateCompositeMaterial = (list) => {
       compositeObj[i.class] = [i];
     }
   });
-
-  console.log(compositeObj, "in compsite action ");
-
   return {
     type: TYPES.COMPOSITE_TYPE,
     payload: compositeObj,
@@ -240,6 +237,36 @@ const updateUserData = (data) => {
     payload: data,
   };
 };
+
+const savBankList = (data) => {
+  return {
+    type: TYPES.BANK_TYPE,
+    payload: data,
+  };
+};
+
+const updatePushToken = (token) => {
+  return {
+    type: TYPES.DEVICETOKEN,
+    payload: token,
+  };
+};
+
+const updateMessageAlert = (status) => {
+  console.log(status, "oppp");
+  return {
+    type: TYPES.MESSAGEALERT,
+    payload: status,
+  };
+};
+
+const updatePickuAlert = (status) => {
+  return {
+    type: TYPES.PICkUPALERT,
+    payload: status,
+  };
+};
+
 export {
   updateNetWork,
   saveUserData,
@@ -270,4 +297,8 @@ export {
   updateNewRequestPop,
   updateNewNotificationPop,
   updateUserData,
+  savBankList,
+  updatePushToken,
+  updatePickuAlert,
+  updateMessageAlert,
 };
