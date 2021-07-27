@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -9,20 +9,24 @@ import {
   ScrollView,
   TouchableOpacity,
   PermissionsAndroid,
-} from "react-native";
-import * as Animatable from "react-native-animatable";
-import { connect } from "react-redux";
-import DashBoardCard from "../Component/DashBoardCard";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { getAllMaterial, updateDeviceToken } from "../Api/api";
-import SideBar from "../Component/SideBar";
-import EditProfile from "../Component/EditProfile";
+} from 'react-native';
+import * as Animatable from 'react-native-animatable';
+import { connect } from 'react-redux';
+import DashBoardCard from '../Component/DashBoardCard';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { getAllMaterial, updateDeviceToken } from '../Api/api';
+import SideBar from '../Component/SideBar';
+import EditProfile from '../Component/EditProfile';
 
-import { Notifications } from "react-native-notifications";
-import Geolocation from "react-native-geolocation-service";
-import { saveLoginLocation } from "../Redux/actionCreator";
-import NewPickup from "../Component/NewPickup";
-import NewMessage from "../Component/NewMessage";
+import { Notifications } from 'react-native-notifications';
+import Geolocation from 'react-native-geolocation-service';
+import {
+  saveLoginLocation,
+  updatePickupAlertModal,
+} from '../Redux/actionCreator';
+import NewPickup from '../Component/NewPickup';
+import NewMessage from '../Component/NewMessage';
+import { store } from '../Redux/store';
 
 const mapStateToProps = (state) => {
   return {
@@ -33,7 +37,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => {
-  console.log("her");
+  console.log('her');
   return {
     saveLoginLocation: (obj) => {
       dispatch(saveLoginLocation(obj));
@@ -49,8 +53,8 @@ const DashBoard = (props) => {
     let granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       {
-        title: "Scrapays Location Permission",
-        message: "Scrapays App needs access to your location ",
+        title: 'Scrapays Location Permission',
+        message: 'Scrapays App needs access to your location ',
       }
     );
     if (granted) {
@@ -61,7 +65,7 @@ const DashBoard = (props) => {
             lng: position.coords.longitude,
           });
 
-          console.log("My current location", {
+          console.log('My current location', {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           });
@@ -87,8 +91,8 @@ const DashBoard = (props) => {
   }, []);
   return (
     <ImageBackground
-      source={require("../assets/background/bg2.jpg")}
-      style={{ height: "100%", width: "100%" }}
+      source={require('../assets/background/bg2.jpg')}
+      style={{ height: '100%', width: '100%' }}
     >
       <SideBar
         showSideBar={showSideBar}
@@ -118,7 +122,7 @@ const DashBoard = (props) => {
           <Text
             style={[
               styles.dashBoardText,
-              { alignSelf: "center", bottom: 0, fontSize: 18 },
+              { alignSelf: 'center', bottom: 0, fontSize: 18 },
             ]}
           >
             Dashboard
@@ -126,7 +130,7 @@ const DashBoard = (props) => {
           <View style={styles.headersLogo}>
             <TouchableOpacity
               onPress={() => {
-                props.navigation.navigate("Message");
+                props.navigation.navigate('Message');
               }}
             >
               <MaterialCommunityIcons
@@ -141,14 +145,14 @@ const DashBoard = (props) => {
               <Image
                 source={{
                   uri:
-                    "https://staging.scrapays.com/storage/profile_pictures/" +
+                    'https://api.scrapays.com/storage/profile_pictures/' +
                     props.userData.avatar_image,
                 }}
                 style={{ width: 90, height: 90, borderRadius: 45 }}
               />
             ) : (
               <Image
-                source={require("../assets/avatar.png")}
+                source={require('../assets/avatar.png')}
                 style={{ width: 90, height: 90, borderRadius: 45 }}
               />
             )}
@@ -171,7 +175,7 @@ const DashBoard = (props) => {
         <Text
           style={[
             styles.dashBoardText,
-            { marginLeft: 20, marginBottom: 20, textTransform: "capitalize" },
+            { marginLeft: 20, marginBottom: 20, textTransform: 'capitalize' },
           ]}
         >
           {props.userData.first_name} {props.userData.last_name}
@@ -180,52 +184,52 @@ const DashBoard = (props) => {
           <View style={styles.sectionContainer}>
             <DashBoardCard
               tab={true}
-              screenName={"Pickup"}
-              icon={require("../assets/bell.png")}
+              screenName={'Pickup'}
+              icon={require('../assets/bell.png')}
               text="New pickup request"
             />
             <DashBoardCard
-              screenName={"CollectionLog"}
-              icon={require("../assets/dumpster.png")}
+              screenName={'CollectionLog'}
+              icon={require('../assets/dumpster.png')}
               text="Collection log"
             />
           </View>
           <View style={styles.sectionContainer}>
             <DashBoardCard
               tab={true}
-              screenName={"CollectionHistory"}
-              icon={require("../assets/dumpsterHistory.png")}
+              screenName={'CollectionHistory'}
+              icon={require('../assets/dumpsterHistory.png')}
               text="Collection History"
             />
             <DashBoardCard
               tab={true}
-              screenName={"Wallet"}
-              icon={require("../assets/wallet.png")}
+              screenName={'Wallet'}
+              icon={require('../assets/wallet.png')}
               text="Wallet"
             />
           </View>
           <View style={styles.sectionContainer}>
             <DashBoardCard
-              screenName={"CompositePrice"}
-              icon={require("../assets/fridge.png")}
+              screenName={'CompositePrice'}
+              icon={require('../assets/fridge.png')}
               text="Household Material Price List"
             />
             <DashBoardCard
-              screenName={"SearchAgent"}
-              icon={require("../assets/searching.png")}
+              screenName={'SearchAgent'}
+              icon={require('../assets/searching.png')}
               text="Search Agent"
             />
           </View>
           <View style={styles.sectionContainer}>
             <DashBoardCard
-              screenName={"BulkOfTake"}
-              icon={require("../assets/request.png")}
+              screenName={'BulkOfTake'}
+              icon={require('../assets/request.png')}
               text=" Bulk Request Offtake"
             />
 
             <DashBoardCard
-              screenName={"ConfirmTonnageByAgent"}
-              icon={require("../assets/purse.png")}
+              screenName={'ConfirmTonnageByAgent'}
+              icon={require('../assets/purse.png')}
               text="Pending Payment"
             />
           </View>
@@ -247,21 +251,21 @@ const DashBoard = (props) => {
 const styles = StyleSheet.create({
   headers: {
     paddingHorizontal: 20,
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginTop: StatusBar.currentHeight + 20,
   },
-  headersLogo: { flexDirection: "row" },
+  headersLogo: { flexDirection: 'row' },
   dashBoardText: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
     fontSize: 24,
-    position: "relative",
+    position: 'relative',
     bottom: 10,
   },
   sectionContainer: {
     paddingHorizontal: 30,
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginBottom: 20,
   },
 });

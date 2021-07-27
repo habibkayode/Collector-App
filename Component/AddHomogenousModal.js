@@ -1,17 +1,8 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import Modal from "react-native-modal";
 import RNPickerSelect from "react-native-picker-select";
-import { store } from "../Redux/store";
-
+import * as Animatable from "react-native-animatable";
 import { Button } from "native-base";
 
 const HomogeneousModal = (props) => {
@@ -19,9 +10,9 @@ const HomogeneousModal = (props) => {
   let materialsObj = props.materialsObj;
 
   let handleSubmit = () => {
-    // if (!props.homogenouesObj.id || !props.homogenouesObj.tonnage) {
-    //   return setShowError(true);
-    // }
+    if (!props.homogenouesObj.id || !props.homogenouesObj.tonnage) {
+      return setShowError(true);
+    }
     console.log("idid ");
     props.handleSubmit();
   };
@@ -57,7 +48,6 @@ const HomogeneousModal = (props) => {
               borderColor: "#F18921",
               borderStyle: "solid",
               borderRadius: 10,
-              marginBottom: 20,
             },
             placeholder: {
               color: "black",
@@ -85,10 +75,19 @@ const HomogeneousModal = (props) => {
           //   };
           // })}
         />
+        {showError && !props.homogenouesObj.id && (
+          <Animatable.View
+            style={{ alignSelf: "flex-start" }}
+            animation="fadeInLeft"
+            duration={500}
+          >
+            <Text style={styles.errorMsg}>Please pick type of material</Text>
+          </Animatable.View>
+        )}
 
         {props.homogenouesObj.id ? (
           <Image
-            style={{ width: 100, height: 100 }}
+            style={{ width: 100, height: 100, marginTop: 20 }}
             source={{
               uri: `https://api.scrapays.com/storage/material_list_images/${
                 props.materialsObj[props.homogenouesObj.id].image
@@ -96,11 +95,14 @@ const HomogeneousModal = (props) => {
             }}
           />
         ) : (
-          <Image source={require("../assets/image.png")} />
+          <Image
+            style={{ marginTop: 20 }}
+            source={require("../assets/image.png")}
+          />
         )}
         <View
           style={{
-            marginVertical: 20,
+            marginTop: 20,
             width: "100%",
             flexDirection: "row",
             justifyContent: "space-between",
@@ -136,14 +138,18 @@ const HomogeneousModal = (props) => {
               paddingHorizontal: 10,
             }}
             onPress={async () => {
-              let value = await props.gettingValue();
-              console.log(value, "val");
-              props.setHomogenouesObj((prev) => ({
-                ...prev,
-                tonnage: value,
-                price: value * materialsObj[prev.id].price,
-                materialId: materialsObj[prev.id].id,
-              }));
+              if (props.homogenouesObj.id) {
+                let value = await props.gettingValue();
+                console.log(value, "val");
+                props.setHomogenouesObj((prev) => ({
+                  ...prev,
+                  tonnage: value,
+                  price: value * materialsObj[prev.id].producer_commission,
+                  materialId: materialsObj[prev.id].id,
+                }));
+              } else {
+                setShowError(true);
+              }
             }}
           >
             <Text style={{ color: "white", fontWeight: "bold" }}>
@@ -151,6 +157,15 @@ const HomogeneousModal = (props) => {
             </Text>
           </Button>
         </View>
+        {showError && !props.homogenouesObj.tonnage && (
+          <Animatable.View
+            style={{ alignSelf: "flex-start" }}
+            animation="fadeInLeft"
+            duration={500}
+          >
+            <Text style={styles.errorMsg}>Tonnage is required</Text>
+          </Animatable.View>
+        )}
         <TouchableOpacity
           onPress={handleSubmit}
           style={{
@@ -158,6 +173,7 @@ const HomogeneousModal = (props) => {
             backgroundColor: "#F18921",
             borderRadius: 10,
             width: "100%",
+            marginTop: 20,
           }}
         >
           <Text
@@ -171,7 +187,7 @@ const HomogeneousModal = (props) => {
             Done
           </Text>
         </TouchableOpacity>
-        <View
+        {/* <View
           style={{
             flexDirection: "row",
             justifyContent: "flex-start",
@@ -193,6 +209,7 @@ const HomogeneousModal = (props) => {
             </Text>
           </Text>
         </View>
+      */}
       </View>
     </Modal>
   );
@@ -226,6 +243,18 @@ const styles = StyleSheet.create({
     width: "100%",
     color: "black",
     //alignItems: "flex-start",
+  },
+
+  actionError: {
+    flexDirection: "row",
+    marginTop: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#FF0000",
+    paddingBottom: 5,
+  },
+  errorMsg: {
+    color: "#FF0000",
+    fontSize: 14,
   },
 });
 

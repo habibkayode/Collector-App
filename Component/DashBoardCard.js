@@ -1,6 +1,6 @@
-import React from "react";
-import { View, Image, Text, TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import React from 'react';
+import { Image, Text, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const DashBoardCard = (props) => {
   const navigation = useNavigation();
@@ -10,13 +10,13 @@ const DashBoardCard = (props) => {
         navigation.navigate(props.screenName);
       }}
       style={{
-        width: "46%",
+        width: '46%',
         height: 125,
-        backgroundColor: "#252525",
+        backgroundColor: '#252525',
         borderRadius: 10,
         //  justifyContent: "center",
         paddingTop: 20,
-        alignItems: "center",
+        alignItems: 'center',
         paddingHorizontal: 10,
         elevation: 10,
       }}
@@ -24,10 +24,10 @@ const DashBoardCard = (props) => {
       <Image source={props.icon} />
       <Text
         style={{
-          color: "white",
+          color: 'white',
           fontSize: 16,
-          fontWeight: "bold",
-          textAlign: "center",
+          fontWeight: 'bold',
+          textAlign: 'center',
           marginTop: 10,
         }}
       >

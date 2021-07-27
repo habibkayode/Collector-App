@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,21 +9,21 @@ import {
   FlatList,
   ActivityIndicator,
   TouchableWithoutFeedback,
-} from "react-native";
-import * as Animatable from "react-native-animatable";
-import Bgcover from "../Component/Bg/BackgroundCover";
-import { getAllCollection } from "../Api/api";
-import RNPickerSelect from "react-native-picker-select";
-import moment from "moment";
-import DateRangePicker from "react-native-daterange-picker";
-import DateTimePicker from "@react-native-community/datetimepicker";
+} from 'react-native';
+import * as Animatable from 'react-native-animatable';
+import Bgcover from '../Component/Bg/BackgroundCover';
+import { getAllCollection } from '../Api/api';
+import RNPickerSelect from 'react-native-picker-select';
+import moment from 'moment';
+import DateRangePicker from 'react-native-daterange-picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
-import CalendarPicker from "react-native-calendar-picker";
-import { Dropdown } from "react-native-material-dropdown";
-import Modal from "react-native-modal";
+import CalendarPicker from 'react-native-calendar-picker';
+import { Dropdown } from 'react-native-material-dropdown';
+import Modal from 'react-native-modal';
 
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { numberWithCommas } from "../helper/helper";
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { numberWithCommas } from '../helper/helper';
 
 const mapStateToProps = (state) => {
   return {
@@ -60,7 +60,7 @@ const WalletHistory = (props) => {
         setData((prev) => [...prev, ...response]);
         setAllColleciton((prev) => [...prev, ...response]);
       }
-      console.log("her");
+      console.log('her');
       setLoading(false);
       setRefreshing(false);
     } catch (e) {
@@ -69,7 +69,7 @@ const WalletHistory = (props) => {
   };
 
   React.useEffect(() => {
-    const unsubscribe = props.navigation.addListener("focus", () => {
+    const unsubscribe = props.navigation.addListener('focus', () => {
       //  setLoading(true);
       setPage(1);
     });
@@ -80,7 +80,7 @@ const WalletHistory = (props) => {
   useEffect(() => {
     if (page) {
       getAllCollectionCaller().then(() => {
-        console.log("finishi loading", page);
+        console.log('finishi loading', page);
         setLoading(false);
         setRefreshing(false);
       });
@@ -96,8 +96,8 @@ const WalletHistory = (props) => {
   };
 
   let onDateChange = (date, type) => {
-    console.log(date, type, "dates");
-    if (type === "END_DATE") {
+    console.log(date, type, 'dates');
+    if (type === 'END_DATE') {
       setEndDate(date);
     } else {
       setStartDate(date);
@@ -108,15 +108,18 @@ const WalletHistory = (props) => {
     <Bgcover name="Transaction History">
       {loading ? (
         <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
         >
-          <ActivityIndicator size="large" color="#F18921" />
+          <Image
+            source={require('../assets/loading-gif.gif')}
+            style={{ width: 50, height: 50 }}
+          ></Image>
         </View>
       ) : allCollection.length === 0 ? (
         <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
         >
-          <Text style={{ fontSize: 18, textAlign: "center", color: "#F18921" }}>
+          <Text style={{ fontSize: 18, textAlign: 'center', color: '#F18921' }}>
             No Transaction Data yet..
           </Text>
         </View>
@@ -124,21 +127,21 @@ const WalletHistory = (props) => {
         <View>
           <Text
             style={{
-              fontWeight: "bold",
+              fontWeight: 'bold',
               fontSize: 18,
               marginHorizontal: 20,
               marginBottom: 10,
-              color: "black",
+              color: 'black',
             }}
           >
             Filter By
           </Text>
           <View
             style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
+              flexDirection: 'row',
+              justifyContent: 'space-between',
               marginHorizontal: 10,
-              width: "100%",
+              width: '100%',
               //  backgroundColor: "red",
               marginBottom: 20,
             }}
@@ -149,9 +152,9 @@ const WalletHistory = (props) => {
               baseColor="grey"
               onChangeText={(value, index) => {
                 console.log(value);
-                if (value === "all") {
+                if (value === 'all') {
                   setData((prev) => allCollection);
-                  console.log("i am here", allCollection.length);
+                  console.log('i am here', allCollection.length);
                 } else {
                   let newCollection = allCollection.filter(
                     (i) => i.drop_off_status === value
@@ -164,27 +167,27 @@ const WalletHistory = (props) => {
               dropdownOffset={{ top: 0, left: 0 }}
               containerStyle={{
                 borderWidth: 1,
-                borderColor: "#F18921",
+                borderColor: '#F18921',
                 borderRadius: 10,
                 paddingHorizontal: 10,
               }}
               inputContainerStyle={{
                 width: 80,
-                borderBottomColor: "transparent",
+                borderBottomColor: 'transparent',
                 paddingBottom: 0,
               }}
               data={[
                 {
-                  label: "All ",
-                  value: "all",
+                  label: 'All ',
+                  value: 'all',
                 },
                 {
-                  label: "Withdraw",
-                  value: "Withdraw",
+                  label: 'Withdraw',
+                  value: 'Withdraw',
                 },
                 {
-                  label: "Credit",
-                  value: "Credit",
+                  label: 'Credit',
+                  value: 'Credit',
                 },
               ]}
             />
@@ -200,54 +203,54 @@ const WalletHistory = (props) => {
               dropdownOffset={{ top: 0, left: 0 }}
               containerStyle={{
                 borderWidth: 1,
-                borderColor: "#F18921",
+                borderColor: '#F18921',
                 borderRadius: 10,
                 paddingHorizontal: 10,
               }}
               inputContainerStyle={{
                 width: 94,
-                borderBottomColor: "transparent",
+                borderBottomColor: 'transparent',
                 paddingBottom: 0,
               }}
               data={[
                 {
-                  label: "All ",
-                  value: "all",
+                  label: 'All ',
+                  value: 'all',
                 },
                 {
-                  label: "Today",
+                  label: 'Today',
                   value: 0,
                 },
                 {
-                  label: "3 days Ago",
+                  label: '3 days Ago',
                   value: 3,
                 },
                 {
-                  label: "1 week Ago",
+                  label: '1 week Ago',
                   value: 7,
                 },
                 {
-                  label: "2 Weeks",
+                  label: '2 Weeks',
                   value: 14,
                 },
 
                 {
-                  label: "1 month Ago",
+                  label: '1 month Ago',
                   value: 30,
                 },
 
                 {
-                  label: "2 month Ago",
+                  label: '2 month Ago',
                   value: 60,
                 },
 
                 {
-                  label: "3 month Ago",
+                  label: '3 month Ago',
                   value: 90,
                 },
 
                 {
-                  label: "6 month Ago",
+                  label: '6 month Ago',
                   value: 180,
                 },
               ]}
@@ -256,8 +259,8 @@ const WalletHistory = (props) => {
             <TouchableOpacity
               style={{
                 marginRight: 20,
-                justifyContent: "center",
-                flexDirection: "row",
+                justifyContent: 'center',
+                flexDirection: 'row',
                 top: 5,
                 right: 5,
                 // borderWidth: 1,
@@ -286,10 +289,10 @@ const WalletHistory = (props) => {
                 <View
                   style={{
                     flex: 1,
-                    alignSelf: "stretch",
-                    flexDirection: "row",
-                    textAlign: "center",
-                    backgroundColor: "#F18921",
+                    alignSelf: 'stretch',
+                    flexDirection: 'row',
+                    textAlign: 'center',
+                    backgroundColor: '#F18921',
                     paddingVertical: 5,
                   }}
                 >
@@ -306,14 +309,14 @@ const WalletHistory = (props) => {
               return (
                 <TouchableOpacity
                   onPress={() => {
-                    props.navigation.navigate("WalletDetail", item);
+                    props.navigation.navigate('WalletDetail', item);
                   }}
                   style={{
                     flex: 1,
-                    alignSelf: "stretch",
-                    flexDirection: "row",
+                    alignSelf: 'stretch',
+                    flexDirection: 'row',
                     paddingVertical: 5,
-                    backgroundColor: "#FDF2E7",
+                    backgroundColor: '#FDF2E7',
                   }}
                 >
                   <Text numberOfLines={2} style={styles.bodyText}>
@@ -353,18 +356,18 @@ const WalletHistory = (props) => {
       >
         <TouchableOpacity
           activeOpacity={1}
-          style={{ height: "100%", width: "100%", flex: 1 }}
+          style={{ height: '100%', width: '100%', flex: 1 }}
           onPress={() => {
-            console.log("first 11");
+            console.log('first 11');
             setModalCalender(false);
           }}
         >
           <TouchableWithoutFeedback
             onPress={() => {
-              console.log("first");
+              console.log('first');
             }}
           >
-            <View style={{ backgroundColor: "white", marginHorizontal: 10 }}>
+            <View style={{ backgroundColor: 'white', marginHorizontal: 10 }}>
               <CalendarPicker
                 startFromMonday={true}
                 allowRangeSelection={true}
@@ -386,26 +389,26 @@ const WalletHistory = (props) => {
 const styles = StyleSheet.create({
   headerText: {
     flex: 1,
-    alignSelf: "stretch",
-    textAlign: "center",
+    alignSelf: 'stretch',
+    textAlign: 'center',
     fontSize: 16,
-    fontWeight: "bold",
-    color: "white",
-    textAlignVertical: "center",
+    fontWeight: 'bold',
+    color: 'white',
+    textAlignVertical: 'center',
   },
   bodyText: {
     flex: 1,
-    alignSelf: "stretch",
-    textAlign: "center",
-    textAlignVertical: "center",
+    alignSelf: 'stretch',
+    textAlign: 'center',
+    textAlignVertical: 'center',
     paddingHorizontal: 5,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
 
   pickerContainer: {
     borderWidth: 1,
-    borderColor: "#F18921",
-    borderStyle: "solid",
+    borderColor: '#F18921',
+    borderStyle: 'solid',
     borderRadius: 10,
     marginBottom: 20,
     marginHorizontal: 20,
@@ -413,19 +416,19 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   pickerInputAndroid: {
-    color: "black",
-    fontWeight: "700",
+    color: 'black',
+    fontWeight: '700',
     fontSize: 18,
   },
   modal: {
     //  justifyContent: "center",
     margin: 0,
-    position: "absolute",
+    position: 'absolute',
     flex: 1,
-    height: "100%",
-    alignSelf: "flex-start",
-    justifyContent: "flex-start",
-    width: "100%",
+    height: '100%',
+    alignSelf: 'flex-start',
+    justifyContent: 'flex-start',
+    width: '100%',
   },
 });
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,21 +9,21 @@ import {
   FlatList,
   ActivityIndicator,
   TouchableWithoutFeedback,
-} from "react-native";
-import * as Animatable from "react-native-animatable";
-import Bgcover from "../Component/Bg/BackgroundCover";
-import { getAllCollection } from "../Api/api";
-import RNPickerSelect from "react-native-picker-select";
-import moment from "moment";
-import DateRangePicker from "react-native-daterange-picker";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import CalendarPicker from "react-native-calendar-picker";
-import { Dropdown } from "react-native-material-dropdown";
-import Modal from "react-native-modal";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { numberWithCommas } from "../helper/helper";
-import HistoryCard from "../Component/HistoryCard";
-import { start } from "react-native-ble-manager";
+} from 'react-native';
+import * as Animatable from 'react-native-animatable';
+import Bgcover from '../Component/Bg/BackgroundCover';
+import { getAllCollection } from '../Api/api';
+import RNPickerSelect from 'react-native-picker-select';
+import moment from 'moment';
+import DateRangePicker from 'react-native-daterange-picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import CalendarPicker from 'react-native-calendar-picker';
+import { Dropdown } from 'react-native-material-dropdown';
+import Modal from 'react-native-modal';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { numberWithCommas } from '../helper/helper';
+import HistoryCard from '../Component/HistoryCard';
+import { start } from 'react-native-ble-manager';
 
 const mapStateToProps = (state) => {
   return {
@@ -39,9 +39,9 @@ const CollectionHistory = (props) => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [allCollection, setAllColleciton] = useState([]);
-  const [stausFilter, setStatusFilter] = useState("all");
+  const [stausFilter, setStatusFilter] = useState('all');
   const [showDatePicker, setDatePickerShow] = useState(false);
-  const [dayDiff, setDayDiff] = useState("all");
+  const [dayDiff, setDayDiff] = useState('all');
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
   const [modalCalender, setModalCalender] = useState(false);
@@ -49,12 +49,12 @@ const CollectionHistory = (props) => {
 
   let statusFun = (value, arr) => {
     let newCollection;
-    if (value === "all") {
+    if (value === 'all') {
       newCollection = arr;
-    } else if (value === "droppedoff") {
+    } else if (value === 'droppedoff') {
       newCollection = arr.filter((i) => i.drop_off_status === value);
     } else {
-      newCollection = arr.filter((i) => i.drop_off_status !== "droppedoff");
+      newCollection = arr.filter((i) => i.drop_off_status !== 'droppedoff');
     }
 
     return newCollection;
@@ -71,7 +71,7 @@ const CollectionHistory = (props) => {
 
   let byDaysFun = (value, arr) => {
     let newData;
-    if (value == "all") {
+    if (value == 'all') {
       newData = arr;
     } else {
       let newDate = new Date();
@@ -107,7 +107,7 @@ const CollectionHistory = (props) => {
     // }
 
     setData(newData);
-    setDayDiff("all");
+    setDayDiff('all');
     setModalCalender(false);
     //setEndDate();
     //  setStartDate();
@@ -115,7 +115,7 @@ const CollectionHistory = (props) => {
   };
   let filterByStatus = (value) => {
     let newCollection = statusFun(value, allCollection);
-    if (dayDiff !== "all") {
+    if (dayDiff !== 'all') {
       newCollection = byDaysFun(dayDiff, newCollection);
     }
     if (startDate && endDate) {
@@ -170,7 +170,7 @@ const CollectionHistory = (props) => {
         setAllColleciton(response);
       } else {
         let dataToBeAdded;
-        if (value == "all") {
+        if (value == 'all') {
           // setData(allCollection);
           dataToBeAdded = response;
         } else {
@@ -183,7 +183,7 @@ const CollectionHistory = (props) => {
         setData((prev) => [...prev, ...dataToBeAdded]);
         setAllColleciton((prev) => [...prev, ...response]);
       }
-      console.log("her");
+      console.log('her');
       setLoading(false);
       setRefreshing(false);
     } catch (e) {
@@ -192,7 +192,7 @@ const CollectionHistory = (props) => {
   };
 
   React.useEffect(() => {
-    const unsubscribe = props.navigation.addListener("focus", () => {
+    const unsubscribe = props.navigation.addListener('focus', () => {
       //  setLoading(true);
       setPage(1);
     });
@@ -203,7 +203,7 @@ const CollectionHistory = (props) => {
   useEffect(() => {
     if (page) {
       getAllCollectionCaller().then(() => {
-        console.log("finishi loading", page);
+        console.log('finishi loading', page);
         setLoading(false);
         setRefreshing(false);
       });
@@ -219,8 +219,8 @@ const CollectionHistory = (props) => {
   };
 
   let onDateChange = (date, type) => {
-    console.log(date, type, "dates");
-    if (type === "END_DATE") {
+    console.log(date, type, 'dates');
+    if (type === 'END_DATE') {
       setEndDate(date);
       setShowProceed(true);
     } else {
@@ -232,15 +232,18 @@ const CollectionHistory = (props) => {
     <Bgcover name="Collection History">
       {loading ? (
         <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
         >
-          <ActivityIndicator size="large" color="#F18921" />
+          <Image
+            source={require('../assets/loading-gif.gif')}
+            style={{ width: 50, height: 50 }}
+          ></Image>
         </View>
       ) : allCollection.length === 0 ? (
         <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
         >
-          <Text style={{ fontSize: 18, textAlign: "center", color: "#F18921" }}>
+          <Text style={{ fontSize: 18, textAlign: 'center', color: '#F18921' }}>
             No Collection Data yet..
           </Text>
         </View>
@@ -248,21 +251,21 @@ const CollectionHistory = (props) => {
         <View style={{ marginBottom: 100 }}>
           <Text
             style={{
-              fontWeight: "bold",
+              fontWeight: 'bold',
               fontSize: 18,
               marginHorizontal: 20,
               marginBottom: 10,
-              color: "black",
+              color: 'black',
             }}
           >
             Filter By
           </Text>
           <View
             style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
+              flexDirection: 'row',
+              justifyContent: 'space-between',
               marginHorizontal: 10,
-              width: "100%",
+              width: '100%',
               //  backgroundColor: "red",
               marginBottom: 20,
             }}
@@ -279,28 +282,28 @@ const CollectionHistory = (props) => {
               dropdownOffset={{ top: 0, left: 0 }}
               containerStyle={{
                 borderWidth: 1,
-                borderColor: "#F18921",
+                borderColor: '#F18921',
                 borderRadius: 10,
                 paddingHorizontal: 10,
               }}
               inputContainerStyle={{
                 width: 80,
-                borderBottomColor: "transparent",
+                borderBottomColor: 'transparent',
                 paddingBottom: 0,
               }}
               //   onChangeText={(value) => setDateFilter(Number(value))}
               data={[
                 {
-                  label: "All ",
-                  value: "all",
+                  label: 'All ',
+                  value: 'all',
                 },
                 {
-                  label: "Dropped",
-                  value: "droppedoff",
+                  label: 'Dropped',
+                  value: 'droppedoff',
                 },
                 {
-                  label: "Pending",
-                  value: "peinding",
+                  label: 'Pending',
+                  value: 'peinding',
                 },
               ]}
             />
@@ -321,59 +324,59 @@ const CollectionHistory = (props) => {
               dropdownOffset={{ top: 0, left: 0 }}
               containerStyle={{
                 borderWidth: 1,
-                borderColor: "#F18921",
+                borderColor: '#F18921',
                 borderRadius: 10,
                 paddingHorizontal: 10,
               }}
               inputContainerStyle={{
                 width: 95,
-                borderBottomColor: "transparent",
+                borderBottomColor: 'transparent',
                 paddingBottom: 0,
               }}
               data={[
                 {
-                  label: "All ",
-                  value: "all",
+                  label: 'All ',
+                  value: 'all',
                 },
                 {
-                  label: "Today",
+                  label: 'Today',
                   value: 0,
                 },
                 {
-                  label: "3 days Ago",
+                  label: '3 days Ago',
                   value: 3,
                 },
                 {
-                  label: "1 week Ago",
+                  label: '1 week Ago',
                   value: 7,
                 },
                 {
-                  label: "2 Weeks",
+                  label: '2 Weeks',
                   value: 14,
                 },
 
                 {
-                  label: "1 month Ago",
+                  label: '1 month Ago',
                   value: 30,
                 },
 
                 {
-                  label: "2 month Ago",
+                  label: '2 month Ago',
                   value: 60,
                 },
 
                 {
-                  label: "3 month Ago",
+                  label: '3 month Ago',
                   value: 90,
                 },
 
                 {
-                  label: "6 month Ago",
+                  label: '6 month Ago',
                   value: 180,
                 },
 
                 {
-                  label: "1 year Ago",
+                  label: '1 year Ago',
                   value: 365,
                 },
               ]}
@@ -428,10 +431,10 @@ const CollectionHistory = (props) => {
             <TouchableOpacity
               style={{
                 marginRight: 20,
-                justifyContent: "center",
-                flexDirection: "row",
+                justifyContent: 'center',
+                flexDirection: 'row',
                 borderWidth: 1,
-                borderColor: "#F18921",
+                borderColor: '#F18921',
                 borderRadius: 10,
                 padding: 10,
               }}
@@ -557,18 +560,18 @@ const CollectionHistory = (props) => {
       >
         <TouchableOpacity
           activeOpacity={1}
-          style={{ height: "100%", width: "100%", flex: 1 }}
+          style={{ height: '100%', width: '100%', flex: 1 }}
           onPress={() => {
-            console.log("first 11");
+            console.log('first 11');
             setModalCalender(false);
           }}
         >
           <TouchableWithoutFeedback
             onPress={() => {
-              console.log("first");
+              console.log('first');
             }}
           >
-            <View style={{ backgroundColor: "white", marginHorizontal: 10 }}>
+            <View style={{ backgroundColor: 'white', marginHorizontal: 10 }}>
               <CalendarPicker
                 startFromMonday={true}
                 allowRangeSelection={true}
@@ -587,12 +590,12 @@ const CollectionHistory = (props) => {
                   style={{
                     padding: 10,
                     borderRadius: 10,
-                    alignSelf: "center",
-                    backgroundColor: "#F18921",
+                    alignSelf: 'center',
+                    backgroundColor: '#F18921',
                     marginBottom: 20,
                   }}
                 >
-                  <Text style={{ color: "white", fontWeight: "bold" }}>
+                  <Text style={{ color: 'white', fontWeight: 'bold' }}>
                     Proceed
                   </Text>
                 </TouchableOpacity>
@@ -608,26 +611,26 @@ const CollectionHistory = (props) => {
 const styles = StyleSheet.create({
   headerText: {
     flex: 1,
-    alignSelf: "stretch",
-    textAlign: "center",
+    alignSelf: 'stretch',
+    textAlign: 'center',
     fontSize: 16,
-    fontWeight: "bold",
-    color: "white",
-    textAlignVertical: "center",
+    fontWeight: 'bold',
+    color: 'white',
+    textAlignVertical: 'center',
   },
   bodyText: {
     flex: 1,
-    alignSelf: "stretch",
-    textAlign: "center",
-    textAlignVertical: "center",
+    alignSelf: 'stretch',
+    textAlign: 'center',
+    textAlignVertical: 'center',
     paddingHorizontal: 5,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
 
   pickerContainer: {
     borderWidth: 1,
-    borderColor: "#F18921",
-    borderStyle: "solid",
+    borderColor: '#F18921',
+    borderStyle: 'solid',
     borderRadius: 10,
     marginBottom: 20,
     marginHorizontal: 20,
@@ -635,19 +638,19 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   pickerInputAndroid: {
-    color: "black",
-    fontWeight: "700",
+    color: 'black',
+    fontWeight: '700',
     fontSize: 18,
   },
   modal: {
     //  justifyContent: "center",
     margin: 0,
-    position: "absolute",
+    position: 'absolute',
     flex: 1,
-    height: "100%",
-    alignSelf: "flex-start",
-    justifyContent: "flex-start",
-    width: "100%",
+    height: '100%',
+    alignSelf: 'flex-start',
+    justifyContent: 'flex-start',
+    width: '100%',
   },
 });
 

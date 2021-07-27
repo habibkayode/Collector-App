@@ -1,19 +1,20 @@
-import axios from "axios";
-import { store } from "../Redux/store";
-import { updateLoggedIn, updateNetWorkLoading } from "../Redux/actionCreator";
-import { Alert } from "react-native";
+import axios from 'axios';
+import { store } from '../Redux/store';
+import { updateLoggedIn, updateNetWorkLoading } from '../Redux/actionCreator';
+import { Alert } from 'react-native';
 
-const baseURL = "https://api.scrapays.com/v1";
+const baseURL = 'https://api.scrapays.com/v1';
+//const baseURL = 'https://staging.scrapays.com/v1';
 
 let errFun = (error) => {
   console.log(error);
   if (
     error.response.status === 401 &&
-    error.response.data.error === "Invalid token"
+    error.response.data.error === 'Invalid token'
   ) {
     store.dispatch(updateLoggedIn(false));
     store.dispatch(updateNetWorkLoading(false));
-    Alert.alert("Session Expired", "Please login again");
+    Alert.alert('Session Expired', 'Please login again');
   } else {
     console.log(error.response.data);
     store.dispatch(updateNetWorkLoading(false));

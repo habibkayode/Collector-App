@@ -1,5 +1,5 @@
-import { AxiosSecure, AxiosNoLoading, AxiosNormal } from "./axios";
-import { store } from "../Redux/store";
+import { AxiosSecure, AxiosNoLoading, AxiosNormal } from './axios';
+import { store } from '../Redux/store';
 import {
   savePickUpRequest,
   saveMaterialTypes,
@@ -11,7 +11,8 @@ import {
   saveAgent,
   updateNetWorkLoading,
   savBankList,
-} from "../Redux/actionCreator";
+} from '../Redux/actionCreator';
+import { calculateDistance } from '../helper/locationHelper';
 
 const convertArrayToObject = (array, key) => {
   const initialValue = {};
@@ -27,17 +28,17 @@ let getSingleCollectorPickUp = async (page = 1, refreshing = false) => {
   try {
     let userId = store.getState().normal.userData.id;
     let url = `/collectors/${userId}/pickuprequests?page=${page}&collector_accepted=pending`;
-    console.log(url, "singlePick");
+    console.log(url, 'singlePick');
     let response = await AxiosNoLoading.get(url);
     if (response.status === 200) {
-      console.log(page, "page number");
+      console.log(page, 'page number');
       store.dispatch(savePickUpRequest(response.data.data, refreshing));
       return;
     } else {
       //
     }
   } catch (e) {
-    console.log(e, "in pickup");
+    console.log(e, 'in pickup');
   }
 };
 
@@ -45,7 +46,7 @@ let getAllSingleCollectorPickUp = async () => {
   try {
     let userId = store.getState().normal.userData.id;
     let url = `/collectors/${userId}/pickuprequests?collector_accepted=pending`;
-    console.log(url, "all pending pickup request");
+    console.log(url, 'all pending pickup request');
     let response = await AxiosNoLoading.get(url);
     if (response.status === 200) {
       console.log(response.data);
@@ -54,27 +55,27 @@ let getAllSingleCollectorPickUp = async () => {
       //
     }
   } catch (e) {
-    console.log(e, "in all pickup request");
+    console.log(e, 'in all pickup request');
     throw e;
   }
 };
 
 let getAllMaterial = async () => {
   try {
-    let url = "/materials?per_page=-1";
+    let url = '/materials?per_page=-1';
     let response = await AxiosSecure(url);
     console.log(url, response.status);
     if (response.status === 200) {
       let dataObj = convertArrayToObject(
         response.data.data.homogeneous,
-        "name"
+        'name'
       );
       store.dispatch(saveMaterialTypes(response.data.data.homogenous, dataObj));
 
       store.dispatch(updateCompositeMaterial(response.data.data.composite));
     }
   } catch (e) {
-    console.log(e, "in material");
+    console.log(e, 'in material');
   }
 };
 
@@ -83,7 +84,7 @@ let acceptPickUp = async (id) => {
     let url = `/pickuprequests/${id}/accept`;
     let response = await AxiosSecure.put(url);
     if (response.status == 200) {
-      console.log("accepted ", id);
+      console.log('accepted ', id);
       return response.data;
     }
   } catch (err) {
@@ -97,7 +98,7 @@ let rejectPickUp = async (id) => {
     let response = await AxiosSecure.put(url);
     console.log(response.data, response.status);
     if (response.status == 200) {
-      console.log("Rejected", id);
+      console.log('Rejected', id);
       return response.data;
     }
   } catch (err) {
@@ -111,7 +112,7 @@ let getAcceptedPickupRequst = async (page, refreshing = false) => {
     let url = `/collectors/${userId}/pickuprequests?collector_accepted=accepted&page=${page}`;
     let response = await AxiosNoLoading.get(url);
     if (response.status == 200) {
-      console.log("accepted pickup request", userId);
+      console.log('accepted pickup request', userId);
       store.dispatch(saveAcceptedPickUpRequest(response.data.data, refreshing));
       return response.data;
     }
@@ -123,7 +124,7 @@ let getAcceptedPickupRequst = async (page, refreshing = false) => {
 let getAllAcceptedPickupRequst = async () => {
   let userId = store.getState().normal.userData.id;
   try {
-    let url = `/collectors/${userId}/pickuprequests?collector_accepted=accepted&per_page=-1`;
+    let url = `/collectors/${userId}/pickuprequests?collector_accepted=accepted&status=pending&per_page=-1`;
     let response = await AxiosNoLoading.get(url);
     return response.data.data;
   } catch (err) {
@@ -153,12 +154,12 @@ let getAllCollection = async (page) => {
     let response = await AxiosNoLoading.get(url);
 
     if (response.status == 200) {
-      console.log("all collection");
-      console.log(response.data, "collection s");
+      console.log('all collection');
+      console.log(response.data, 'collection s');
       return response.data.data;
     }
   } catch (e) {
-    console.log(e.response.data.error, "collection  errors");
+    console.log(e.response.data.error, 'collection  errors');
   }
 };
 
@@ -185,7 +186,7 @@ let getComissionBalance = async () => {
     let response = await AxiosNoLoading.get(url);
     if (response.status === 200) return response.data;
   } catch (e) {
-    console.log(e, "bll");
+    console.log(e, 'bll');
     throw e;
   }
 };
@@ -197,7 +198,7 @@ let getPendingComissionBalance = async () => {
     let response = await AxiosNoLoading.get(url);
     if (response.status === 200) return response.data;
   } catch (e) {
-    console.log(e, "pending bll");
+    console.log(e, 'pending bll');
 
     store.dispatch(updateNetWorkLoading(false));
     throw e;
@@ -212,7 +213,7 @@ let getCOGbalance = async () => {
     if (response.status === 200) return response.data;
   } catch (e) {
     store.dispatch(updateNetWorkLoading(false));
-    console.log(e, "cog");
+    console.log(e, 'cog');
     throw e;
   }
 };
@@ -225,7 +226,7 @@ let getBankList = async () => {
     if (response.status === 200)
       store.dispatch(savBankList(response.data.data));
   } catch (e) {
-    console.log(e, "inbank");
+    console.log(e, 'inbank');
 
     store.dispatch(updateNetWorkLoading(false));
     throw e;
@@ -233,7 +234,7 @@ let getBankList = async () => {
 };
 
 let transferFromCommission = async (payload) => {
-  let url = "/wallets/withdraw";
+  let url = '/wallets/withdraw';
   try {
     let response = await AxiosSecure.post(url, payload);
     return response.data;
@@ -246,20 +247,31 @@ let transferFromCommission = async (payload) => {
 };
 
 let airtimeTransfer = async (payload) => {
-  let url = "/wallets/airtime";
+  let url = '/wallets/airtime';
   try {
     let response = await AxiosSecure.post(url, payload);
     return response.data;
   } catch (e) {
     console.log(e);
+    store.dispatch(updateNetWorkLoading(false));
+    throw e;
+  }
+};
 
+let airtimeTransferCOG = async (payload) => {
+  let url = '/wallets/airtime?wallet=cog';
+  try {
+    let response = await AxiosSecure.post(url, payload);
+    return response.data;
+  } catch (e) {
+    console.log(e);
     store.dispatch(updateNetWorkLoading(false));
     throw e;
   }
 };
 
 let transferFromAccount = async (payload) => {
-  let url = "/wallets/withdraw?wallet=COG";
+  let url = '/wallets/withdraw?wallet=cog';
   try {
     let response = await AxiosSecure.post(url, payload);
     return response.data;
@@ -272,7 +284,20 @@ let transferFromAccount = async (payload) => {
 };
 
 let walletToWalletTransfer = async (payload) => {
-  let url = "/wallets/transfer";
+  let url = '/wallets/transfer';
+  try {
+    let response = await AxiosSecure.post(url, payload);
+    return response.data;
+  } catch (e) {
+    console.log(e);
+
+    store.dispatch(updateNetWorkLoading(false));
+    throw e;
+  }
+};
+
+let walletToWalletTransferCOG = async (payload) => {
+  let url = '/wallets/transfer?wallet=cog';
   try {
     let response = await AxiosSecure.post(url, payload);
     return response.data;
@@ -285,7 +310,7 @@ let walletToWalletTransfer = async (payload) => {
 };
 
 let interWalletTransfer = async (payload) => {
-  let url = "/wallets/transfer/interwallet";
+  let url = '/wallets/transfer/interwallet';
   try {
     let response = await AxiosSecure.post(url, payload);
     return response.data;
@@ -298,7 +323,7 @@ let interWalletTransfer = async (payload) => {
 };
 
 let fundWallet = async (payload) => {
-  let url = "/wallets/fund";
+  let url = '/wallets/fund';
 
   try {
     let response = await AxiosSecure.put(url, payload);
@@ -312,7 +337,7 @@ let fundWallet = async (payload) => {
 };
 
 let initializeFunding = async (payload) => {
-  let url = "/wallets/fund/initialize";
+  let url = '/wallets/fund/initialize';
   try {
     let response = await AxiosSecure.post(url, payload);
     return response.data;
@@ -328,7 +353,7 @@ let updateLocation = async (lat, lng) => {
   let id = store.getState().normal.userData.id;
   try {
     console.log(lat, lng);
-    let response = await AxiosNoLoading.post("/locations/ping", {
+    let response = await AxiosNoLoading.post('/locations/ping', {
       lat,
       lng,
       id,
@@ -351,7 +376,7 @@ let updateProfile = async (data) => {
     return response.data;
   } catch (e) {
     store.dispatch(updateNetWorkLoading(false));
-    console.log(e, "in update Profile");
+    console.log(e, 'in update Profile');
     throw e;
   }
 };
@@ -362,14 +387,14 @@ let getAllCoverageRegion = async () => {
     let response = await AxiosNormal.get(url);
     if (response.status === 200) {
       let sort = response.data.data.sort(function (a, b) {
-        return ("" + a.name).localeCompare(b.name);
+        return ('' + a.name).localeCompare(b.name);
       });
 
       store.dispatch(saveCoverageZone(sort));
       return;
     }
   } catch (e) {
-    console.log(e.response.data.error, "in coverage Zone");
+    console.log(e.response.data.error, 'in coverage Zone');
     // throw e;
   }
 };
@@ -384,13 +409,34 @@ let gettAllAgent = async () => {
         (k) =>
           k.userable &&
           k.userable.coordinates !== null &&
-          k.userable.coordinates?.lat !== null
+          k.userable.coordinates?.lat !== null &&
+          k.userable.availability == true
       );
+
+      let cur = store.getState().location.coordinate;
+
+      for (let i = 0; i < data.length; i++) {
+        console.log(i, data.length, 'llll');
+        data[i]['distance'] = calculateDistance(
+          Number(cur.lat),
+          Number(cur.lng),
+          Number(data[i].userable.coordinates.lat),
+          Number(data[i].userable.coordinates.lng),
+          'K'
+        );
+      }
+
+      data.sort(function (a, b) {
+        return a.distance - b.distance;
+      });
+      //change
+
       store.dispatch(saveAgent(data));
       return;
     }
   } catch (e) {
-    console.log(e.response.data.error, "in getting all agent");
+    console.log(e);
+    // console.log(e.response.data.error, 'in getting all agent');
     // throw e;
   }
 };
@@ -401,7 +447,7 @@ let submitPickup = async (payload) => {
     let response = await AxiosSecure.post(url, payload);
     console.log(response.data);
   } catch (e) {
-    console.log(e, "in submiting pickup reqest");
+    console.log(e, 'in submiting pickup reqest');
 
     store.dispatch(updateNetWorkLoading(false));
     throw e;
@@ -409,27 +455,27 @@ let submitPickup = async (payload) => {
 };
 
 let verifyPhone = async (data) => {
-  console.log(data, "dat in vee");
-  let url = "/auth/phone/verify";
+  console.log(data, 'dat in vee');
+  let url = '/auth/phone/verify';
   try {
     let response = await AxiosSecure.post(url, data);
-    console.log(response.data, "veriyDaddd");
+    console.log(response.data, 'veriyDaddd');
     return response.data;
   } catch (e) {
-    console.log(e, "icode veryfication");
+    console.log(e, 'icode veryfication');
     store.dispatch(updateNetWorkLoading(false));
     throw e;
   }
 };
 
 const sendVerificationCodeAgain = async (phone) => {
-  let url = "/auth/phone/verify/resend";
+  let url = '/auth/phone/verify/resend';
   console.log(phone);
   try {
     let response = await AxiosNormal.post(url, { phone });
-    console.log(response.data, "resindin");
+    console.log(response.data, 'resindin');
   } catch (e) {
-    console.log(e.response.data.error, "send againg");
+    console.log(e.response.data.error, 'send againg');
 
     store.dispatch(updateNetWorkLoading(false));
   }
@@ -440,7 +486,7 @@ const getProducerDetails = async (details) => {
   console.log(url);
   try {
     let response = await AxiosSecure.get(url);
-    console.log(response.data, "produces details");
+    console.log(response.data, 'produces details');
     return response.data;
   } catch (e) {
     console.log(e.response.data.error);
@@ -455,7 +501,7 @@ let getUserName = async (phone) => {
   console.log(url);
   try {
     let response = await AxiosSecure.get(url);
-    console.log(response.data, "user name details");
+    console.log(response.data, 'user name details');
     return response.data;
   } catch (e) {
     console.log(e.response.data.error);
@@ -471,7 +517,7 @@ let getWalletHistory = async () => {
   console.log(url);
   try {
     let response = await AxiosNoLoading.get(url);
-    console.log(response.data, "histoy");
+    console.log(response.data, 'histoy');
     return response.data;
   } catch (e) {
     console.log(e.response.data.error);
@@ -486,7 +532,7 @@ let getWalletHistoryCOG = async () => {
   console.log(url);
   try {
     let response = await AxiosNoLoading.get(url);
-    console.log(response.data, "histoy");
+    console.log(response.data, 'histoy');
     return response.data;
   } catch (e) {
     console.log(e.response.data.error);
@@ -500,7 +546,7 @@ let getAccountName = async (payload) => {
   console.log(url);
   try {
     let response = await AxiosSecure.get(url);
-    console.log(response.data, "acount name");
+    console.log(response.data, 'acount name');
     return response.data;
   } catch (e) {
     console.log(e.response.data.error);
@@ -519,7 +565,7 @@ const notifyAgent = async (agentId) => {
       agent_id: agentId,
     });
   } catch (e) {
-    console.log(e, "lloo");
+    console.log(e, 'lloo');
 
     store.dispatch(updateNetWorkLoading(false));
     throw e;
@@ -527,7 +573,7 @@ const notifyAgent = async (agentId) => {
 };
 
 const bulkUpload = async (payload) => {
-  let url = "/listedscraps";
+  let url = '/listedscraps';
   try {
     let response = await AxiosSecure.post(url, payload);
   } catch (error) {
@@ -555,11 +601,10 @@ const getAllNofification = async () => {
   try {
     const response = await AxiosSecure.get(url);
 
-    console.log(response.data.data, "Notification");
     store.dispatch(saveNotification(response.data.data));
     return response.data.data;
   } catch (e) {
-    console.log(e.response.data.error, "in notification");
+    console.log(e.response.data.error, 'in notification');
     // throw e;
   }
 };
@@ -572,7 +617,7 @@ const deleteNotification = async (notificationId) => {
 
     return response.data.data;
   } catch (e) {
-    console.log(e.response.data.error, "in notification");
+    console.log(e.response.data.error, 'in notification');
     store.dispatch(updateNetWorkLoading(false));
 
     throw e;
@@ -631,6 +676,21 @@ let rejectPayment = async (dropoffId) => {
   }
 };
 
+let getSinglePickup = async (pickupId) => {
+  console.log(pickupId, 'pppppppppppppppppppppppppppppp');
+  let id = store.getState().normal.userData.id;
+  let url = `/pickuprequests/${pickupId}`;
+
+  try {
+    let response = await AxiosSecure.get(url);
+    console.log(response.data, 'llll');
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
 export {
   getSingleCollectorPickUp,
   getAllMaterial,
@@ -673,4 +733,7 @@ export {
   acceptPayment,
   rejectPayment,
   interWalletTransfer,
+  getSinglePickup,
+  airtimeTransferCOG,
+  walletToWalletTransferCOG,
 };

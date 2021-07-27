@@ -56,6 +56,7 @@ let checkBluetootEnabled = async () => {
 };
 
 let startDiscovery = async () => {
+  console.log("in here")
   store.dispatch(updateBluetoothStatus("scanning"));
   try {
     let granted = await requestAccessFineLocationPermission();
@@ -71,6 +72,7 @@ let startDiscovery = async () => {
       //props.saveDiscoverList(unpaired);
       // console.log(unpaired[0].name, "loging found devices");
       store.dispatch(saveDiscoverList(unpaired ? unpaired : []));
+      console.log(unpaired);
     } finally {
       //props.saveDiscoveringState(false);
       store.dispatch(saveDiscoveringState(false));

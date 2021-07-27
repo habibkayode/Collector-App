@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,15 +6,15 @@ import {
   ActivityIndicator,
   Image,
   TextInput,
-} from "react-native";
-import * as Animatable from "react-native-animatable";
-import Bgcover from "../Component/Bg/BackgroundCover";
-import CollectionLogCard from "../Component/CollectionLogCard";
+} from 'react-native';
+import * as Animatable from 'react-native-animatable';
+import Bgcover from '../Component/Bg/BackgroundCover';
+import CollectionLogCard from '../Component/CollectionLogCard';
 import {
   getAcceptedPickupRequst,
   getAllAcceptedPickupRequst,
-} from "../Api/api";
-import { connect } from "react-redux";
+} from '../Api/api';
+import { connect } from 'react-redux';
 
 const mapStateToProps = (state) => {
   console.log(state.normal.acceptedPickupRequests);
@@ -36,18 +36,25 @@ const CollectionLogScreen = ({ navigation, ...props }) => {
     try {
       let response = await getAllAcceptedPickupRequst();
       setAllAcceptedPickup(response);
-      console.log(response, "pppkkiooiii000======");
+      console.log(response, 'pppkkiooiii000======');
       setData(response);
     } catch (e) {
-      console.log(e, "error in all pickup");
+      console.log(e, 'error in all pickup');
     }
   };
 
+  let removeById = (id) => {
+    setData((prev) => {
+      let newState = prev.filter((i) => i.id !== id);
+      return newState;
+    });
+  };
+
   React.useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
+    const unsubscribe = navigation.addListener('focus', () => {
       setLoading(true);
       getAcceptedPickup().then(() => {
-        setSearchTex("");
+        setSearchTex('');
         setLoading(false);
       });
     });
@@ -76,13 +83,13 @@ const CollectionLogScreen = ({ navigation, ...props }) => {
         setPages(pages + 1);
       })
       .finally(() => setLoadingMore(false));
-    console.log("i am here handle load more");
+    console.log('i am here handle load more');
   };
 
   const handleRefresh = () => {
     setRefreshing(true);
     getAcceptedPickup().then(() => {
-      setSearchTex("");
+      setSearchTex('');
       setRefreshing(false);
     });
   };
@@ -98,7 +105,7 @@ const CollectionLogScreen = ({ navigation, ...props }) => {
   // }, []);
 
   const redirectFunc = () => {
-    navigation.navigate("MapScreen");
+    navigation.navigate('MapScreen');
   };
   // return (
   //   <Bgcover name="Collection Log">
@@ -183,9 +190,12 @@ const CollectionLogScreen = ({ navigation, ...props }) => {
     <Bgcover name="Collection Log">
       {loading ? (
         <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
         >
-          <ActivityIndicator size="large" color="#F18921" />
+          <Image
+            source={require('../assets/loading-gif.gif')}
+            style={{ width: 50, height: 50 }}
+          ></Image>
         </View>
       ) : (
         <>
@@ -194,41 +204,41 @@ const CollectionLogScreen = ({ navigation, ...props }) => {
               paddingHorizontal: 10,
               marginHorizontal: 20,
               height: 50,
-              backgroundColor: "#F0F0F0",
+              backgroundColor: '#F0F0F0',
               borderRadius: 10,
-              flexDirection: "row",
-              alignItems: "center",
+              flexDirection: 'row',
+              alignItems: 'center',
               marginBottom: 20,
             }}
           >
             <Image
               style={{ marginRight: 10 }}
-              source={require("../assets/loupe1.png")}
+              source={require('../assets/loupe1.png')}
             />
             <TextInput
               placeholder="search for new Collection"
               placeholderTextColor="#D3D3D3"
-              style={{ fontSize: 15, fontWeight: "bold", flex: 1 }}
+              style={{ fontSize: 15, fontWeight: 'bold', flex: 1 }}
               onChangeText={handleTextChange}
             />
           </View>
           {data.length === 0 && (
             <View
               style={{
-                alignItems: "center",
-                justifyContent: "center",
+                alignItems: 'center',
+                justifyContent: 'center',
                 // flex: 1,
                 // position: "absolute",
-                width: "100%",
-                height: "100%",
+                width: '100%',
+                height: '100%',
                 //backgroundColor: "red",
               }}
             >
               <Text
                 style={{
-                  fontWeight: "bold",
+                  fontWeight: 'bold',
                   fontSize: 20,
-                  color: "#F18921",
+                  color: '#F18921',
                 }}
               >
                 ... No Collection Data yet
@@ -244,9 +254,10 @@ const CollectionLogScreen = ({ navigation, ...props }) => {
               return (
                 <CollectionLogCard
                   data={item}
-                  buttonName={"Pickup Now"}
+                  removeById={removeById}
+                  buttonName={'Pickup Now'}
                   redirectFunc={() => {
-                    navigation.navigate("MapScreen", item);
+                    navigation.navigate('MapScreen', item);
                   }}
                 />
               );
@@ -306,16 +317,16 @@ export default connect(mapStateToProps, null)(CollectionLogScreen);
 const ListFooterComponent = () => (
   <View
     style={{
-      position: "relative",
-      width: "100%",
+      position: 'relative',
+      width: '100%',
       height: 40,
       paddingVertical: 20,
       marginTop: 10,
       marginBottom: 10,
-      borderColor: "#F18921",
-      justifyContent: "center",
+      borderColor: '#F18921',
+      justifyContent: 'center',
     }}
   >
-    <ActivityIndicator animating size="large" color={"#F18921"} />
+    <ActivityIndicator animating size="large" color={'#F18921'} />
   </View>
 );

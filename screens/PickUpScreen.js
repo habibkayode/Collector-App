@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -12,19 +12,19 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Alert,
-} from "react-native";
-import * as Animatable from "react-native-animatable";
+} from 'react-native';
+import * as Animatable from 'react-native-animatable';
 
-import Modal from "react-native-modal";
+import Modal from 'react-native-modal';
 import {
   getSingleCollectorPickUp,
   getAllSingleCollectorPickUp,
   getProducerDetails,
-} from "../Api/api";
-import PickUpCard from "../Component/PickUpCard";
-import { connect } from "react-redux";
-import Bgcover from "../Component/Bg/BackgroundCover";
-import { useFocusEffect } from "@react-navigation/native";
+} from '../Api/api';
+import PickUpCard from '../Component/PickUpCard';
+import { connect } from 'react-redux';
+import Bgcover from '../Component/Bg/BackgroundCover';
+import { useFocusEffect } from '@react-navigation/native';
 
 const mapStateToProps = (state) => {
   return {
@@ -44,8 +44,8 @@ const PickupScreen = (props) => {
   const [showModal, setShowModal] = useState(false);
   let [producerDetails, setProducerDetails] = useState({});
   let [newRequest, setNewRequest] = useState({
-    name: "",
-    phone: "",
+    name: '',
+    phone: '',
   });
 
   // useEffect(() => {
@@ -63,7 +63,15 @@ const PickupScreen = (props) => {
       // setShowModal(false);
     } catch (e) {
       console.log(e);
-      Alert.alert("Error", e.response.data.error);
+
+      if (e.response?.data.error === 'Not Found.') {
+        Alert.alert(
+          'Not Found',
+          `The phone number ${newRequest.phone} is not yet registered as a Scrapays producer \n\n Please inform the custuomer to dial *347*477# and process again`
+        );
+      } else {
+        Alert.alert('Error', e.response.data.error);
+      }
     }
   };
 
@@ -73,15 +81,15 @@ const PickupScreen = (props) => {
       setAllPickup(response);
       setData(response);
     } catch (e) {
-      console.log(e, "error in all pickup");
+      console.log(e, 'error in all pickup');
     }
   };
 
   React.useEffect(() => {
-    const unsubscribe = props.navigation.addListener("focus", () => {
+    const unsubscribe = props.navigation.addListener('focus', () => {
       setLoading(true);
       getAllPickup().then(() => {
-        setSearchTex("");
+        setSearchTex('');
         setLoading(false);
       });
     });
@@ -97,7 +105,7 @@ const PickupScreen = (props) => {
         setPages(pages + 1);
       })
       .finally(() => setLoadingMore(false));
-    csole.log("i am here handle load more");
+    csole.log('i am here handle load more');
   };
 
   const handleTextChange = (values) => {
@@ -113,7 +121,7 @@ const PickupScreen = (props) => {
   const handleRefresh = () => {
     setRefreshing(true);
     getAllPickup().then(() => {
-      setSearchTex("");
+      setSearchTex('');
       setRefreshing(false);
     });
   };
@@ -131,9 +139,12 @@ const PickupScreen = (props) => {
     <Bgcover name="New Pickup Request ">
       {loading ? (
         <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
         >
-          <ActivityIndicator size="large" color="#F18921" />
+          <Image
+            source={require('../assets/loading-gif.gif')}
+            style={{ width: 50, height: 50 }}
+          ></Image>
         </View>
       ) : (
         <>
@@ -142,29 +153,29 @@ const PickupScreen = (props) => {
               paddingHorizontal: 10,
               marginHorizontal: 20,
               height: 50,
-              backgroundColor: "#F0F0F0",
+              backgroundColor: '#F0F0F0',
               borderRadius: 10,
-              flexDirection: "row",
-              alignItems: "center",
+              flexDirection: 'row',
+              alignItems: 'center',
               marginBottom: 5,
             }}
           >
             <Image
               style={{ marginRight: 10 }}
-              source={require("../assets/loupe1.png")}
+              source={require('../assets/loupe1.png')}
             />
             <TextInput
               placeholder="search for new request"
               placeholderTextColor="#D3D3D3"
-              style={{ fontSize: 15, fontWeight: "bold", flex: 1 }}
+              style={{ fontSize: 15, fontWeight: 'bold', flex: 1 }}
               onChangeText={handleTextChange}
             />
           </View>
           <TouchableOpacity
             style={{
-              flexDirection: "row",
+              flexDirection: 'row',
               marginBottom: 20,
-              alignSelf: "flex-end",
+              alignSelf: 'flex-end',
               marginHorizontal: 20,
             }}
             onPress={() => {
@@ -173,22 +184,22 @@ const PickupScreen = (props) => {
           >
             <View
               style={{
-                backgroundColor: "#F18921",
+                backgroundColor: '#F18921',
                 paddingVertical: 2,
                 borderRadius: 10,
                 paddingHorizontal: 3,
                 marginRight: 5,
-                alignSelf: "flex-start",
+                alignSelf: 'flex-start',
                 top: 0,
               }}
             >
               <Image
                 style={{ bottom: 0 }}
-                source={require("../assets/addition-thick-symbol.png")}
+                source={require('../assets/addition-thick-symbol.png')}
               />
             </View>
             <Text
-              style={{ color: "black", fontWeight: "bold", marginRight: 5 }}
+              style={{ color: 'black', fontWeight: 'bold', marginRight: 5 }}
             >
               Add new pickup request
             </Text>
@@ -196,20 +207,20 @@ const PickupScreen = (props) => {
           {data.length === 0 && (
             <View
               style={{
-                alignItems: "center",
-                justifyContent: "center",
+                alignItems: 'center',
+                justifyContent: 'center',
                 // flex: 1,
                 // position: "absolute",
-                width: "100%",
-                height: "100%",
+                width: '100%',
+                height: '100%',
                 //backgroundColor: "red",
               }}
             >
               <Text
                 style={{
-                  fontWeight: "bold",
+                  fontWeight: 'bold',
                   fontSize: 20,
-                  color: "#F18921",
+                  color: '#F18921',
                 }}
               >
                 ... No Pickup Data yet
@@ -301,7 +312,7 @@ const PickupScreen = (props) => {
         onBackButtonPress={() => {
           setShowModal(false);
           setProducerDetails({});
-          setNewRequest({ name: "", phone: "" });
+          setNewRequest({ name: '', phone: '' });
         }}
         style={styles.modal}
         animationInTiming={600}
@@ -311,7 +322,7 @@ const PickupScreen = (props) => {
           <Text
             style={{
               fontSize: 15,
-              fontWeight: "bold",
+              fontWeight: 'bold',
               marginBottom: 30,
             }}
           >
@@ -320,7 +331,7 @@ const PickupScreen = (props) => {
 
           <View style={styles.inputWrapper}>
             <TextInput
-              placeholder="Producer Phone no"
+              placeholder="Producer Phone number"
               value={newRequest.phone}
               keyboardType="phone-pad"
               onChangeText={(value) =>
@@ -333,27 +344,27 @@ const PickupScreen = (props) => {
             <>
               <View
                 style={{
-                  flexDirection: "row",
-                  alignSelf: "flex-start",
+                  flexDirection: 'row',
+                  alignSelf: 'flex-start',
                   marginTop: 20,
                 }}
               >
-                <Text style={{ fontWeight: "bold", marginRight: 5 }}>
+                <Text style={{ fontWeight: 'bold', marginRight: 5 }}>
                   Name :
                 </Text>
-                <Text style={{ fontWeight: "bold" }}>
+                <Text style={{ fontWeight: 'bold' }}>
                   {producerDetails.Name}
                 </Text>
               </View>
               <View
                 style={{
-                  flexDirection: "row",
-                  alignSelf: "flex-start",
+                  flexDirection: 'row',
+                  alignSelf: 'flex-start',
                   marginTop: 20,
                 }}
               >
-                <Text style={{ fontWeight: "bold", marginRight: 5 }}>ID :</Text>
-                <Text style={{ fontWeight: "bold" }}>
+                <Text style={{ fontWeight: 'bold', marginRight: 5 }}>ID :</Text>
+                <Text style={{ fontWeight: 'bold' }}>
                   {producerDetails.producer_id}
                 </Text>
               </View>
@@ -366,7 +377,7 @@ const PickupScreen = (props) => {
               onPress={() => {
                 // getDetails();
 
-                props.navigation.navigate("ProcessPickup", {
+                props.navigation.navigate('ProcessPickup', {
                   producer: {
                     phone: newRequest.phone,
                     name: producerDetails.Name,
@@ -376,7 +387,7 @@ const PickupScreen = (props) => {
                 });
                 setShowModal(false);
                 setProducerDetails({});
-                setNewRequest({ name: "", phone: "" });
+                setNewRequest({ name: '', phone: '' });
               }}
             >
               <Text style={styles.sendButtonText}>Proceed</Text>
@@ -400,66 +411,69 @@ const PickupScreen = (props) => {
 const ListFooterComponent = () => (
   <View
     style={{
-      position: "relative",
-      width: "100%",
+      position: 'relative',
+      width: '100%',
       height: 40,
       paddingVertical: 20,
       marginTop: 10,
       marginBottom: 10,
-      borderColor: "#F18921",
-      justifyContent: "center",
+      borderColor: '#F18921',
+      justifyContent: 'center',
     }}
   >
-    <ActivityIndicator animating size="large" color={"#F18921"} />
+    <Image
+      source={require('../assets/loading-gif.gif')}
+      style={{ width: 50, height: 50 }}
+    ></Image>
   </View>
 );
 
 const styles = StyleSheet.create({
   sendButton: {
     height: 55,
-    backgroundColor: "#0A956A",
+    backgroundColor: '#0A956A',
     borderRadius: 10,
-    justifyContent: "center",
+    justifyContent: 'center',
     paddingHorizontal: 40,
     marginHorizontal: 20,
     marginTop: 40,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   sendButtonText: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: "white",
-    textAlign: "center",
+    fontWeight: 'bold',
+    color: 'white',
+    textAlign: 'center',
   },
   inputWrapper: {
-    borderColor: "#F18921",
+    borderColor: '#F18921',
     borderWidth: 1,
-    borderStyle: "solid",
+    borderStyle: 'solid',
     paddingHorizontal: 20,
     borderRadius: 10,
     // width: "47%",
     height: 50,
-    width: "100%",
+    width: '100%',
     // marginBottom: 20,
   },
   modal: {
-    justifyContent: "center",
+    justifyContent: 'center',
     margin: 0,
-    position: "absolute",
+    position: 'absolute',
     flex: 1,
-    height: "100%",
-    alignSelf: "center",
-    justifyContent: "center",
+    height: '100%',
+    alignSelf: 'center',
+    justifyContent: 'center',
     // alignItems: "center",
-    width: "90%",
+    width: '90%',
   },
   modalContainer: {
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     padding: 20,
-    alignItems: "center",
+    alignItems: 'center',
     borderRadius: 20,
     //alignSelf: "center",
-    width: "100%",
+    width: '100%',
   },
 });
 

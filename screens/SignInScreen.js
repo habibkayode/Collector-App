@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -10,19 +10,20 @@ import {
   Alert,
   ImageBackground,
   Image,
-} from "react-native";
-import * as Animatable from "react-native-animatable";
-import LinearGradient from "react-native-linear-gradient";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { checkEmail } from "../utils/check";
-import { observer } from "mobx-react-lite";
-import { loginFun } from "../Api/authApi";
-import { saveUserData } from "../Redux/actionCreator";
-import { connect } from "react-redux";
+} from 'react-native';
+import * as Animatable from 'react-native-animatable';
+import LinearGradient from 'react-native-linear-gradient';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { checkEmail } from '../utils/check';
+import { observer } from 'mobx-react-lite';
+import { loginFun } from '../Api/authApi';
+import { saveUserData } from '../Redux/actionCreator';
+import { connect } from 'react-redux';
+import * as BLEapi from "../Api/bluetoothApi"
 
 const mapDispatchToProps = (dispatch) => {
-  console.log("her");
+  console.log('her');
   return {
     saveUserData: (data) => {
       dispatch(saveUserData(data));
@@ -35,8 +36,8 @@ let authStore = {};
 const SignInScreen = (props) => {
   let navigation = props.navigation;
   const [data, setData] = useState({
-    phoneNumber: "",
-    password: "",
+    phoneNumber: '',
+    password: '',
     check_phoneNumberChange: false,
     secureTextEntry: true,
     isValidPhoneNumber: false,
@@ -94,8 +95,8 @@ const SignInScreen = (props) => {
       data.password.length == 0
     ) {
       console.log(data);
-      Alert.alert("Wrong Input!", "Phone Number or password field is invalid", [
-        { text: "Okay" },
+      Alert.alert('Wrong Input!', 'Phone Number or password field is invalid', [
+        { text: 'Okay' },
       ]);
       return;
     }
@@ -105,40 +106,41 @@ const SignInScreen = (props) => {
         phone: data.phoneNumber,
         password: data.password,
       });
-      console.log(resp, "resp");
+      console.log(resp, 'resp');
       if (resp.success) {
-        console.log("here", resp.data.access_token);
+        console.log('here', resp.data.access_token);
         // props.saveUserData({
         //   data: resp.data.user,
         //   token: resp.data.access_token,
         // });
         // props.navigation.navigate("Tab", { screen: "Home" });
       } else {
-        Alert.alert("Error", resp.error);
-        console.log(resp, "error occur");
+        Alert.alert('Error', resp.error);
+        console.log(resp, 'error occur');
       }
     } catch (e) {
-      console.log(e, "diii");
-      Alert.alert("Error", e.response.data.error);
+      console.log(e, 'diii');
+      Alert.alert('Error', e.response?.data.error);
       if (
         e.response.data.error ===
-        "Your phone number has not been verified, please verify it to login."
+        'Your phone number has not been verified, please verify it to login.'
       ) {
-        navigation.navigate("CodePin", { phone: data.phoneNumber });
+        navigation.navigate('CodePin', { phone: data.phoneNumber });
       }
     }
   };
 
+
   return (
     <ImageBackground
-      source={require("../assets/background/bg1.jpg")}
-      style={{ height: "100%", width: "100%" }}
+      source={require('../assets/background/bg1.jpg')}
+      style={{ height: '100%', width: '100%' }}
     >
       <View
         style={{
           marginTop: StatusBar.currentHeight + 20,
-          flexDirection: "row",
-          justifyContent: "space-between",
+          flexDirection: 'row',
+          justifyContent: 'space-between',
           paddingHorizontal: 20,
         }}
       >
@@ -151,9 +153,9 @@ const SignInScreen = (props) => {
         </TouchableOpacity>
         <Image
           style={{
-            alignSelf: "flex-end",
+            alignSelf: 'flex-end',
           }}
-          source={require("../assets/logo-small.png")}
+          source={require('../assets/logo-small.png')}
         />
       </View>
 
@@ -228,15 +230,15 @@ const SignInScreen = (props) => {
 
         <TouchableOpacity
           onPress={() => {
-            props.navigation.navigate("ForgetPassword");
+            props.navigation.navigate('ForgetPassword');
           }}
         >
           <Text
             style={{
               marginTop: 15,
-              color: "black",
-              textAlign: "right",
-              fontWeight: "bold",
+              color: 'black',
+              textAlign: 'right',
+              fontWeight: 'bold',
             }}
           >
             Forgot password?
@@ -250,14 +252,14 @@ const SignInScreen = (props) => {
             }}
           >
             <LinearGradient
-              colors={["#EF7700", "#CB6500"]}
+              colors={['#EF7700', '#CB6500']}
               style={styles.signIn}
             >
               <Text
                 style={[
                   styles.textSign,
                   {
-                    color: "#fff",
+                    color: '#fff',
                   },
                 ]}
               >
@@ -266,11 +268,11 @@ const SignInScreen = (props) => {
             </LinearGradient>
           </TouchableOpacity>
           <Text
-            onPress={() => props.navigation.navigate("SignUp")}
+            onPress={() => props.navigation.navigate('SignUp')}
             style={{ marginTop: 10, fontSize: 15 }}
           >
-            Don’t have an account? Click here to{" "}
-            <Text style={{ color: "#EF7700" }}> Sign Up</Text>
+            Don’t have an account? Click here to{' '}
+            <Text style={{ color: '#EF7700' }}> Sign Up</Text>
           </Text>
         </View>
       </Animatable.View>
@@ -283,11 +285,11 @@ export default connect(null, mapDispatchToProps)(SignInScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#009387",
+    backgroundColor: '#009387',
   },
   header: {
     flex: 1.5,
-    justifyContent: "flex-end",
+    justifyContent: 'flex-end',
     marginTop: 50,
     paddingHorizontal: 20,
     paddingBottom: 20,
@@ -298,52 +300,54 @@ const styles = StyleSheet.create({
     paddingVertical: 30,
   },
   text_header: {
-    color: "black",
-    fontWeight: "bold",
+    color: 'black',
+    fontWeight: 'bold',
     fontSize: 35,
   },
   text: {
-    color: "#05375a",
+    color: '#05375a',
     marginTop: 10,
     fontSize: 18,
   },
   action: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginTop: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#EF7700",
+    borderBottomColor: '#EF7700',
     paddingBottom: 5,
   },
   actionError: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginTop: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#FF0000",
+    borderBottomColor: '#FF0000',
     paddingBottom: 5,
   },
-  textInput: {
-    flex: 1,
-    marginTop: Platform.OS === "ios" ? 0 : -12,
-    paddingLeft: 10,
-    color: "#05375a",
-  },
   errorMsg: {
-    color: "#FF0000",
+    color: '#FF0000',
     fontSize: 14,
   },
+
+  textInput: {
+    flex: 1,
+    marginTop: Platform.OS === 'ios' ? 0 : -12,
+    paddingLeft: 10,
+    color: '#05375a',
+  },
+
   button: {
-    alignItems: "center",
+    alignItems: 'center',
     marginTop: 30,
   },
   signIn: {
-    width: "100%",
+    width: '100%',
     height: 50,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: 10,
   },
   textSign: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
 });

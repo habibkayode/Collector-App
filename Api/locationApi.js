@@ -1,9 +1,10 @@
-import axios from "axios";
+import axios from 'axios';
 
-let googleAPi = "https://maps.googleapis.com/maps/api/distancematrix/json";
+let googleAPi = 'https://maps.googleapis.com/maps/api/distancematrix/json';
 
 let getDistanceAndTime = async (origin, destination) => {
-  console.log(origin, destination, "pkuuu");
+  console.log(destination, 'pkuuu');
+  console.log(origin, 'loooooo');
   let params = `?origins=${Number(origin.lat)},${Number(
     origin.lng
   )}&destinations=${Number(destination.lat)},${Number(
@@ -12,6 +13,7 @@ let getDistanceAndTime = async (origin, destination) => {
 
   try {
     let response = await axios.get(googleAPi + params);
+    console.log(response.data);
     if (response.status) return response.data;
   } catch (e) {
     console.log(e.response);

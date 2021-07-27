@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -13,21 +13,22 @@ import {
   ActivityIndicator,
   Alert,
   BackHandler,
-} from "react-native";
-import * as Animatable from "react-native-animatable";
-import { WebView } from "react-native-webview";
+} from 'react-native';
+import * as Animatable from 'react-native-animatable';
+import { WebView } from 'react-native-webview';
 
-import RNPickerSelect from "react-native-picker-select";
+import RNPickerSelect from 'react-native-picker-select';
 
-import Bgcover from "../Component/Bg/BackgroundCover";
+import Bgcover from '../Component/Bg/BackgroundCover';
 
-import SmoothPinCodeInput from "react-native-smooth-pincode-input";
-import { connect } from "react-redux";
+import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
+import { connect } from 'react-redux';
 import {
   fundWallet,
   walletToWalletTransfer,
   initializeFunding,
-} from "../Api/api";
+} from '../Api/api';
+import { numberWithCommas } from '../helper/helper';
 
 const mapStateToProps = (state) => {
   return {
@@ -44,18 +45,19 @@ const FundWalletScreen = (props) => {
   const [isLoading, setisLoading] = useState(true);
   const [paymentLink, setPaymentLink] = useState();
   const [pinVaule, setPinValue] = useState();
+  const [displayAmount, setDisplayAmount] = useState();
   let pinRef = React.useRef();
   let webViewRef = React.useRef();
   let [data, setData] = useState({
-    bank: "",
-    cardNumber: "",
-    cvv: "",
-    expdate: "",
-    pin: "",
-    amount: "",
+    bank: '',
+    cardNumber: '',
+    cvv: '',
+    expdate: '',
+    pin: '',
+    amount: '',
   });
 
-  const callback_url = "https://app.scrapays.com/dashboard/collector";
+  const callback_url = 'https://app.scrapays.com/dashboard/collector';
 
   let initPaymentFun = async () => {
     let payload = {
@@ -68,7 +70,7 @@ const FundWalletScreen = (props) => {
       setPaymentLink(response.data.authorization_url);
       setPaystackShowModal(true);
     } catch (e) {
-      Alert.alert("Error", e.response.data.error);
+      Alert.alert('Error', e.response.data.error);
     }
   };
 
@@ -86,18 +88,24 @@ const FundWalletScreen = (props) => {
 
       setBigCheck(true);
     } catch (e) {
-      Alert.alert("Error", e.response.data.error);
+      Alert.alert('Error', e.response.data.error);
     }
   };
 
   return (
     <Bgcover name="Fund Wallet">
-      <View style={{ marginHorizontal: 20, flex: 1, justifyContent: "center" }}>
+      <ScrollView
+        contentContainerStyle={{
+          marginHorizontal: 20,
+          flex: 1,
+          justifyContent: 'center',
+        }}
+      >
         <Text
           style={{
             marginLeft: 20,
             marginBottom: 10,
-            fontWeight: "bold",
+            fontWeight: 'bold',
             fontSize: 15,
           }}
         >
@@ -106,17 +114,26 @@ const FundWalletScreen = (props) => {
         <View style={styles.longInputWrapper}>
           <TextInput
             placeholder="Amount"
-            value={amount}
+            value={displayAmount}
             keyboardType="number-pad"
+            onPressOut={() => {
+              console.log('i was');
+            }}
+            onFocus={() => {
+              setDisplayAmount(amount);
+            }}
+            onEndEditing={() => {
+              console.log('oii');
+              setDisplayAmount((prev) => numberWithCommas(prev));
+            }}
             onChangeText={(value) => {
-              // setData((prev) => {
-              //   return {
-              //     ...prev,
-              //     amount: value,
-              //   };
-              // });
+              let sp = value.split('.');
+              if ((sp.length > 1 && sp[1].length > 2) || sp.length > 2) {
+                return;
+              }
 
               setAmount(value);
+              setDisplayAmount(value);
             }}
           />
         </View>
@@ -218,7 +235,7 @@ const FundWalletScreen = (props) => {
         >
           <Text style={styles.sendButtonText}>Proceed</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
 
       <Modal
         visible={showModal}
@@ -235,9 +252,9 @@ const FundWalletScreen = (props) => {
       >
         <View
           style={{
-            backgroundColor: "rgba(0, 0, 0, 0.8)",
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
             flex: 1,
-            justifyContent: "center",
+            justifyContent: 'center',
           }}
         >
           {showBigCheck ? (
@@ -246,30 +263,30 @@ const FundWalletScreen = (props) => {
                 style={{
                   width: 203,
                   height: 203,
-                  borderColor: "#0A956A",
+                  borderColor: '#0A956A',
                   borderWidth: 2,
-                  marginLeft: "auto",
-                  marginRight: "auto",
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
                   borderRadius: 110,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  backgroundColor: "white",
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: 'white',
                 }}
               >
                 <Image
                   style={{ marginTop: 30 }}
-                  source={require("../assets/check-big.png")}
+                  source={require('../assets/check-big.png')}
                 />
               </View>
               <Text
                 style={{
                   marginTop: 20,
                   paddingHorizontal: 30,
-                  textAlign: "center",
+                  textAlign: 'center',
                   fontSize: 16,
                   lineHeight: 18,
-                  color: "white",
-                  fontWeight: "bold",
+                  color: 'white',
+                  fontWeight: 'bold',
                 }}
               >
                 Funds sent
@@ -280,20 +297,20 @@ const FundWalletScreen = (props) => {
               style={{
                 marginHorizontal: 20,
                 paddingVertical: 30,
-                backgroundColor: "white",
+                backgroundColor: 'white',
               }}
             >
               <Text
                 style={{
                   fontSize: 24,
-                  fontWeight: "bold",
+                  fontWeight: 'bold',
                   marginBottom: 30,
                   marginHorizontal: 20,
                 }}
               >
                 Input your wallet pin
               </Text>
-              <View style={{ alignSelf: "center", marginRight: 20 }}>
+              <View style={{ alignSelf: 'center', marginRight: 20 }}>
                 <SmoothPinCodeInput
                   ref={pinRef}
                   value={pinVaule}
@@ -301,12 +318,12 @@ const FundWalletScreen = (props) => {
                   onFulfill={() => {}}
                   cellStyle={{
                     borderWidth: 2,
-                    borderColor: "#EF7700",
+                    borderColor: '#EF7700',
                     marginLeft: 20,
                   }}
                   cellStyleFocused={{
-                    borderColor: "darkorange",
-                    backgroundColor: "orange",
+                    borderColor: 'darkorange',
+                    backgroundColor: 'orange',
                   }}
                 />
                 <TouchableOpacity
@@ -342,30 +359,30 @@ const FundWalletScreen = (props) => {
 
             console.log(
               state.canGoBack,
-              "going back",
-              url.split("?")[0] === callback_url,
+              'going back',
+              url.split('?')[0] === callback_url,
               callback_url,
-              url.split("?")[0]
+              url.split('?')[0]
             );
-            console.log(url, "ppp");
+            console.log(url, 'ppp');
             if (!url) {
               return;
             }
-            if (url.split("?")) {
-              console.log("in here");
-              if (url.split("?")[0] === callback_url) {
-                console.log(url.split("?")[0], "call back");
+            if (url.split('?')) {
+              console.log('in here');
+              if (url.split('?')[0] === callback_url) {
+                console.log(url.split('?')[0], 'call back');
                 console.log(url);
                 setBigCheck(true);
                 setShowModal(true);
                 setTimeout(() => {
-                  props.navigation.navigate("wallet");
+                  props.navigation.navigate('wallet');
                 }, 2000);
                 setPaystackShowModal(false);
               }
             }
 
-            if (url === "https://standard.paystack.co/close") {
+            if (url === 'https://standard.paystack.co/close') {
               // handle webview removal
               // You can either unmount the component, or
               // Use a navigator to pop off the view
@@ -373,14 +390,14 @@ const FundWalletScreen = (props) => {
               setBigCheck(true);
               setShowModal(true);
               setTimeout(() => {
-                props.navigation.navigate("wallet");
+                props.navigation.navigate('wallet');
               }, 2000);
               setPaystackShowModal(false);
             }
           }}
           onMessage={(e) => {
             console.log(e.nativeEvent.data);
-            if (e.nativeEvent.data.event == "successful") {
+            if (e.nativeEvent.data.event == 'successful') {
             }
             setPaystackShowModal(false);
           }}
@@ -390,10 +407,10 @@ const FundWalletScreen = (props) => {
 
         {isLoading && (
           <View>
-            <ActivityIndicator
-              size="large"
-              color={props.ActivityIndicatorColor}
-            />
+            <Image
+              source={require('../assets/loading-gif.gif')}
+              style={{ width: 50, height: 50 }}
+            ></Image>
           </View>
         )}
       </Modal>
@@ -404,24 +421,24 @@ const FundWalletScreen = (props) => {
 const styles = StyleSheet.create({
   sendButton: {
     height: 55,
-    backgroundColor: "#0A956A",
+    backgroundColor: '#0A956A',
     borderRadius: 10,
-    justifyContent: "center",
+    justifyContent: 'center',
     paddingHorizontal: 40,
     marginHorizontal: 20,
     marginTop: 40,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   sendButtonText: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: "white",
-    textAlign: "center",
+    fontWeight: 'bold',
+    color: 'white',
+    textAlign: 'center',
   },
   longInputWrapper: {
-    borderColor: "#F18921",
+    borderColor: '#F18921',
     borderWidth: 1,
-    borderStyle: "solid",
+    borderStyle: 'solid',
     paddingHorizontal: 20,
     borderRadius: 10,
     // width: "47%",
@@ -429,12 +446,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   shorInputWrapper: {
-    borderColor: "#F18921",
+    borderColor: '#F18921',
     borderWidth: 1,
-    borderStyle: "solid",
+    borderStyle: 'solid',
     paddingHorizontal: 20,
     borderRadius: 10,
-    width: "47%",
+    width: '47%',
     height: 50,
     marginBottom: 20,
   },

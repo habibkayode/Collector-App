@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,21 +9,21 @@ import {
   FlatList,
   ActivityIndicator,
   TouchableWithoutFeedback,
-} from "react-native";
-import * as Animatable from "react-native-animatable";
-import Bgcover from "../Component/Bg/BackgroundCover";
-import { getAllCollection } from "../Api/api";
-import RNPickerSelect from "react-native-picker-select";
-import moment from "moment";
-import DateRangePicker from "react-native-daterange-picker";
-import DateTimePicker from "@react-native-community/datetimepicker";
+} from 'react-native';
+import * as Animatable from 'react-native-animatable';
+import Bgcover from '../Component/Bg/BackgroundCover';
+import { getAllCollection } from '../Api/api';
+import RNPickerSelect from 'react-native-picker-select';
+import moment from 'moment';
+import DateRangePicker from 'react-native-daterange-picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
-import CalendarPicker from "react-native-calendar-picker";
-import { Dropdown } from "react-native-material-dropdown";
-import Modal from "react-native-modal";
+import CalendarPicker from 'react-native-calendar-picker';
+import { Dropdown } from 'react-native-material-dropdown';
+import Modal from 'react-native-modal';
 
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { numberWithCommas } from "../helper/helper";
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { numberWithCommas } from '../helper/helper';
 
 const mapStateToProps = (state) => {
   return {
@@ -59,7 +59,7 @@ const CollectionHistory = (props) => {
         setData((prev) => [...prev, ...response]);
         setAllColleciton((prev) => [...prev, ...response]);
       }
-      console.log("her");
+      console.log('her');
       setLoading(false);
       setRefreshing(false);
     } catch (e) {
@@ -68,7 +68,7 @@ const CollectionHistory = (props) => {
   };
 
   React.useEffect(() => {
-    const unsubscribe = props.navigation.addListener("focus", () => {
+    const unsubscribe = props.navigation.addListener('focus', () => {
       //  setLoading(true);
       setPage(1);
     });
@@ -79,7 +79,7 @@ const CollectionHistory = (props) => {
   useEffect(() => {
     if (page) {
       getAllCollectionCaller().then(() => {
-        console.log("finishi loading", page);
+        console.log('finishi loading', page);
         setLoading(false);
         setRefreshing(false);
       });
@@ -95,8 +95,8 @@ const CollectionHistory = (props) => {
   };
 
   let onDateChange = (date, type) => {
-    console.log(date, type, "dates");
-    if (type === "END_DATE") {
+    console.log(date, type, 'dates');
+    if (type === 'END_DATE') {
       setEndDate(date);
     } else {
       setStartDate(date);
@@ -107,15 +107,18 @@ const CollectionHistory = (props) => {
     <Bgcover name="Collection History">
       {loading ? (
         <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
         >
-          <ActivityIndicator size="large" color="#F18921" />
+          <Image
+            source={require('../assets/loading-gif.gif')}
+            style={{ width: 50, height: 50 }}
+          ></Image>
         </View>
       ) : allCollection.length === 0 ? (
         <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
         >
-          <Text style={{ fontSize: 18, textAlign: "center", color: "#F18921" }}>
+          <Text style={{ fontSize: 18, textAlign: 'center', color: '#F18921' }}>
             No Collection Data yet..
           </Text>
         </View>
@@ -123,21 +126,21 @@ const CollectionHistory = (props) => {
         <View>
           <Text
             style={{
-              fontWeight: "bold",
+              fontWeight: 'bold',
               fontSize: 18,
               marginHorizontal: 20,
               marginBottom: 10,
-              color: "black",
+              color: 'black',
             }}
           >
             Filter By
           </Text>
           <View
             style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
+              flexDirection: 'row',
+              justifyContent: 'space-between',
               marginHorizontal: 10,
-              width: "100%",
+              width: '100%',
               //  backgroundColor: "red",
               marginBottom: 20,
             }}
@@ -148,9 +151,9 @@ const CollectionHistory = (props) => {
               baseColor="grey"
               onChangeText={(value, index) => {
                 console.log(value);
-                if (value === "all") {
+                if (value === 'all') {
                   setData((prev) => allCollection);
-                  console.log("i am here", allCollection.length);
+                  console.log('i am here', allCollection.length);
                 } else {
                   let newCollection = allCollection.filter(
                     (i) => i.drop_off_status === value
@@ -163,27 +166,27 @@ const CollectionHistory = (props) => {
               dropdownOffset={{ top: 0, left: 0 }}
               containerStyle={{
                 borderWidth: 1,
-                borderColor: "#F18921",
+                borderColor: '#F18921',
                 borderRadius: 10,
                 paddingHorizontal: 10,
               }}
               inputContainerStyle={{
                 width: 80,
-                borderBottomColor: "transparent",
+                borderBottomColor: 'transparent',
                 paddingBottom: 0,
               }}
               data={[
                 {
-                  label: "All ",
-                  value: "all",
+                  label: 'All ',
+                  value: 'all',
                 },
                 {
-                  label: "Dropped",
-                  value: "accepted",
+                  label: 'Dropped',
+                  value: 'accepted',
                 },
                 {
-                  label: "Mismatch",
-                  value: "rejected",
+                  label: 'Mismatch',
+                  value: 'rejected',
                 },
               ]}
             />
@@ -199,54 +202,54 @@ const CollectionHistory = (props) => {
               dropdownOffset={{ top: 0, left: 0 }}
               containerStyle={{
                 borderWidth: 1,
-                borderColor: "#F18921",
+                borderColor: '#F18921',
                 borderRadius: 10,
                 paddingHorizontal: 10,
               }}
               inputContainerStyle={{
                 width: 60,
-                borderBottomColor: "transparent",
+                borderBottomColor: 'transparent',
                 paddingBottom: 0,
               }}
               data={[
                 {
-                  label: "All ",
-                  value: "all",
+                  label: 'All ',
+                  value: 'all',
                 },
                 {
-                  label: "Today",
+                  label: 'Today',
                   value: 0,
                 },
                 {
-                  label: "3 days Ago",
+                  label: '3 days Ago',
                   value: 3,
                 },
                 {
-                  label: "1 week Ago",
+                  label: '1 week Ago',
                   value: 7,
                 },
                 {
-                  label: "2 Weeks",
+                  label: '2 Weeks',
                   value: 14,
                 },
 
                 {
-                  label: "1 month Ago",
+                  label: '1 month Ago',
                   value: 30,
                 },
 
                 {
-                  label: "2 month Ago",
+                  label: '2 month Ago',
                   value: 60,
                 },
 
                 {
-                  label: "3 month Ago",
+                  label: '3 month Ago',
                   value: 90,
                 },
 
                 {
-                  label: "6 month Ago",
+                  label: '6 month Ago',
                   value: 180,
                 },
               ]}
@@ -301,10 +304,10 @@ const CollectionHistory = (props) => {
             <TouchableOpacity
               style={{
                 marginRight: 20,
-                justifyContent: "center",
-                flexDirection: "row",
+                justifyContent: 'center',
+                flexDirection: 'row',
                 borderWidth: 1,
-                borderColor: "#F18921",
+                borderColor: '#F18921',
                 borderRadius: 10,
                 padding: 10,
               }}
@@ -329,10 +332,10 @@ const CollectionHistory = (props) => {
                 <View
                   style={{
                     flex: 1,
-                    alignSelf: "stretch",
-                    flexDirection: "row",
-                    textAlign: "center",
-                    backgroundColor: "#F18921",
+                    alignSelf: 'stretch',
+                    flexDirection: 'row',
+                    textAlign: 'center',
+                    backgroundColor: '#F18921',
                     paddingVertical: 5,
                   }}
                 >
@@ -340,7 +343,7 @@ const CollectionHistory = (props) => {
                   <Text style={styles.headerText}>Amount paid </Text>
                   <Text style={styles.headerText}>Material type</Text>
                   <Text style={styles.headerText}>Date</Text>
-                  <Text style={{}}> {"    "}</Text>
+                  <Text style={{}}> {'    '}</Text>
                 </View>
               );
             }}
@@ -358,14 +361,14 @@ const CollectionHistory = (props) => {
               return (
                 <TouchableOpacity
                   onPress={() => {
-                    props.navigation.navigate("CollectionHistoryDetail", item);
+                    props.navigation.navigate('CollectionHistoryDetail', item);
                   }}
                   style={{
                     flex: 1,
-                    alignSelf: "stretch",
-                    flexDirection: "row",
+                    alignSelf: 'stretch',
+                    flexDirection: 'row',
                     paddingVertical: 5,
-                    backgroundColor: "#FDF2E7",
+                    backgroundColor: '#FDF2E7',
                   }}
                 >
                   <Text numberOfLines={2} style={styles.bodyText}>
@@ -376,24 +379,24 @@ const CollectionHistory = (props) => {
                   </Text>
                   <Text numberOfLines={3} style={styles.bodyText}>
                     {item.homogeneous_materials.reduce((sum, current) => {
-                      return sum + current.name + " ";
-                    }, "")}
+                      return sum + current.name + ' ';
+                    }, '')}
                   </Text>
                   <Text style={styles.bodyText}>
-                    {createAt.toLocaleDateString("en-GB")}
+                    {createAt.toLocaleDateString('en-GB')}
                   </Text>
                   <View
                     style={{
-                      flexDirection: "row",
-                      alignItems: "center",
+                      flexDirection: 'row',
+                      alignItems: 'center',
                       paddingRight: 5,
                     }}
                   >
                     <MaterialCommunityIcons name="check" color="black" />
-                    {item.drop_off_status === "accepted" && (
+                    {item.drop_off_status === 'accepted' && (
                       <MaterialCommunityIcons name="check" color="red" />
                     )}
-                    {item.drop_off_status === "rejected" && (
+                    {item.drop_off_status === 'rejected' && (
                       <MaterialCommunityIcons name="close" color="red" />
                     )}
                   </View>
@@ -425,18 +428,18 @@ const CollectionHistory = (props) => {
       >
         <TouchableOpacity
           activeOpacity={1}
-          style={{ height: "100%", width: "100%", flex: 1 }}
+          style={{ height: '100%', width: '100%', flex: 1 }}
           onPress={() => {
-            console.log("first 11");
+            console.log('first 11');
             setModalCalender(false);
           }}
         >
           <TouchableWithoutFeedback
             onPress={() => {
-              console.log("first");
+              console.log('first');
             }}
           >
-            <View style={{ backgroundColor: "white", marginHorizontal: 10 }}>
+            <View style={{ backgroundColor: 'white', marginHorizontal: 10 }}>
               <CalendarPicker
                 startFromMonday={true}
                 allowRangeSelection={true}
@@ -458,26 +461,26 @@ const CollectionHistory = (props) => {
 const styles = StyleSheet.create({
   headerText: {
     flex: 1,
-    alignSelf: "stretch",
-    textAlign: "center",
+    alignSelf: 'stretch',
+    textAlign: 'center',
     fontSize: 16,
-    fontWeight: "bold",
-    color: "white",
-    textAlignVertical: "center",
+    fontWeight: 'bold',
+    color: 'white',
+    textAlignVertical: 'center',
   },
   bodyText: {
     flex: 1,
-    alignSelf: "stretch",
-    textAlign: "center",
-    textAlignVertical: "center",
+    alignSelf: 'stretch',
+    textAlign: 'center',
+    textAlignVertical: 'center',
     paddingHorizontal: 5,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
 
   pickerContainer: {
     borderWidth: 1,
-    borderColor: "#F18921",
-    borderStyle: "solid",
+    borderColor: '#F18921',
+    borderStyle: 'solid',
     borderRadius: 10,
     marginBottom: 20,
     marginHorizontal: 20,
@@ -485,19 +488,19 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   pickerInputAndroid: {
-    color: "black",
-    fontWeight: "700",
+    color: 'black',
+    fontWeight: '700',
     fontSize: 18,
   },
   modal: {
     //  justifyContent: "center",
     margin: 0,
-    position: "absolute",
+    position: 'absolute',
     flex: 1,
-    height: "100%",
-    alignSelf: "flex-start",
-    justifyContent: "flex-start",
-    width: "100%",
+    height: '100%',
+    alignSelf: 'flex-start',
+    justifyContent: 'flex-start',
+    width: '100%',
   },
 });
 

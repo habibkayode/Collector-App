@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Scrapays Collector</string>
+    <string name="channel_name">Alert</string>
+    <string name="channel_description">For showing Alert</string>
 </resources>

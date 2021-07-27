@@ -1,13 +1,21 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { View, Image, Text, TouchableOpacity, ScrollView } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { store } from "../Redux/store";
-import { getDistanceAndTime } from "../Api/locationApi";
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Linking,
+  Dimensions,
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { store } from '../Redux/store';
+import { getDistanceAndTime } from '../Api/locationApi';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+let screenWidth = Dimensions.get('screen').width;
 
 const AgentCard = (props) => {
   //console.log(props, "props in agent card");
   let data = props.data;
-  console.log(data);
+  console.log((Number(screenWidth) / 80) * 100, screenWidth, ';;');
   let [timeToLocation, setTimeToLocation] = useState();
   let [currentLocation, setCurrentLocation] = useState({});
   let [distanceApart, setDistanceApart] = useState();
@@ -38,22 +46,22 @@ const AgentCard = (props) => {
         // });
       });
     }
-  }, [props.data]);
+  }, []);
 
   React.useEffect(() => {
     let storeSub;
 
-    const unsubscribe = navigation.addListener("focus", () => {
+    const unsubscribe = navigation.addListener('focus', () => {
       storeSub = store.subscribe(() => {
         setCurrentLocation(store.getState().location.coordinate);
-        console.log(store.getState().location.coordinate, "lociuuyy6678990");
+        console.log(store.getState().location.coordinate, 'lociuuyy6678990');
       });
     });
 
     // Return the function to unsubscribe from the event so it gets removed on unmount
     return () => {
       unsubscribe();
-      storeSub();
+      //  storeSub();
     };
   }, [props.navigation]);
 
@@ -74,27 +82,53 @@ const AgentCard = (props) => {
   return (
     <View
       style={{
-        width: "100%",
-        backgroundColor: "#252525",
+        backgroundColor: '#F4F2F2',
         padding: 20,
         paddingVertical: 10,
         borderRadius: 20,
         marginBottom: 10,
+        width: screenWidth * 0.8,
       }}
     >
       <View
         style={{
-          flexDirection: "row",
-          justifyContent: "flex-start",
+          flexDirection: 'row',
+          justifyContent: 'space-between',
         }}
       >
-        <Text style={{ fontWeight: "bold", fontSize: 22, color: "white" }}>
-          {props.data.first_name} {props.data.last_name}
+        <Text style={{ fontSize: 18, color: '#252525', fontWeight: 'bold' }}>
+          {props.data.first_name} {props.data.last_name} {props.index}
         </Text>
+        <TouchableOpacity
+          onPress={() => {
+            //  props.redirectFunc();
+            navigation.navigate('ConfirmationPage', data);
+          }}
+          style={{
+            //height: 25,
+            alignSelf: 'flex-end',
+            borderRadius: 5,
+            backgroundColor: '#0A956A',
+            justifyContent: 'center',
+            padding: 6,
+          }}
+        >
+          <Text
+            style={{
+              color: 'white',
+              textAlign: 'center',
+              fontWeight: 'bold',
+              alignSelf: 'flex-start',
+              fontSize: 15,
+            }}
+          >
+            Select
+          </Text>
+        </TouchableOpacity>
 
         {/* <Text
           style={{
-            color: "white",
+            color: "#252525",
             alignSelf: "center",
             fontSize: 10,
             marginLeft: 5,
@@ -106,91 +140,104 @@ const AgentCard = (props) => {
       <Text
         style={{
           marginTop: 5,
-          fontSize: 16,
-          color: "white",
-          fontWeight: "bold",
+          fontSize: 15,
+          color: '#252525',
         }}
       >
         {props.data.userable.hosting_address}
       </Text>
       <View
         style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          marginTop: 20,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          marginTop: 5,
+          alignItems: 'center',
         }}
       >
-        <Text style={{ fontWeight: "bold", color: "white", fontSize: 18 }}>
+        <Text selectable={true} style={{ color: '#252525', fontSize: 18 }}>
           {props.data.phone}
         </Text>
+      </View>
+      <View style={{ flexDirection: 'row' }}>
+        <TouchableOpacity
+          style={{ flexDirection: 'row' }}
+          onPress={() => {
+            Linking.openURL(`tel:${props.data.phone}`);
+          }}
+        >
+          <MaterialCommunityIcons name="phone" size={15} color="#72DFC5" />
+          <Text
+            style={{
+              color: 'grey',
+              fontSize: 12,
+              marginLeft: 5,
+            }}
+          >
+            Call
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={{ marginLeft: 15, flexDirection: 'row' }}
+          onPress={() => {
+            Linking.openURL(
+              `whatsapp://send?text=Hello   &phone=+234${props.data.phone}`
+            );
+          }}
+        >
+          <MaterialCommunityIcons name="whatsapp" size={15} color="#72DFC5" />
+          <Text
+            style={{
+              color: 'grey',
+              fontSize: 12,
+              marginLeft: 5,
+            }}
+          >
+            Chat
+          </Text>
+        </TouchableOpacity>
       </View>
 
       <View
         style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
+          flexDirection: 'row',
+          justifyContent: 'space-between',
           marginTop: 10,
         }}
       >
-        <Text style={{ color: "white", fontWeight: "bold" }}>
-          Distane Apart
+        <Text style={{ color: '#252525', fontSize: 15, fontWeight: 'bold' }}>
+          Distance Apart
         </Text>
-        <Text style={{ color: "white", fontWeight: "bold" }}>
+        <Text style={{ color: '#252525', fontSize: 15, fontWeight: 'bold' }}>
           Estimated Time
         </Text>
       </View>
       <View
         style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
+          flexDirection: 'row',
+          justifyContent: 'space-between',
           marginBottom: 10,
         }}
       >
-        <Text style={{ color: "white" }}>{distanceApart}</Text>
-        <Text style={{ color: "white" }}>{timeToLocation}</Text>
+        <Text style={{ color: '#252525' }}>{distanceApart}</Text>
+        <Text style={{ color: '#252525' }}>{timeToLocation}</Text>
       </View>
 
       <View
         style={{
           marginTop: 5,
-          flexDirection: "row",
-          justifyContent: "flex-end",
-          alignItems: "center",
+          flexDirection: 'row',
+          justifyContent: 'flex-end',
+          alignItems: 'center',
         }}
       >
         <View
           style={{
-            flexDirection: "row",
+            flexDirection: 'row',
             marginLeft: 30,
             //  width: "40%",
           }}
-        >
-          <TouchableOpacity
-            onPress={() => {
-              //  props.redirectFunc();
-              navigation.navigate("ConfirmationPage", data);
-            }}
-            style={{
-              //height: 25,
-              alignSelf: "flex-end",
-              borderRadius: 10,
-              backgroundColor: "#0A956A",
-              justifyContent: "center",
-              padding: 12,
-            }}
-          >
-            <Text
-              style={{
-                color: "white",
-                textAlign: "center",
-                fontWeight: "bold",
-                alignSelf: "flex-start",
-              }}
-            >
-              Proceed
-            </Text>
-          </TouchableOpacity>
-        </View>
+        ></View>
       </View>
     </View>
   );

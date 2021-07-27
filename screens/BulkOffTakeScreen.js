@@ -47,7 +47,6 @@ const BulkOfTakeScreen = ({ navigation, userData }) => {
     }
     let payload = new FormData();
     payload.append("full_name", contactName);
-
     payload.append("phone", contactNumber);
     payload.append("email", userData.email);
     payload.append("material_location", address);
@@ -305,7 +304,7 @@ const BulkOfTakeScreen = ({ navigation, userData }) => {
             }}
           >
             <TextInput
-              placeholder="Customer phone no"
+              placeholder="Customer phone number"
               keyboardType="phone-pad"
               value={contactNumber}
               onChangeText={(value) => setContactNumber(value)}

@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 import { getAccountName } from "../Api/api";
+import { numberWithCommas } from "../helper/helper";
 import { store } from "../Redux/store";
 
 let emptyObj = {
@@ -17,6 +18,7 @@ let emptyObj = {
   amount: "",
   accountNumber: "",
   accountName: "",
+  displayAmount: "",
 };
 
 const BankDetailsInput = (props) => {
@@ -168,27 +170,52 @@ const BankDetailsInput = (props) => {
         <TextInput
           placeholder="Amount"
           keyboardType="numeric"
-          value={banksData.amount}
+          value={banksData.displayAmount}
+          onFocus={() => {
+            setBankData((prev) => {
+              return {
+                ...prev,
+                displayAmount: prev.amount,
+              };
+            });
+          }}
+          onEndEditing={() => {
+            setBankData((prev) => {
+              return {
+                ...prev,
+
+                displayAmount: numberWithCommas(prev.amount),
+              };
+            });
+          }}
           onChangeText={(value) => {
+            let sp = value.split(".");
+            if ((sp.length > 1 && sp[1].length > 2) || sp.length > 2) {
+              return;
+            }
             setBankData((prev) => {
               return {
                 ...prev,
                 amount: value,
+                displayAmount: value,
               };
             });
           }}
           style={{ fontWeight: "bold", fontSize: 16 }}
         />
       </View>
-
-      <TouchableOpacity
-        style={styles.sendButton}
-        onPress={() => {
-          sendData();
-        }}
-      >
-        <Text style={styles.sendButtonText}>Send</Text>
-      </TouchableOpacity>
+      {banksData.accountNumber.length === 10 &&
+      banksData.amount &&
+      banksData.name ? (
+        <TouchableOpacity
+          style={styles.sendButton}
+          onPress={() => {
+            sendData();
+          }}
+        >
+          <Text style={styles.sendButtonText}>Send</Text>
+        </TouchableOpacity>
+      ) : null}
     </>
   );
 };

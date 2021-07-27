@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -10,10 +10,10 @@ import {
   Modal,
   ActivityIndicator,
   Alert,
-} from "react-native";
-import * as Animatable from "react-native-animatable";
-import SmoothPinCodeInput from "react-native-smooth-pincode-input";
-import { connect } from "react-redux";
+} from 'react-native';
+import * as Animatable from 'react-native-animatable';
+import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
+import { connect } from 'react-redux';
 import {
   getComissionBalance,
   transferFromCommission,
@@ -21,18 +21,18 @@ import {
   walletToWalletTransfer,
   getPendingComissionBalance,
   interWalletTransfer,
-} from "../Api/api";
-import Airtime from "../Component/AirtimeCard";
-import AirttimeInputDetails from "../Component/AirtimeInputsDetails";
-import BankCard from "../Component/BankCard";
-import BankDetailsInput from "../Component/BankDetailsInputs";
-import Bgcover from "../Component/Bg/BackgroundCover";
-import PagaCard from "../Component/PagaCard";
-import PagaDetailsInput from "../Component/PagaDetailsInput";
-import WalletCard from "../Component/WalletCard";
-import WalletDetailsInput from "../Component/WalletInputDetails";
-import { numberWithCommas } from "../helper/helper";
-import WalletDetailScreen from "./WalletDetailScreen";
+} from '../Api/api';
+import Airtime from '../Component/AirtimeCard';
+import AirttimeInputDetails from '../Component/AirtimeInputsDetails';
+import BankCard from '../Component/BankCard';
+import BankDetailsInput from '../Component/BankDetailsInputs';
+import Bgcover from '../Component/Bg/BackgroundCover';
+import PagaCard from '../Component/PagaCard';
+import PagaDetailsInput from '../Component/PagaDetailsInput';
+import WalletCard from '../Component/WalletCard';
+import WalletDetailsInput from '../Component/WalletInputDetails';
+import { numberWithCommas } from '../helper/helper';
+import WalletDetailScreen from './WalletDetailScreen';
 
 const mapStateToProps = (state) => {
   return {
@@ -44,7 +44,7 @@ const WithdrawCommission = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [showBigCheck, setBigCheck] = useState(false);
   const [togglePaymentType, setTogglePaymentType] = useState(false);
-  const [paymentmethod, setPaymenthod] = useState("Bank");
+  const [paymentmethod, setPaymenthod] = useState('Bank');
   const [pinVaule, setPinValue] = useState();
   const [balance, setBalance] = useState();
   const [pendingComission, setPendingComission] = useState();
@@ -58,7 +58,7 @@ const WithdrawCommission = (props) => {
     try {
       let commissionResponse = await getComissionBalance();
       let pendingResopnse = await getPendingComissionBalance();
-      console.log(commissionResponse, "commission resopnse");
+      console.log(commissionResponse, 'commission resopnse');
       setBalance(commissionResponse.data.balance);
       setPendingComission(pendingResopnse.data.balance);
 
@@ -77,7 +77,7 @@ const WithdrawCommission = (props) => {
     payload.pin = pinVaule;
     payload.phone = props.phoneNo;
     setPinValue();
-    console.log(payload, "final payload");
+    console.log(payload, 'final payload');
 
     try {
       let response = await transferFromCommission(payload);
@@ -87,10 +87,10 @@ const WithdrawCommission = (props) => {
       setTimeout(() => {
         setBigCheck(false);
         setShowModal(false);
-        props.navigation.navigate("wallet");
+        props.navigation.navigate('wallet');
       }, 2000);
     } catch (e) {
-      Alert.alert("Error", e.response.data.error);
+      Alert.alert('Error', e.response.data.error);
     }
   };
 
@@ -107,18 +107,18 @@ const WithdrawCommission = (props) => {
       setTimeout(() => {
         setBigCheck(false);
         setShowModal(false);
-        props.navigation.navigate("wallet");
+        props.navigation.navigate('wallet');
       }, 2000);
     } catch (e) {
-      Alert.alert("Error", e.response.data.error);
+      Alert.alert('Error', e.response.data.error);
     }
   };
 
   let sendToWallet = async () => {
     let walletFunc;
     let payload = { ...walletData };
-    if (walletData.type === "Main Account") {
-      payload.mode = "commission-to-cog";
+    if (walletData.type === 'Main Account') {
+      payload.mode = 'commission-to-cog';
       delete payload.beneficiary;
       walletFunc = interWalletTransfer;
     } else {
@@ -128,29 +128,30 @@ const WithdrawCommission = (props) => {
     payload.phone = props.phoneNo;
     payload.pin = pinVaule;
     setPinValue();
-    console.log(payload.mode, "lloo");
-
+    console.log(payload.mode, 'lloo');
     try {
       let response = await walletFunc(payload);
       setBigCheck(true);
-
       setTimeout(() => {
         setBigCheck(false);
         setShowModal(false);
-        props.navigation.navigate("wallet");
+        props.navigation.navigate('wallet');
       }, 2000);
     } catch (e) {
-      Alert.alert("Error", e.response.data.error);
+      Alert.alert('Error', e.response.data.error);
     }
   };
 
   return (
-    <Bgcover name="Wthidraw Commission">
+    <Bgcover name="Withdraw Commission">
       {loading ? (
         <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
         >
-          <ActivityIndicator size="large" color="#F18921" />
+          <Image
+            source={require('../assets/loading-gif.gif')}
+            style={{ width: 50, height: 50 }}
+          ></Image>
         </View>
       ) : (
         <ScrollView>
@@ -158,17 +159,17 @@ const WithdrawCommission = (props) => {
             style={{
               marginHorizontal: 20,
               padding: 20,
-              backgroundColor: "#0A956A",
+              backgroundColor: '#0A956A',
               marginBottom: 20,
               borderRadius: 10,
             }}
           >
             <Text
               style={{
-                color: "white",
-                fontWeight: "bold",
-                alignSelf: "center",
-                textAlign: "center",
+                color: 'white',
+                fontWeight: 'bold',
+                alignSelf: 'center',
+                textAlign: 'center',
                 fontSize: 18,
               }}
             >
@@ -177,10 +178,10 @@ const WithdrawCommission = (props) => {
 
             <Text
               style={{
-                color: "white",
-                fontWeight: "bold",
-                alignSelf: "center",
-                textAlign: "center",
+                color: 'white',
+                fontWeight: 'bold',
+                alignSelf: 'center',
+                textAlign: 'center',
                 fontSize: 25,
                 marginVertical: 10,
               }}
@@ -188,49 +189,49 @@ const WithdrawCommission = (props) => {
               {numberWithCommas(balance)}
             </Text>
             <View
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}
             >
               <View
                 style={{
-                  backgroundColor: "white",
+                  backgroundColor: 'white',
                   padding: 10,
                   borderRadius: 10,
                 }}
               >
                 <Text
                   style={{
-                    textAlign: "center",
+                    textAlign: 'center',
                     fontSize: 10,
-                    fontWeight: "bold",
+                    fontWeight: 'bold',
                   }}
                 >
                   Approved Commission
                 </Text>
-                <Text style={{ textAlign: "center", fontWeight: "bold" }}>
+                <Text style={{ textAlign: 'center', fontWeight: 'bold' }}>
                   {numberWithCommas(balance)}
                 </Text>
               </View>
               <View
                 style={{
-                  backgroundColor: "white",
+                  backgroundColor: 'white',
                   padding: 10,
                   borderRadius: 10,
                 }}
               >
                 <Text
                   style={{
-                    textAlign: "center",
+                    textAlign: 'center',
                     fontSize: 10,
-                    fontWeight: "bold",
+                    fontWeight: 'bold',
                   }}
                 >
                   Pending Commission
                 </Text>
                 <Text
                   style={{
-                    textAlign: "center",
-                    fontWeight: "bold",
-                    color: "#ED5A5A",
+                    textAlign: 'center',
+                    fontWeight: 'bold',
+                    color: '#ED5A5A',
                   }}
                 >
                   {numberWithCommas(pendingComission)}
@@ -241,47 +242,47 @@ const WithdrawCommission = (props) => {
 
           <View style={{ marginHorizontal: 20 }}>
             <View
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}
             >
               <BankCard
-                disable={paymentmethod === "Bank"}
+                disable={paymentmethod === 'Bank'}
                 onPress={() => {
                   setTogglePaymentType(false);
-                  setPaymenthod("Bank");
+                  setPaymenthod('Bank');
                 }}
               />
               <PagaCard
-                disable={paymentmethod === "Paga"}
+                disable={paymentmethod === 'Paga'}
                 onPress={() => {
                   // setTogglePaymentType(true);
-                  console.log("poo");
+                  console.log('poo');
                   //setPaymenthod("Paga");
                 }}
               />
             </View>
             <View
               style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
+                flexDirection: 'row',
+                justifyContent: 'space-between',
                 marginVertical: 20,
               }}
             >
               <Airtime
-                disable={paymentmethod === "Airtime"}
+                disable={paymentmethod === 'Airtime'}
                 onPress={() => {
                   setTogglePaymentType(false);
-                  setPaymenthod("Airtime");
+                  setPaymenthod('Airtime');
                 }}
               />
               <WalletCard
-                disable={paymentmethod === "Wallet"}
+                disable={paymentmethod === 'Wallet'}
                 onPress={() => {
                   setTogglePaymentType(true);
-                  setPaymenthod("Wallet");
+                  setPaymenthod('Wallet');
                 }}
               />
             </View>
-            {paymentmethod === "Paga" && (
+            {paymentmethod === 'Paga' && (
               <PagaDetailsInput
                 sendFunc={() => {
                   setShowModal(true);
@@ -289,7 +290,7 @@ const WithdrawCommission = (props) => {
               />
             )}
 
-            {paymentmethod === "Bank" && (
+            {paymentmethod === 'Bank' && (
               <BankDetailsInput
                 sendFunc={(data) => {
                   setShowModal(true);
@@ -298,7 +299,7 @@ const WithdrawCommission = (props) => {
               />
             )}
 
-            {paymentmethod === "Airtime" && (
+            {paymentmethod === 'Airtime' && (
               <AirttimeInputDetails
                 sendFunc={(data) => {
                   setShowModal(true);
@@ -307,7 +308,7 @@ const WithdrawCommission = (props) => {
               />
             )}
 
-            {paymentmethod === "Wallet" && (
+            {paymentmethod === 'Wallet' && (
               <WalletDetailsInput
                 sendFunc={(data) => {
                   setShowModal(true);
@@ -331,9 +332,9 @@ const WithdrawCommission = (props) => {
           >
             <View
               style={{
-                backgroundColor: "rgba(0, 0, 0, 0.8)",
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
                 flex: 1,
-                justifyContent: "center",
+                justifyContent: 'center',
               }}
             >
               {showBigCheck ? (
@@ -342,33 +343,33 @@ const WithdrawCommission = (props) => {
                     style={{
                       width: 203,
                       height: 203,
-                      borderColor: "#0A956A",
+                      borderColor: '#0A956A',
                       borderWidth: 2,
-                      marginLeft: "auto",
-                      marginRight: "auto",
+                      marginLeft: 'auto',
+                      marginRight: 'auto',
                       borderRadius: 110,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      backgroundColor: "white",
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: 'white',
                     }}
                   >
                     <Image
                       style={{ marginTop: 30 }}
-                      source={require("../assets/check-big.png")}
+                      source={require('../assets/check-big.png')}
                     />
                   </View>
                   <Text
                     style={{
                       marginTop: 20,
                       paddingHorizontal: 30,
-                      textAlign: "center",
+                      textAlign: 'center',
                       fontSize: 16,
                       lineHeight: 18,
-                      color: "white",
-                      fontWeight: "bold",
+                      color: 'white',
+                      fontWeight: 'bold',
                     }}
                   >
-                    Funds sent
+                    Transaction Completed
                   </Text>
                 </>
               ) : (
@@ -376,20 +377,20 @@ const WithdrawCommission = (props) => {
                   style={{
                     marginHorizontal: 20,
                     paddingVertical: 30,
-                    backgroundColor: "white",
+                    backgroundColor: 'white',
                   }}
                 >
                   <Text
                     style={{
                       fontSize: 24,
-                      fontWeight: "bold",
+                      fontWeight: 'bold',
                       marginBottom: 30,
                       marginHorizontal: 20,
                     }}
                   >
                     Input your wallet pin
                   </Text>
-                  <View style={{ alignSelf: "center", marginRight: 20 }}>
+                  <View style={{ alignSelf: 'center', marginRight: 20 }}>
                     <SmoothPinCodeInput
                       ref={pinRef}
                       value={pinVaule}
@@ -397,12 +398,12 @@ const WithdrawCommission = (props) => {
                       onFulfill={() => {}}
                       cellStyle={{
                         borderWidth: 2,
-                        borderColor: "#EF7700",
+                        borderColor: '#EF7700',
                         marginLeft: 20,
                       }}
                       cellStyleFocused={{
-                        borderColor: "darkorange",
-                        backgroundColor: "orange",
+                        borderColor: 'darkorange',
+                        backgroundColor: 'orange',
                       }}
                     />
                     <TouchableOpacity
@@ -410,13 +411,13 @@ const WithdrawCommission = (props) => {
                       onPress={() => {
                         // setBigCheck(true);
 
-                        if (paymentmethod === "Bank") {
+                        if (paymentmethod === 'Bank') {
                           makeTransfer();
                         }
-                        if (paymentmethod === "Airtime") {
+                        if (paymentmethod === 'Airtime') {
                           buyAirtime();
                         }
-                        if (paymentmethod === "Wallet") {
+                        if (paymentmethod === 'Wallet') {
                           sendToWallet();
                         }
                       }}
@@ -437,19 +438,19 @@ const WithdrawCommission = (props) => {
 const styles = StyleSheet.create({
   sendButton: {
     height: 55,
-    backgroundColor: "#0A956A",
+    backgroundColor: '#0A956A',
     borderRadius: 10,
-    justifyContent: "center",
+    justifyContent: 'center',
     paddingHorizontal: 40,
     marginHorizontal: 20,
     marginTop: 40,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   sendButtonText: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: "white",
-    textAlign: "center",
+    fontWeight: 'bold',
+    color: 'white',
+    textAlign: 'center',
   },
 });
 

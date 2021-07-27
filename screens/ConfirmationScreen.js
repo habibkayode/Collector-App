@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,14 +9,14 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
-} from "react-native";
-import * as Animatable from "react-native-animatable";
-import SmoothPinCodeInput from "react-native-smooth-pincode-input";
-import Bgcover from "../Component/Bg/BackgroundCover";
-import { useRoute } from "@react-navigation/core";
-import { numberWithCommas } from "../helper/helper";
-import { connect } from "react-redux";
-import { submitPickup } from "../Api/api";
+} from 'react-native';
+import * as Animatable from 'react-native-animatable';
+import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
+import Bgcover from '../Component/Bg/BackgroundCover';
+import { useRoute } from '@react-navigation/core';
+import { numberWithCommas } from '../helper/helper';
+import { connect } from 'react-redux';
+import { submitPickup } from '../Api/api';
 
 const mapStateToProps = (state) => {
   // console.log(state.bluetooth.connected, "bluetoothstate");
@@ -27,6 +27,7 @@ const mapStateToProps = (state) => {
 
 const confirmationScreen = (props) => {
   let requestData = useRoute().params;
+
   if (!requestData.producerData.name)
     requestData.producerData.name = `${requestData.producerData.first_name} ${requestData.producerData.last_name}`;
 
@@ -37,14 +38,14 @@ const confirmationScreen = (props) => {
 
   let submitRequest = () => {
     let newMaterial = requestData.materials.map((i) => {
-      if (i.materialType === "Composite") {
+      if (i.materialType === 'Composite') {
         let obj = {};
-        obj.material_type = "Composite";
+        obj.material_type = 'Composite';
         obj.material_id = i.itemId;
         return obj;
       } else {
         let obj = {};
-        obj.material_type = "Homogeneous";
+        obj.material_type = 'Homogeneous';
         obj.tonnage = i.tonnage;
         obj.material_id = i.materialId;
         return obj;
@@ -56,10 +57,9 @@ const confirmationScreen = (props) => {
         return prev + (current.price ? Number(current.price) : 0);
       }, 0),
       total_tonnage: requestData.materials.reduce((prev, current) => {
-        if (current.materialsType !== "composite") {
+        if (current.materialsType !== 'composite') {
           return prev + (current.tonnage ? Number(current.tonnage) : 0);
         }
-
         return prev + 0;
       }, 0),
       payment_mode: requestData.mode,
@@ -69,13 +69,17 @@ const confirmationScreen = (props) => {
       collector_pin: String(code),
     };
 
+    if (requestData.pickupId) {
+      console.log(requestData.pickupId, 'iiiiiiiiiiiii');
+      payload.pickup_id = requestData.pickupId;
+    }
     submitPickup(payload)
       .then(() => {
-        props.navigation.navigate("PaymentConfirm");
+        props.navigation.navigate('PaymentConfirm');
       })
       .catch((e) => {
-        Alert.alert("Error", e.response.data.error);
-        console.log(e, "pooooo0");
+        Alert.alert('Error', e.response.data.error);
+        console.log(e, 'pooooo0');
       });
   };
 
@@ -84,45 +88,45 @@ const confirmationScreen = (props) => {
       <View style={{ marginTop: 20 }}>
         <Text
           style={{
-            fontWeight: "bold",
+            fontWeight: 'bold',
             fontSize: 18,
-            textAlign: "center",
+            textAlign: 'center',
             marginBottom: 20,
 
             paddingHorizontal: 20,
           }}
         >
-          You are about to pay{" "}
+          You are about to pay{' '}
           {numberWithCommas(
             requestData.materials.reduce((prev, current) => {
               return prev + (current.price ? Number(current.price) : 0);
             }, 0)
-          )}{" "}
+          )}{' '}
           to {`${requestData.producerData.name}`}
         </Text>
 
         <Text
           style={{
             fontSize: 18,
-            textAlign: "center",
+            textAlign: 'center',
             marginBottom: 20,
             paddingHorizontal: 20,
           }}
         >
           Input your wallet pin to confirm
         </Text>
-        <View style={{ alignItems: "center", paddingHorizontal: 20 }}>
+        <View style={{ alignItems: 'center', paddingHorizontal: 20 }}>
           <SmoothPinCodeInput
             ref={pinInput}
             value={code}
             onTextChange={(code) => setCode(code)}
             cellStyle={{
               borderWidth: 2,
-              borderColor: "#EF7700",
+              borderColor: '#EF7700',
             }}
             cellStyleFocused={{
-              borderColor: "darkorange",
-              backgroundColor: "orange",
+              borderColor: 'darkorange',
+              backgroundColor: 'orange',
             }}
             onFulfill={() => {
               setDisable(false);
@@ -133,9 +137,9 @@ const confirmationScreen = (props) => {
             disabled={disable}
             style={{
               height: 55,
-              backgroundColor: "#0A956A",
+              backgroundColor: '#0A956A',
               borderRadius: 10,
-              justifyContent: "center",
+              justifyContent: 'center',
               paddingHorizontal: 20,
               marginHorizontal: 20,
               marginTop: 40,
@@ -148,9 +152,9 @@ const confirmationScreen = (props) => {
             <Text
               style={{
                 fontSize: 18,
-                fontWeight: "bold",
-                color: "white",
-                textAlign: "center",
+                fontWeight: 'bold',
+                color: 'white',
+                textAlign: 'center',
               }}
             >
               Confirm

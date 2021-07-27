@@ -1,5 +1,5 @@
-import { useRoute } from "@react-navigation/core";
-import React, { useEffect, useState } from "react";
+import { useRoute } from '@react-navigation/core';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -11,14 +11,14 @@ import {
   FlatList,
   ActivityIndicator,
   Alert,
-} from "react-native";
-import * as Animatable from "react-native-animatable";
-import { connect } from "react-redux";
-import { getAllPendingCollection, notifyAgent } from "../Api/api";
+} from 'react-native';
+import * as Animatable from 'react-native-animatable';
+import { connect } from 'react-redux';
+import { getAllPendingCollection, notifyAgent } from '../Api/api';
 
-import { getDistanceAndTime } from "../Api/locationApi";
-import Accordion from "../Component/Accordion";
-import Bgcover from "../Component/Bg/BackgroundCover";
+import { getDistanceAndTime } from '../Api/locationApi';
+import Accordion from '../Component/Accordion';
+import Bgcover from '../Component/Bg/BackgroundCover';
 
 const mapStateToProps = (state) => {
   return {
@@ -80,10 +80,10 @@ const ConfirmationPageScreen = ({
     try {
       let response = await notifyAgent(agentData.id);
 
-      navigation.navigate("AgentMap", agentData);
+      navigation.navigate('AgentMap', agentData);
     } catch (error) {
-      Alert.alert("Error", error.response?.data.error);
-      navigation.navigate("AgentMap", agentData);
+      Alert.alert('Error', error.response?.data.error);
+      // navigation.navigate('AgentMap', agentData);
     }
   };
 
@@ -93,7 +93,7 @@ const ConfirmationPageScreen = ({
     getData(pages)
       .then(() => {})
       .finally(() => setLoadingMore(false));
-    console.log("i am here handle load more");
+    console.log('i am here handle load more');
   };
 
   const handleRefresh = () => {
@@ -109,8 +109,8 @@ const ConfirmationPageScreen = ({
   return (
     <Bgcover name="Confirmation Screen">
       <View style={{ flex: 1 }}>
-        <View style={{ maxHeight: "100%", marginHorizontal: 20 }}>
-          <Text style={{ fontSize: 15, fontWeight: "bold", marginBottom: 10 }}>
+        <View style={{ maxHeight: '100%', marginHorizontal: 20 }}>
+          <Text style={{ fontSize: 15, fontWeight: 'bold', marginBottom: 10 }}>
             Collections List
           </Text>
 
@@ -133,7 +133,7 @@ const ConfirmationPageScreen = ({
               // justifyContent: "space-between",
             }}
           >
-            <Text style={{ fontSize: 15, fontWeight: "bold" }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold' }}>
               Estimated Time to Agent Location
             </Text>
             <Text style={{ fontSize: 15 }}>{timeToLocation}</Text>
@@ -146,7 +146,7 @@ const ConfirmationPageScreen = ({
               // justifyContent: "space-between",
             }}
           >
-            <Text style={{ fontSize: 15, fontWeight: "bold" }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold' }}>
               Estimated distance to Agent Location
             </Text>
             <Text style={{ fontSize: 15 }}>{distanceApart}</Text>
@@ -158,14 +158,14 @@ const ConfirmationPageScreen = ({
             style={{
               paddingHorizontal: 30,
               paddingVertical: 10,
-              alignSelf: "flex-end",
-              backgroundColor: "green",
+              alignSelf: 'flex-end',
+              backgroundColor: 'green',
               borderRadius: 10,
               marginTop: 20,
               marginBottom: 20,
             }}
           >
-            <Text style={{ color: "white", fontSize: 12, fontWeight: "bold" }}>
+            <Text style={{ color: 'white', fontSize: 12, fontWeight: 'bold' }}>
               Notify Agent
             </Text>
           </TouchableOpacity>
@@ -278,22 +278,25 @@ const ConfirmationPageScreen = ({
 const ListFooterComponent = () => (
   <View
     style={{
-      position: "relative",
-      width: "100%",
+      position: 'relative',
+      width: '100%',
       height: 40,
       paddingVertical: 20,
       marginTop: 10,
       marginBottom: 10,
-      borderColor: "#F18921",
-      justifyContent: "center",
+      borderColor: '#F18921',
+      justifyContent: 'center',
     }}
   >
-    <ActivityIndicator animating size="large" color={"#F18921"} />
+    <Image
+      source={require('../assets/loading-gif.gif')}
+      style={{ width: 50, height: 50 }}
+    ></Image>
   </View>
 );
 
 const styles = StyleSheet.create({
-  mainHeading: { fontSize: 15, fontWeight: "bold", marginTop: 20 },
+  mainHeading: { fontSize: 15, fontWeight: 'bold', marginTop: 20 },
   leftWrapper: { marginTop: 10, marginLeft: 20 },
 });
 

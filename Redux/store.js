@@ -1,8 +1,10 @@
-import { createStore, applyMiddleware, combineReducers } from "redux";
-import thunk from "redux-thunk";
-import { reducerFunc } from "./reducer";
-import bluetoothReducer from "./bluetoothReducer";
-import locationReducer from "./locationReducer";
+import { createStore, applyMiddleware, combineReducers } from 'redux';
+import thunk from 'redux-thunk';
+import { composeWithDevTools } from 'redux-devtools-extension';
+
+import { reducerFunc } from './reducer';
+import bluetoothReducer from './bluetoothReducer';
+import locationReducer from './locationReducer';
 
 let AllReducer = combineReducers({
   bluetooth: bluetoothReducer,
@@ -10,6 +12,9 @@ let AllReducer = combineReducers({
   location: locationReducer,
 });
 
-const store = createStore(AllReducer, applyMiddleware(thunk));
+const store = createStore(
+  AllReducer,
+  composeWithDevTools(applyMiddleware(thunk))
+);
 
 export { store };

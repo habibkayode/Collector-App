@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -11,25 +11,26 @@ import {
   TouchableOpacity,
   Modal,
   Alert,
-} from "react-native";
-import * as Animatable from "react-native-animatable";
-import SmoothPinCodeInput from "react-native-smooth-pincode-input";
-import { connect } from "react-redux";
+} from 'react-native';
+import * as Animatable from 'react-native-animatable';
+import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
+import { connect } from 'react-redux';
 import {
   transferFromAccount,
   walletToWalletTransfer,
-  airtimeTransfer,
+  airtimeTransferCOG,
   interWalletTransfer,
-} from "../Api/api";
-import Airtime from "../Component/AirtimeCard";
-import AirttimeInputDetails from "../Component/AirtimeInputsDetails";
-import BankCard from "../Component/BankCard";
-import BankDetailsInput from "../Component/BankDetailsInputs";
-import Bgcover from "../Component/Bg/BackgroundCover";
-import PagaCard from "../Component/PagaCard";
-import PagaDetailsInput from "../Component/PagaDetailsInput";
-import WalletCard from "../Component/WalletCard";
-import WalletDetailsInput from "../Component/WalletInputDetails";
+  walletToWalletTransferCOG,
+} from '../Api/api';
+import Airtime from '../Component/AirtimeCard';
+import AirttimeInputDetails from '../Component/AirtimeInputsDetails';
+import BankCard from '../Component/BankCard';
+import BankDetailsInput from '../Component/BankDetailsInputs';
+import Bgcover from '../Component/Bg/BackgroundCover';
+import PagaCard from '../Component/PagaCard';
+import PagaDetailsInput from '../Component/PagaDetailsInput';
+import WalletCard from '../Component/WalletCard';
+import WalletDetailsInput from '../Component/WalletInputDetails';
 
 const mapStateToProps = (state) => {
   return {
@@ -41,7 +42,7 @@ const WithdrawCOGScreen = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [showBigCheck, setBigCheck] = useState(false);
   const [togglePaymentType, setTogglePaymentType] = useState(false);
-  const [paymentmethod, setPaymenthod] = useState("Bank");
+  const [paymentmethod, setPaymenthod] = useState('Bank');
   const [pinVaule, setPinValue] = useState();
   const [loading, setLoading] = useState(true);
   let [bankData, setBankData] = useState();
@@ -54,7 +55,7 @@ const WithdrawCOGScreen = (props) => {
     payload.pin = pinVaule;
     payload.phone = props.phoneNo;
     setPinValue();
-    console.log(payload, "final payload");
+    console.log(payload, 'final payload');
 
     try {
       let response = await transferFromAccount(payload);
@@ -63,10 +64,10 @@ const WithdrawCOGScreen = (props) => {
       setTimeout(() => {
         setBigCheck(false);
         setShowModal(false);
-        props.navigation.navigate("wallet");
+        props.navigation.navigate('wallet');
       }, 2000);
     } catch (e) {
-      Alert.alert("Error", e.response.data.error);
+      Alert.alert('Error', e.response.data.error);
     }
   };
 
@@ -77,32 +78,32 @@ const WithdrawCOGScreen = (props) => {
     setPinValue();
 
     try {
-      let response = await airtimeTransfer(payload);
+      let response = await airtimeTransferCOG(payload);
       setBigCheck(true);
       setTimeout(() => {
         setBigCheck(false);
         setShowModal(false);
-        props.navigation.navigate("wallet");
+        props.navigation.navigate('wallet');
       }, 2000);
     } catch (e) {
-      Alert.alert("Error", e.response.data.error);
+      Alert.alert('Error', e.response.data.error);
     }
   };
   let sendToWallet = async () => {
     let walletFunc;
     let payload = { ...walletData };
-    if (walletData.type === "Commission Account") {
-      payload.mode = "cog-to-commission";
+    if (walletData.type === 'Commission Account') {
+      payload.mode = 'cog-to-commission';
       delete payload.beneficiary;
       walletFunc = interWalletTransfer;
     } else {
-      walletFunc = walletToWalletTransfer;
+      walletFunc = walletToWalletTransferCOG;
     }
     delete payload.type;
     payload.phone = props.phoneNo;
     payload.pin = pinVaule;
     setPinValue();
-    console.log(payload.mode, "lloo");
+    console.log(payload.mode, 'lloo');
 
     try {
       let response = await walletFunc(payload);
@@ -110,10 +111,10 @@ const WithdrawCOGScreen = (props) => {
       setTimeout(() => {
         setBigCheck(false);
         setShowModal(false);
-        props.navigation.navigate("wallet");
+        props.navigation.navigate('wallet');
       }, 2000);
     } catch (e) {
-      Alert.alert("Error", e.response.data.error);
+      Alert.alert('Error', e.response.data.error);
     }
   };
 
@@ -122,47 +123,47 @@ const WithdrawCOGScreen = (props) => {
       <ScrollView>
         <View style={{ marginHorizontal: 20 }}>
           <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
+            style={{ flexDirection: 'row', justifyContent: 'space-between' }}
           >
             <BankCard
-              disable={paymentmethod === "Bank"}
+              disable={paymentmethod === 'Bank'}
               onPress={() => {
                 setTogglePaymentType(false);
-                setPaymenthod("Bank");
+                setPaymenthod('Bank');
               }}
             />
             <PagaCard
-              disable={paymentmethod === "Paga"}
+              disable={paymentmethod === 'Paga'}
               onPress={() => {
                 setTogglePaymentType(true);
-                console.log("poo");
-                setPaymenthod("Paga");
+                console.log('poo');
+                setPaymenthod('Paga');
               }}
             />
           </View>
           <View
             style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
+              flexDirection: 'row',
+              justifyContent: 'space-between',
               marginVertical: 20,
             }}
           >
             <Airtime
-              disable={paymentmethod === "Airtime"}
+              disable={paymentmethod === 'Airtime'}
               onPress={() => {
                 setTogglePaymentType(false);
-                setPaymenthod("Airtime");
+                setPaymenthod('Airtime');
               }}
             />
             <WalletCard
-              disable={paymentmethod === "Wallet"}
+              disable={paymentmethod === 'Wallet'}
               onPress={() => {
                 setTogglePaymentType(true);
-                setPaymenthod("Wallet");
+                setPaymenthod('Wallet');
               }}
             />
           </View>
-          {paymentmethod === "Paga" && (
+          {paymentmethod === 'Paga' && (
             <PagaDetailsInput
               sendFunc={() => {
                 setShowModal(true);
@@ -170,7 +171,7 @@ const WithdrawCOGScreen = (props) => {
             />
           )}
 
-          {paymentmethod === "Bank" && (
+          {paymentmethod === 'Bank' && (
             <BankDetailsInput
               sendFunc={(payload) => {
                 setBankData(payload);
@@ -179,7 +180,7 @@ const WithdrawCOGScreen = (props) => {
             />
           )}
 
-          {paymentmethod === "Airtime" && (
+          {paymentmethod === 'Airtime' && (
             <AirttimeInputDetails
               sendFunc={(data) => {
                 setShowModal(true);
@@ -188,7 +189,7 @@ const WithdrawCOGScreen = (props) => {
             />
           )}
 
-          {paymentmethod === "Wallet" && (
+          {paymentmethod === 'Wallet' && (
             <WalletDetailsInput
               cog={true}
               sendFunc={(data) => {
@@ -213,9 +214,9 @@ const WithdrawCOGScreen = (props) => {
         >
           <View
             style={{
-              backgroundColor: "rgba(0, 0, 0, 0.8)",
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
               flex: 1,
-              justifyContent: "center",
+              justifyContent: 'center',
             }}
           >
             {showBigCheck ? (
@@ -224,33 +225,33 @@ const WithdrawCOGScreen = (props) => {
                   style={{
                     width: 203,
                     height: 203,
-                    borderColor: "#0A956A",
+                    borderColor: '#0A956A',
                     borderWidth: 2,
-                    marginLeft: "auto",
-                    marginRight: "auto",
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
                     borderRadius: 110,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor: "white",
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: 'white',
                   }}
                 >
                   <Image
                     style={{ marginTop: 30 }}
-                    source={require("../assets/check-big.png")}
+                    source={require('../assets/check-big.png')}
                   />
                 </View>
                 <Text
                   style={{
                     marginTop: 20,
                     paddingHorizontal: 30,
-                    textAlign: "center",
+                    textAlign: 'center',
                     fontSize: 16,
                     lineHeight: 18,
-                    color: "white",
-                    fontWeight: "bold",
+                    color: 'white',
+                    fontWeight: 'bold',
                   }}
                 >
-                  Funds sent
+                  Transaction Completed
                 </Text>
               </>
             ) : (
@@ -258,20 +259,20 @@ const WithdrawCOGScreen = (props) => {
                 style={{
                   marginHorizontal: 20,
                   paddingVertical: 30,
-                  backgroundColor: "white",
+                  backgroundColor: 'white',
                 }}
               >
                 <Text
                   style={{
                     fontSize: 24,
-                    fontWeight: "bold",
+                    fontWeight: 'bold',
                     marginBottom: 30,
                     marginHorizontal: 20,
                   }}
                 >
                   Input your wallet pin
                 </Text>
-                <View style={{ alignSelf: "center", marginRight: 20 }}>
+                <View style={{ alignSelf: 'center', marginRight: 20 }}>
                   <SmoothPinCodeInput
                     ref={pinRef}
                     value={pinVaule}
@@ -279,24 +280,24 @@ const WithdrawCOGScreen = (props) => {
                     onFulfill={() => {}}
                     cellStyle={{
                       borderWidth: 2,
-                      borderColor: "#EF7700",
+                      borderColor: '#EF7700',
                       marginLeft: 20,
                     }}
                     cellStyleFocused={{
-                      borderColor: "darkorange",
-                      backgroundColor: "orange",
+                      borderColor: 'darkorange',
+                      backgroundColor: 'orange',
                     }}
                   />
                   <TouchableOpacity
                     style={styles.sendButton}
                     onPress={() => {
-                      if (paymentmethod === "Bank") {
+                      if (paymentmethod === 'Bank') {
                         makeTransfer();
                       }
-                      if (paymentmethod === "Airtime") {
+                      if (paymentmethod === 'Airtime') {
                         buyAirtime();
                       }
-                      if (paymentmethod === "Wallet") {
+                      if (paymentmethod === 'Wallet') {
                         sendToWallet();
                       }
                     }}
@@ -316,19 +317,19 @@ const WithdrawCOGScreen = (props) => {
 const styles = StyleSheet.create({
   sendButton: {
     height: 55,
-    backgroundColor: "#0A956A",
+    backgroundColor: '#0A956A',
     borderRadius: 10,
-    justifyContent: "center",
+    justifyContent: 'center',
     paddingHorizontal: 40,
     marginHorizontal: 20,
     marginTop: 40,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   sendButtonText: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: "white",
-    textAlign: "center",
+    fontWeight: 'bold',
+    color: 'white',
+    textAlign: 'center',
   },
 });
 

@@ -1,6 +1,6 @@
-import * as TYPES from "./types";
+import * as TYPES from './types';
 let initialState = {
-  token: "",
+  token: '',
   logedIn: false,
   connetcted: false,
   userData: {},
@@ -25,14 +25,28 @@ let initialState = {
   requestPop: false,
   notificationsPop: false,
   bankList: [],
-  devicePushToken: "",
-
+  devicePushToken: '',
   showMessageAlert: false,
   showPickupAlert: false,
+  pickupAlertModal: {},
+  redirect: { status: false },
 };
 
 const reducerFunc = (state = initialState, action) => {
   switch (action.type) {
+    case TYPES.REDIRECT:
+      console.log(action.payload);
+      return {
+        ...state,
+        redirect: action.payload,
+      };
+    case TYPES.PICkUPALERTMODAL:
+      console.log(action.payload);
+      return {
+        ...state,
+        pickupAlertModal: action.payload,
+      };
+
     case TYPES.PICkUPALERT:
       return {
         ...state,
@@ -40,7 +54,7 @@ const reducerFunc = (state = initialState, action) => {
       };
 
     case TYPES.MESSAGEALERT:
-      console.log(action.payload, "poopp00");
+      console.log(action.payload, 'poopp00');
       return {
         ...state,
         showMessageAlert: action.payload,
@@ -83,7 +97,7 @@ const reducerFunc = (state = initialState, action) => {
       if (action.payload.refreshing) {
         newCollection = [...action.payload.data];
       } else {
-        console.log("i am not refreshing in accepted");
+        console.log('i am not refreshing in accepted');
         newCollection = [...state.allCollection, ...action.payload.data];
       }
       return {
@@ -128,10 +142,10 @@ const reducerFunc = (state = initialState, action) => {
     case TYPES.ACCEPTED_PICKUPREQUEST_TYPE:
       let newData = [];
       if (action.payload.refreshing) {
-        console.log("i am reshing in accetped");
+        console.log('i am reshing in accetped');
         newData = [...action.payload.data];
       } else {
-        console.log("i am not refreshing in accepted");
+        console.log('i am not refreshing in accepted');
         newData = [...state.acceptedPickupRequests, ...action.payload.data];
       }
       return {
@@ -168,10 +182,10 @@ const reducerFunc = (state = initialState, action) => {
     case TYPES.COLLECTORPICKUPREQUEST:
       let newPickupRequest = [];
       if (action.payload.refreshing) {
-        console.log("i am reshingis");
+        console.log('i am reshingis');
         newPickupRequest = [...action.payload.data];
       } else {
-        console.log("i am not refreshing");
+        console.log('i am not refreshing');
         newPickupRequest = [...state.pickupRequests, ...action.payload.data];
       }
       return {
@@ -185,7 +199,7 @@ const reducerFunc = (state = initialState, action) => {
         materialsObj: action.payload.materialObject,
       };
     case TYPES.PICKUPANDIMAGETYPE:
-      console.log("pickup");
+      console.log('pickup');
       let newPickup = state.pickupRequests.map((ele) => {
         let newObj = {
           ...ele,
@@ -198,7 +212,7 @@ const reducerFunc = (state = initialState, action) => {
             return m.name === k;
           });
           //changes needed
-          console.log(actualMaterial, "actual");
+          console.log(actualMaterial, 'actual');
           return state.materials[actualMaterial];
         });
         newObj.newMaterials = newMaterials;

@@ -83,10 +83,23 @@ let changeUserType = async (payload) => {
   }
 };
 
+let getAllSecurityQuestion = async () => {
+  try {
+    let url = "/auth/securityquestions";
+    let response = await AxiosNormal.get(url);
+    return response.data;
+  } catch (e) {
+    store.dispatch(updateNetWorkLoading(false));
+    console.log(e, "error in catch");
+    throw e;
+  }
+};
+
 export {
   loginFun,
   registerCollector,
   forgetPassword,
   resetPassword,
   changeUserType,
+  getAllSecurityQuestion,
 };

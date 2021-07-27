@@ -1,32 +1,19 @@
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  ScrollView,
-  PermissionsAndroid,
-} from "react-native";
-import * as Animatable from "react-native-animatable";
-import MapView, { Marker, Callout } from "react-native-maps";
-import CollectionLogCard from "../Component/CollectionLogCard";
-import MapViewDirections from "react-native-maps-directions";
-import { gettAllAgent } from "../Api/api";
-import { connect } from "react-redux";
-import Bgcover from "../Component/Bg/BackgroundCover";
-import Geolocation from "react-native-geolocation-service";
-import AgentCard from "../Component/AgentCard";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Image, PermissionsAndroid, FlatList } from 'react-native';
 
-const origin = { latitude: 37.3318456, longitude: -122.0296002 };
+import MapView, { Marker, Callout } from 'react-native-maps';
+import { gettAllAgent } from '../Api/api';
+import { connect } from 'react-redux';
+import Bgcover from '../Component/Bg/BackgroundCover';
+import Geolocation from 'react-native-geolocation-service';
+import AgentCard from '../Component/AgentCard';
 
-const GOOGLE_MAPS_APIKEY = "AIzaSyBxdQWCyWmxbf3O65eaOzb2XXoCT4lpgIs";
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
+const GOOGLE_MAPS_APIKEY = 'AIzaSyBxdQWCyWmxbf3O65eaOzb2XXoCT4lpgIs';
 const mapStateToProps = (state) => {
-  console.log(state.normal.acceptedPickupRequests);
   return {
     agents: state.normal.agents,
-
     userLocation: state.location.coordinate,
   };
 };
@@ -35,13 +22,16 @@ const SearchAgentScreen = ({ navigation, agents, userLocation }) => {
   let [startingLocation, setStartingLocation] = useState();
   let [loading, setLoading] = useState(true);
   let [selectedIndex, setSelectIndex] = useState(0);
+  let [scrollX, setScrollX] = useState(0);
+
+  let agentsRef = useRef();
 
   let getCurrentLocation = async () => {
     let granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       {
-        title: "Scrapays Location Permission",
-        message: "Scrapays App needs access to your location ",
+        title: 'Scrapays Location Permission',
+        message: 'Scrapays App needs access to your location ',
       }
     );
     if (granted) {
@@ -51,7 +41,7 @@ const SearchAgentScreen = ({ navigation, agents, userLocation }) => {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
           });
-          console.log("My current location", JSON.stringify(position));
+          console.log('My current location', JSON.stringify(position));
         },
         (error) => {
           // See error code charts below.
@@ -63,26 +53,27 @@ const SearchAgentScreen = ({ navigation, agents, userLocation }) => {
   };
 
   useEffect(() => {
-    gettAllAgent().then(() => setLoading(false));
+    gettAllAgent().then(() => {
+      setLoading(false);
+    });
     getCurrentLocation();
   }, []);
 
   const redirectFunc = () => {
-    navigation.navigate("ConfirmationPage");
+    navigation.navigate('ConfirmationPage');
   };
   return (
     <Bgcover name=" Search for Agent">
       {!loading && startingLocation && (
         <>
-          <View style={{ marginBottom: 20, flex: 1 }}>
+          <View style={{ marginBottom: 0, flex: 1 }}>
             <MapView
-              showsUserLocation
               showsTraffic
               loadingEnabled
               loadingIndicatorColor="#F18921"
               toolbarEnabled
-              style={{ height: "100%" }}
-              region={{
+              style={{ height: '100%' }}
+              initialRegion={{
                 latitude: startingLocation.latitude,
                 longitude: startingLocation.longitude,
                 latitudeDelta: 0.0922,
@@ -97,7 +88,7 @@ const SearchAgentScreen = ({ navigation, agents, userLocation }) => {
               >
                 <Image
                   style={{ width: 30, height: 30 }}
-                  source={require("../assets/srapays-logo.png")}
+                  source={require('../assets/srapays-logo.png')}
                 ></Image>
               </Marker>
               {/* <Marker
@@ -121,26 +112,61 @@ const SearchAgentScreen = ({ navigation, agents, userLocation }) => {
                 </Callout>
               </Marker> */}
               {agents.map((i, index) => {
-                console.log(i, "agents cordinate", `Agent ${index + 1}`);
                 return (
                   <Marker
-                    onPress={() => setSelectIndex(index)}
+                    onPress={() => {
+                      agentsRef.current.scrollToIndex({
+                        animated: true,
+                        index,
+                      });
+                      setSelectIndex(index);
+                    }}
                     key={index}
                     title={` ${i.first_name} ${i.last_name} `}
                     coordinate={{
                       latitude: parseFloat(i.userable.coordinates.lat),
                       longitude: parseFloat(i.userable.coordinates.lng),
                     }}
-                    image={require("../assets/marker2.png")}
-                  />
+                    // image={require('../assets/marker2.png')}
+                  >
+                    {scrollX >= index * 200 && scrollX < (index + 1) * 200 ? (
+                      <MaterialCommunityIcons
+                        name="map-marker-outline"
+                        size={60}
+                        color="#EF7700"
+                      />
+                    ) : (
+                      <Image
+                        style={{ width: 30, height: 30 }}
+                        source={require('../assets/marker2.png')}
+                      ></Image>
+                    )}
+                  </Marker>
                 );
               })}
             </MapView>
           </View>
-          <View style={{ paddingHorizontal: 10 }}>
-            {agents.length > 0 && (
-              <AgentCard data={agents[selectedIndex]} index={selectedIndex} />
-            )}
+          <View style={{ position: 'absolute', bottom: 0 }}>
+            <FlatList
+              ref={agentsRef}
+              horizontal={true}
+              data={agents}
+              contentContainerStyle={{ paddingHorizontal: 20 }}
+              onScroll={(event) => {
+                console.log(event.nativeEvent.contentOffset);
+                setScrollX(event.nativeEvent.contentOffset.x);
+              }}
+              getItemLayout={(data, index) => ({
+                length: 280,
+                offset: 310 * index,
+                index,
+              })}
+              ItemSeparatorComponent={() => <View style={{ width: 30 }} />}
+              keyExtractor={(item, index) => index}
+              renderItem={({ item, index }) => {
+                return <AgentCard data={item} index={index} />;
+              }}
+            />
           </View>
         </>
       )}

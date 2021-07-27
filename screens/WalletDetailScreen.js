@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -10,16 +10,16 @@ import {
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
-} from "react-native";
-import { useRoute } from "@react-navigation/core";
-import * as Animatable from "react-native-animatable";
-import Bgcover from "../Component/Bg/BackgroundCover";
-import { numberWithCommas } from "../helper/helper";
-import moment from "moment";
+} from 'react-native';
+import { useRoute } from '@react-navigation/core';
+import * as Animatable from 'react-native-animatable';
+import Bgcover from '../Component/Bg/BackgroundCover';
+import { numberWithCommas } from '../helper/helper';
+import moment from 'moment';
 
 const WalletDetailScreen = () => {
   let transactionDetail = useRoute().params;
-  console.log(transactionDetail, "ddd");
+  console.log(transactionDetail, 'ddd');
 
   return (
     <Bgcover name="Transaction Details">
@@ -27,20 +27,20 @@ const WalletDetailScreen = () => {
         <Text
           style={{
             fontSize: 12,
-            fontWeight: "bold",
-            textAlign: "right",
+            fontWeight: 'bold',
+            textAlign: 'right',
             marginBottom: 10,
           }}
         >
-          {moment(transactionDetail.date).format("Do MMM YY,h:mm:ss a")}
+          {moment(transactionDetail.date).format('Do MMM YY,h:mm:ss a')}
         </Text>
-        <Text style={styles.mainHeading}>Transaction Id </Text>
+        {/* <Text style={styles.mainHeading}>Transaction Id </Text>
         <View style={styles.leftWrapper}>
-          <Text>1234567</Text>
-        </View>
+          <Text>{transactionDetail.id}</Text>
+        </View> */}
         <Text style={styles.mainHeading}>Transaction Type</Text>
         <View style={styles.leftWrapper}>
-          <Text>{transactionDetail.type === "Cr" ? "Credit" : "Debit"}</Text>
+          <Text>{transactionDetail.type === 'Cr' ? 'Credit' : 'Debit'}</Text>
         </View>
         <Text style={styles.mainHeading}>Transaction Amount</Text>
         <View style={styles.leftWrapper}>
@@ -50,13 +50,17 @@ const WalletDetailScreen = () => {
         <View style={styles.leftWrapper}>
           <Text> {transactionDetail.narration} </Text>
         </View>
+        <Text style={styles.mainHeading}>Beneficiary</Text>
+        <View style={styles.leftWrapper}>
+          <Text> {transactionDetail.Beneficiary} </Text>
+        </View>
       </View>
     </Bgcover>
   );
 };
 
 const styles = StyleSheet.create({
-  mainHeading: { fontSize: 15, fontWeight: "bold", marginTop: 20 },
+  mainHeading: { fontSize: 15, fontWeight: 'bold', marginTop: 20 },
   leftWrapper: { marginTop: 10, marginLeft: 20 },
 });
 

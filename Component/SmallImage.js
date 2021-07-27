@@ -1,28 +1,23 @@
-import React from "react";
-import { Image, View, Text } from "react-native";
-import { store } from "../Redux/store";
+import React from 'react';
+import { Image, View, Text } from 'react-native';
 
 const SmallImage = ({ data }) => {
-  //let check = store.getState().normal.materialsObj[data];
-  //  console.log(check, "check material image", data);
-  console.log(data, "data");
-
   return (
     <View style={{ width: 50 }}>
       <View
         style={{
           width: 30,
           height: 27.27,
-          justifyContent: "center",
-          alignItems: "center",
+          justifyContent: 'center',
+          alignItems: 'center',
           marginLeft: 5,
           borderRadius: 6,
-          backgroundColor: "white",
+          backgroundColor: 'white',
           borderWidth: 1,
         }}
       >
         <Image
-          style={{ resizeMode: "cover", width: "80%", height: "90%" }}
+          style={{ resizeMode: 'cover', width: '80%', height: '90%' }}
           source={{
             uri: `https://api.scrapays.com/storage/material_list_images/${data.image}`,
           }}
@@ -37,10 +32,10 @@ const SmallImage = ({ data }) => {
       </View>
       <Text
         style={{
-          color: "white",
+          color: 'white',
           fontSize: 10,
           left: 5,
-          maxWidth: "100%",
+          maxWidth: '100%',
         }}
       >
         {data.name}

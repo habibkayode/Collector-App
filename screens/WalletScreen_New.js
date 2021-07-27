@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -11,28 +11,28 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   ActivityIndicator,
-} from "react-native";
-import BgCover from "../Component/Bg/BackgroundCover";
-import { Pages } from "react-native-pages";
-import dummyData from "../helper/dataMay-8-2021.json";
-import { Dropdown } from "react-native-material-dropdown";
-import CalendarPicker from "react-native-calendar-picker";
-import Modal from "react-native-modal";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { numberWithCommas } from "../helper/helper";
+} from 'react-native';
+import BgCover from '../Component/Bg/BackgroundCover';
+import { Pages } from 'react-native-pages';
+import dummyData from '../helper/dataMay-8-2021.json';
+import { Dropdown } from 'react-native-material-dropdown';
+import CalendarPicker from 'react-native-calendar-picker';
+import Modal from 'react-native-modal';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { numberWithCommas } from '../helper/helper';
 import {
   getCOGbalance,
   getComissionBalance,
   getBankList,
   getWalletHistory,
   getWalletHistoryCOG,
-} from "../Api/api";
-import moment from "moment";
+} from '../Api/api';
+import moment from 'moment';
 
 const WalletScreen = (props) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [title, setTitle] = useState("Commission");
-  const [buttonText, setButtonText] = useState("Withdraw Commission");
+  const [title, setTitle] = useState('Commission');
+  const [buttonText, setButtonText] = useState('Withdraw Commission');
   const [dateFilter, setDateFilter] = useState();
   const [refresh, setRefresh] = useState(false);
   const [startDate, setStartDate] = useState();
@@ -75,8 +75,8 @@ const WalletScreen = (props) => {
   };
 
   let onDateChange = (date, type) => {
-    console.log(date, type, "dates");
-    if (type === "END_DATE") {
+    console.log(date, type, 'dates');
+    if (type === 'END_DATE') {
       setEndDate(date);
     } else {
       setStartDate(date);
@@ -107,34 +107,34 @@ const WalletScreen = (props) => {
 
   useEffect(() => {
     if (currentIndex === 0) {
-      setTitle("Commission");
-      setButtonText("Withdraw Commission");
+      setTitle('Commission');
+      setButtonText('Withdraw Commission');
     }
 
     if (currentIndex === 1) {
-      setTitle("Account Balance");
-      setButtonText("Withdraw ");
+      setTitle('Account Balance');
+      setButtonText('Withdraw ');
     }
 
     if (currentIndex === 2) {
-      setTitle("Account Balance");
-      setButtonText("In-wallet Transfer");
+      setTitle('Account Balance');
+      setButtonText('In-wallet Transfer');
     }
   }, [currentIndex]);
 
   let getBalance = async () => {
     try {
       let commissionResponse = await getComissionBalance();
-      console.log(commissionResponse, "commission resopnse");
+      console.log(commissionResponse, 'commission resopnse');
       let accountBalanceResponse = await getCOGbalance();
-      console.log(accountBalanceResponse, "cog resopnse");
+      console.log(accountBalanceResponse, 'cog resopnse');
       setBalance({
         commission: commissionResponse.data.balance,
         account: accountBalanceResponse.data.balance,
       });
       setLoading(false);
     } catch (e) {
-      console.log(e, "commm");
+      console.log(e, 'commm');
     }
   };
   let getHistory = async () => {
@@ -149,7 +149,7 @@ const WalletScreen = (props) => {
       historyResponse.data.forEach((i) => {
         let date = moment(i.date).toDate();
         date.setHours(0, 0, 0, 0);
-        console.log(date, "klko");
+        console.log(date, 'klko');
         if (dummyObj.hasOwnProperty(date)) {
           dummyObj[date].push(i);
         } else {
@@ -160,7 +160,7 @@ const WalletScreen = (props) => {
       historyResponse2.data.forEach((i) => {
         let date = moment(i.date).toDate();
         date.setHours(0, 0, 0, 0);
-        console.log(date, "klko");
+        console.log(date, 'klko');
         if (dummyObj2.hasOwnProperty(date)) {
           dummyObj2[date].push(i);
         } else {
@@ -194,7 +194,7 @@ const WalletScreen = (props) => {
   };
 
   React.useEffect(() => {
-    const unsubscribe = props.navigation.addListener("focus", () => {
+    const unsubscribe = props.navigation.addListener('focus', () => {
       setLoading(true);
       setLoading2(true);
       getBalance();
@@ -214,42 +214,45 @@ const WalletScreen = (props) => {
     <BgCover name="Wallet">
       {loading || loading2 ? (
         <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
         >
-          <ActivityIndicator size="large" color="#F18921" />
+          <Image
+            source={require('../assets/loading-gif.gif')}
+            style={{ width: 50, height: 50 }}
+          ></Image>
         </View>
       ) : (
-        <View style={{ flex: 1, height: "100%", marginBottom: 10 }}>
+        <View style={{ flex: 1, height: '100%', marginBottom: 10 }}>
           <TouchableOpacity
             style={{
-              flexDirection: "row",
+              flexDirection: 'row',
               marginBottom: 20,
-              alignSelf: "flex-end",
+              alignSelf: 'flex-end',
               marginHorizontal: 20,
             }}
             onPress={() => {
-              props.navigation.navigate("FundWallet");
+              props.navigation.navigate('FundWallet');
             }}
           >
             <Text
-              style={{ color: "black", fontWeight: "bold", marginRight: 5 }}
+              style={{ color: 'black', fontWeight: 'bold', marginRight: 5 }}
             >
               Fund Wallet
             </Text>
             <View
               style={{
-                backgroundColor: "#F18921",
+                backgroundColor: '#F18921',
                 paddingVertical: 2,
                 borderRadius: 10,
                 paddingHorizontal: 3,
                 marginRight: 5,
-                alignSelf: "flex-start",
+                alignSelf: 'flex-start',
                 top: 0,
               }}
             >
               <Image
                 style={{ bottom: 0 }}
-                source={require("../assets/addition-thick-symbol.png")}
+                source={require('../assets/addition-thick-symbol.png')}
               />
             </View>
           </TouchableOpacity>
@@ -260,7 +263,7 @@ const WalletScreen = (props) => {
             onScrollEnd={(index) => {
               // setCurrentIndex(Number(index));
             }}
-            backgroundColor={"white"}
+            backgroundColor={'white'}
             horizontal={true}
             indicatorColor="none"
             ref={(r) => (pageRef.current = r)}
@@ -271,17 +274,17 @@ const WalletScreen = (props) => {
                   style={{
                     marginHorizontal: 20,
                     padding: 20,
-                    backgroundColor: "#0A956A",
+                    backgroundColor: '#0A956A',
                     marginBottom: 20,
                     borderRadius: 10,
                   }}
                 >
                   <Text
                     style={{
-                      color: "white",
-                      fontWeight: "bold",
-                      alignSelf: "center",
-                      textAlign: "center",
+                      color: 'white',
+                      fontWeight: 'bold',
+                      alignSelf: 'center',
+                      textAlign: 'center',
                       fontSize: 18,
                     }}
                   >
@@ -290,10 +293,10 @@ const WalletScreen = (props) => {
 
                   <Text
                     style={{
-                      color: "white",
-                      fontWeight: "bold",
-                      alignSelf: "center",
-                      textAlign: "center",
+                      color: 'white',
+                      fontWeight: 'bold',
+                      alignSelf: 'center',
+                      textAlign: 'center',
                       fontSize: 25,
                       marginVertical: 10,
                     }}
@@ -306,13 +309,13 @@ const WalletScreen = (props) => {
                   </Text>
                   <View
                     style={{
-                      flexDirection: "row",
-                      justifyContent: "space-around",
+                      flexDirection: 'row',
+                      justifyContent: 'space-around',
                       marginTop: 10,
                     }}
                   >
                     <TouchableOpacity
-                      style={{ alignSelf: "flex-start" }}
+                      style={{ alignSelf: 'flex-start' }}
                       onPress={() => {
                         pageRef.current.scrollToPage(0);
                       }}
@@ -321,25 +324,25 @@ const WalletScreen = (props) => {
                         style={{
                           padding: 5,
                           backgroundColor:
-                            currentIndex === 0 ? "white" : "transparent",
-                          alignSelf: "center",
+                            currentIndex === 0 ? 'white' : 'transparent',
+                          alignSelf: 'center',
                           borderRadius: 7,
                         }}
                       >
                         <Image
-                          source={require("../assets/coins.png")}
+                          source={require('../assets/coins.png')}
                           style={{
-                            alignSelf: "center",
+                            alignSelf: 'center',
                           }}
                         />
                       </View>
-                      <Text style={{ color: "white", fontSize: 12 }}>
+                      <Text style={{ color: 'white', fontSize: 12 }}>
                         Commission
                       </Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                      style={{ alignSelf: "flex-start" }}
+                      style={{ alignSelf: 'flex-start' }}
                       onPress={() => {
                         pageRef.current.scrollToPage(1);
                       }}
@@ -348,23 +351,23 @@ const WalletScreen = (props) => {
                         style={{
                           padding: 5,
                           backgroundColor:
-                            currentIndex === 1 ? "white" : "transparent",
-                          alignSelf: "center",
+                            currentIndex === 1 ? 'white' : 'transparent',
+                          alignSelf: 'center',
                           borderRadius: 7,
                         }}
                       >
                         <Image
-                          source={require("../assets/money.png")}
+                          source={require('../assets/money.png')}
                           style={{
-                            alignSelf: "center",
+                            alignSelf: 'center',
                           }}
                         />
                       </View>
-                      <Text style={{ color: "white", fontSize: 12 }}>
+                      <Text style={{ color: 'white', fontSize: 12 }}>
                         Account
                       </Text>
 
-                      <Text style={{ color: "white", fontSize: 12 }}>
+                      <Text style={{ color: 'white', fontSize: 12 }}>
                         Balance
                       </Text>
                     </TouchableOpacity>
@@ -410,27 +413,27 @@ const WalletScreen = (props) => {
                 <TouchableOpacity
                   onPress={() => {
                     if (currentIndex === 1)
-                      props.navigation.navigate("WithdrawCOG");
+                      props.navigation.navigate('WithdrawCOG');
                     if (currentIndex === 0)
-                      props.navigation.navigate("WithdrawComission");
+                      props.navigation.navigate('WithdrawComission');
 
                     if (currentIndex === 2)
-                      props.navigation.navigate("WalletToWallet");
+                      props.navigation.navigate('WalletToWallet');
                   }}
                   style={{
                     width: 110,
                     paddingVertical: 10,
                     marginHorizontal: 20,
                     borderRadius: 10,
-                    alignSelf: "flex-start",
-                    backgroundColor: "#F18921",
+                    alignSelf: 'flex-start',
+                    backgroundColor: '#F18921',
                   }}
                 >
                   <Text
                     style={{
-                      color: "white",
-                      textAlign: "center",
-                      fontWeight: "bold",
+                      color: 'white',
+                      textAlign: 'center',
+                      fontWeight: 'bold',
                     }}
                   >
                     {buttonText}
@@ -440,14 +443,14 @@ const WalletScreen = (props) => {
                   style={{
                     marginTop: 10,
                     marginHorizontal: 20,
-                    flexDirection: "row",
-                    justifyContent: "space-between",
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
                   }}
                 >
                   <View>
                     <Text
                       style={{
-                        fontWeight: "bold",
+                        fontWeight: 'bold',
                         fontSize: 14,
                       }}
                       onLayout={(e) => {
@@ -459,7 +462,7 @@ const WalletScreen = (props) => {
                     <View
                       style={{
                         width: 70,
-                        backgroundColor: "#0A956A",
+                        backgroundColor: '#0A956A',
                         height: 3,
                         marginBottom: 10,
                       }}
@@ -468,9 +471,9 @@ const WalletScreen = (props) => {
                   <TouchableOpacity
                     style={{
                       marginRight: 20,
-                      justifyContent: "center",
-                      flexDirection: "row",
-                      borderColor: "#F18921",
+                      justifyContent: 'center',
+                      flexDirection: 'row',
+                      borderColor: '#F18921',
                       borderRadius: 10,
                     }}
                     onPress={() => {
@@ -490,7 +493,7 @@ const WalletScreen = (props) => {
                     placeholder="Days"
                     placeholderTextColor="grey"
                     onChangeText={(value) => {
-                      if (value !== "all") {
+                      if (value !== 'all') {
                         let newDummy = { ...obj };
                         let newDate = new Date();
                         newDate.setDate(new Date().getDate() - Number(value));
@@ -524,7 +527,7 @@ const WalletScreen = (props) => {
                     fontSize={12}
                     dropdownOffset={{ top: 0, left: 0 }}
                     inputContainerStyle={{
-                      borderBottomColor: "transparent",
+                      borderBottomColor: 'transparent',
                       //   width: 100,
                     }}
                     containerStyle={{
@@ -532,52 +535,52 @@ const WalletScreen = (props) => {
                     }}
                     data={[
                       {
-                        label: "All ",
-                        value: "all",
+                        label: 'All ',
+                        value: 'all',
                       },
                       {
-                        label: "Today",
+                        label: 'Today',
                         value: 0,
                       },
 
                       {
-                        label: "Yesterday",
+                        label: 'Yesterday',
                         value: 1,
                       },
                       {
-                        label: "3 days Ago",
+                        label: '3 days Ago',
                         value: 3,
                       },
                       {
-                        label: "1 week Ago",
+                        label: '1 week Ago',
                         value: 7,
                       },
                       {
-                        label: "2 Weeks",
+                        label: '2 Weeks',
                         value: 14,
                       },
 
                       {
-                        label: "1 month Ago",
+                        label: '1 month Ago',
                         value: 30,
                       },
 
                       {
-                        label: "2 month Ago",
+                        label: '2 month Ago',
                         value: 60,
                       },
 
                       {
-                        label: "3 month Ago",
+                        label: '3 month Ago',
                         value: 90,
                       },
 
                       {
-                        label: "6 month Ago",
+                        label: '6 month Ago',
                         value: 180,
                       },
                       {
-                        label: "1 year Ago",
+                        label: '1 year Ago',
                         value: 365,
                       },
                     ]}
@@ -606,41 +609,51 @@ const WalletScreen = (props) => {
                         >
                           <View
                             style={{
-                              backgroundColor: "#E8E8E8",
+                              backgroundColor: '#E8E8E8',
                               padding: 3,
                             }}
                           >
-                            <Text style={{ fontWeight: "bold" }}>
-                              {moment(each).format("Do MMM YY")}
+                            <Text style={{ fontWeight: 'bold' }}>
+                              {moment(each).format('Do MMM YY')}
                             </Text>
                           </View>
                           <View style={{ flex: 1 }}>
                             {obj[each].map((ele, index) => {
+                              let hold = ele.Beneficiary.split('-')[0];
+                              let hold2 = hold.split(' ');
+                              let beneficiary =
+                                hold2.length > 0
+                                  ? hold2[hold2.length - 1]
+                                  : hold2[0];
                               return (
                                 <TouchableOpacity
                                   // style={{ flex: 1 }}
-
                                   style={{
-                                    flexDirection: "row",
-                                    justifyContent: "space-between",
+                                    flexDirection: 'row',
+                                    //  justifyContent: 'space-between',
                                     marginVertical: 2,
                                     //   flexGrow: 1,
                                   }}
                                   onPress={() => {
                                     props.navigation.navigate(
-                                      "WalletDetail",
+                                      'WalletDetail',
                                       ele
                                     );
                                   }}
                                 >
                                   <Text style={{ width: 20 }}>{index + 1}</Text>
                                   <Image
-                                    source={require("../assets/money-new.png")}
+                                    style={{ marginLeft: 20 }}
+                                    source={require('../assets/money-new.png')}
                                   />
-                                  <Text>{ele.Beneficiary.split("-")[0]}</Text>
+                                  <Text
+                                    style={{ flex: 1, textAlign: 'center' }}
+                                  >
+                                    {beneficiary}
+                                  </Text>
                                   <Text
                                     style={{
-                                      color: ele.type == "Cr" ? "green" : "red",
+                                      color: ele.type == 'Cr' ? 'green' : 'red',
                                     }}
                                   >
                                     {numberWithCommas(ele.amount)}
@@ -666,41 +679,51 @@ const WalletScreen = (props) => {
                         >
                           <View
                             style={{
-                              backgroundColor: "#E8E8E8",
+                              backgroundColor: '#E8E8E8',
                               padding: 3,
                             }}
                           >
-                            <Text style={{ fontWeight: "bold" }}>
-                              {moment(each).format("Do MMM YY")}
+                            <Text style={{ fontWeight: 'bold' }}>
+                              {moment(each).format('Do MMM YY')}
                             </Text>
                           </View>
                           <View style={{ flex: 1 }}>
                             {obj2[each].map((ele, index) => {
+                              let hold = ele.Beneficiary.split('-')[0];
+                              let hold2 = hold.split(' ');
+                              let beneficiary =
+                                hold2.length > 0
+                                  ? hold2[hold2.length - 1]
+                                  : hold2[0];
                               return (
                                 <TouchableOpacity
                                   // style={{ flex: 1 }}
-
                                   style={{
-                                    flexDirection: "row",
-                                    justifyContent: "space-between",
+                                    flexDirection: 'row',
+                                    //  justifyContent: 'space-between',
                                     marginVertical: 2,
                                     //   flexGrow: 1,
                                   }}
                                   onPress={() => {
                                     props.navigation.navigate(
-                                      "WalletDetail",
+                                      'WalletDetail',
                                       ele
                                     );
                                   }}
                                 >
                                   <Text style={{ width: 20 }}>{index + 1}</Text>
                                   <Image
-                                    source={require("../assets/money-new.png")}
+                                    style={{ marginLeft: 20 }}
+                                    source={require('../assets/money-new.png')}
                                   />
-                                  <Text>{ele.Beneficiary.split("-")[0]}</Text>
+                                  <Text
+                                    style={{ flex: 1, textAlign: 'center' }}
+                                  >
+                                    {beneficiary}
+                                  </Text>
                                   <Text
                                     style={{
-                                      color: ele.type == "Cr" ? "green" : "red",
+                                      color: ele.type == 'Cr' ? 'green' : 'red',
                                     }}
                                   >
                                     {numberWithCommas(ele.amount)}
@@ -733,14 +756,14 @@ const WalletScreen = (props) => {
       >
         <TouchableOpacity
           activeOpacity={1}
-          style={{ height: "100%", width: "100%", flex: 1 }}
+          style={{ height: '100%', width: '100%', flex: 1 }}
           onPress={() => {
-            console.log("first 11");
+            console.log('first 11');
             setModalCalender(false);
           }}
         >
           <TouchableWithoutFeedback onPress={() => {}}>
-            <View style={{ backgroundColor: "white", marginHorizontal: 10 }}>
+            <View style={{ backgroundColor: 'white', marginHorizontal: 10 }}>
               <CalendarPicker
                 startFromMonday={true}
                 allowRangeSelection={true}
@@ -759,12 +782,12 @@ const WalletScreen = (props) => {
                   style={{
                     padding: 10,
                     borderRadius: 10,
-                    alignSelf: "center",
-                    backgroundColor: "#F18921",
+                    alignSelf: 'center',
+                    backgroundColor: '#F18921',
                     marginBottom: 20,
                   }}
                 >
-                  <Text style={{ color: "white", fontWeight: "bold" }}>
+                  <Text style={{ color: 'white', fontWeight: 'bold' }}>
                     Proceed
                   </Text>
                 </TouchableOpacity>
@@ -781,37 +804,37 @@ const styles = StyleSheet.create({
   wrapper: { height: 300 },
   slide1: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#9DD6EB",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#9DD6EB',
   },
   slide2: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#97CAE5",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#97CAE5',
   },
   slide3: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#92BBD9",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#92BBD9',
   },
   text: {
-    color: "#fff",
+    color: '#fff',
     fontSize: 30,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
 
   modal: {
     //  justifyContent: "center",
     margin: 0,
-    position: "absolute",
+    position: 'absolute',
     flex: 1,
-    height: "100%",
-    alignSelf: "flex-start",
-    justifyContent: "flex-start",
-    width: "100%",
+    height: '100%',
+    alignSelf: 'flex-start',
+    justifyContent: 'flex-start',
+    width: '100%',
   },
 });
 

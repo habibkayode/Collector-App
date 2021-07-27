@@ -1,5 +1,5 @@
-import moment from "moment";
-import React, { useState, useEffect } from "react";
+import moment from 'moment';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,12 +8,12 @@ import {
   ScrollView,
   ActivityIndicator,
   RefreshControl,
-} from "react-native";
-import * as Animatable from "react-native-animatable";
-import { getPendingPayment } from "../Api/api";
-import Bgcover from "../Component/Bg/BackgroundCover";
-import PaymentAccordion from "../Component/PaymentAccordion";
-import { numberWithCommas } from "../helper/helper";
+} from 'react-native';
+import * as Animatable from 'react-native-animatable';
+import { getPendingPayment } from '../Api/api';
+import Bgcover from '../Component/Bg/BackgroundCover';
+import PaymentAccordion from '../Component/PaymentAccordion';
+import { numberWithCommas } from '../helper/helper';
 
 const ConfirmTonnageByAgent = (props) => {
   const [confirm, setConfirm] = useState(false);
@@ -27,7 +27,7 @@ const ConfirmTonnageByAgent = (props) => {
     try {
       let response = await getPendingPayment();
       setData(response.data);
-      console.log(false, "kkkk");
+      console.log(false, 'kkkk');
       setLoading(false);
     } catch (error) {}
   };
@@ -38,7 +38,7 @@ const ConfirmTonnageByAgent = (props) => {
   }, [reload]);
 
   React.useEffect(() => {
-    const unsubscribe = props.navigation.addListener("focus", () => {
+    const unsubscribe = props.navigation.addListener('focus', () => {
       setLoading(true);
       getPendingPaymentFun().then(() => {
         //        setLoading(false);
@@ -62,18 +62,21 @@ const ConfirmTonnageByAgent = (props) => {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-        contentContainerStyle={{ minHeight: "100%" }}
+        contentContainerStyle={{ minHeight: '100%' }}
       >
         {loading ? (
           <View
             style={{
               flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100%",
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%',
             }}
           >
-            <ActivityIndicator size="large" color="#F18921" />
+            <Image
+              source={require('../assets/loading-gif.gif')}
+              style={{ width: 50, height: 50 }}
+            ></Image>
           </View>
         ) : (
           <>
@@ -81,16 +84,16 @@ const ConfirmTonnageByAgent = (props) => {
               <View
                 style={{
                   flex: 1,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: "100%",
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height: '100%',
                 }}
               >
                 <Text
                   style={{
-                    fontWeight: "bold",
+                    fontWeight: 'bold',
                     fontSize: 20,
-                    color: "#F18921",
+                    color: '#F18921',
                   }}
                 >
                   ... No Pending Payment yet
@@ -105,9 +108,9 @@ const ConfirmTonnageByAgent = (props) => {
                     <>
                       <>
                         <Text style={styles.mainHeading}>Agent Name</Text>
-                        <View style={{ flexDirection: "row", marginTop: 5 }}>
+                        <View style={{ flexDirection: 'row', marginTop: 5 }}>
                           <Text style={{ fontSize: 15 }}>
-                            {actual[0].agent.first_name}{" "}
+                            {actual[0].agent.first_name}{' '}
                             {actual[0].agent.last_name}
                           </Text>
                         </View>
@@ -115,7 +118,7 @@ const ConfirmTonnageByAgent = (props) => {
                           Agent Phone number
                         </Text>
                         <View
-                          style={{ flexDirection: "row", marginVertical: 5 }}
+                          style={{ flexDirection: 'row', marginVertical: 5 }}
                         >
                           <Text>{actual[0].agent.phone}</Text>
                         </View>
@@ -140,7 +143,7 @@ const ConfirmTonnageByAgent = (props) => {
 };
 
 const styles = StyleSheet.create({
-  mainHeading: { fontSize: 15, fontWeight: "bold" },
+  mainHeading: { fontSize: 15, fontWeight: 'bold' },
   leftWrapper: { marginTop: 10, marginLeft: 20 },
 });
 

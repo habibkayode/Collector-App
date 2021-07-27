@@ -1,4 +1,4 @@
-import * as TYPES from "./types";
+import * as TYPES from './types';
 
 const updateNetWork = (connected) => {
   return {
@@ -8,7 +8,7 @@ const updateNetWork = (connected) => {
 };
 
 const savePickUpRequest = (data, refreshing) => {
-  console.log(refreshing, "refreshing in save ", data.length);
+  console.log(refreshing, 'refreshing in save ', data.length);
   return {
     type: TYPES.COLLECTORPICKUPREQUEST,
     payload: {
@@ -19,7 +19,7 @@ const savePickUpRequest = (data, refreshing) => {
 };
 
 const saveAcceptedPickUpRequest = (data, refreshing) => {
-  console.log(refreshing, "refreshing in save ", data.length);
+  console.log(refreshing, 'refreshing in save ', data.length);
   return {
     type: TYPES.ACCEPTED_PICKUPREQUEST_TYPE,
     payload: {
@@ -48,7 +48,7 @@ const updateContentLoading = (status) => {
 };
 
 const saveUserData = (data, token) => {
-  console.log(data, "saving user data");
+  console.log(data, 'saving user data');
   return {
     type: TYPES.SAVEUSERDATA,
     payload: {
@@ -140,7 +140,7 @@ const materialLoaded = () => {
 };
 
 const updateSideBar = (status) => {
-  console.log(status, "ll");
+  console.log(status, 'll');
   return {
     type: TYPES.SIDEBAR_TYPE,
     payload: status,
@@ -200,7 +200,7 @@ const saveLoginLocation = (obj) => {
 };
 
 const saveAllCollection = (data, refreshing) => {
-  console.log(refreshing, "refreshing in save ", data.length);
+  console.log(refreshing, 'refreshing in save ', data.length);
   return {
     type: TYPES.ALL_COLLECTION,
     payload: {
@@ -210,7 +210,7 @@ const saveAllCollection = (data, refreshing) => {
   };
 };
 const updateLoggedIn = (status) => {
-  console.log(status, "changing Status");
+  console.log(status, 'changing Status');
   return {
     type: TYPES.LOGIN_TYPE,
     payload: status,
@@ -253,7 +253,7 @@ const updatePushToken = (token) => {
 };
 
 const updateMessageAlert = (status) => {
-  console.log(status, "oppp");
+  console.log(status, 'oppp');
   return {
     type: TYPES.MESSAGEALERT,
     payload: status,
@@ -264,6 +264,20 @@ const updatePickuAlert = (status) => {
   return {
     type: TYPES.PICkUPALERT,
     payload: status,
+  };
+};
+
+const updatePickupAlertModal = (status) => {
+  return {
+    type: TYPES.PICkUPALERTMODAL,
+    payload: status,
+  };
+};
+
+const updateRedirect = (obj) => {
+  return {
+    type: TYPES.REDIRECT,
+    payload: obj,
   };
 };
 
@@ -301,4 +315,6 @@ export {
   updatePushToken,
   updatePickuAlert,
   updateMessageAlert,
+  updatePickupAlertModal,
+  updateRedirect,
 };

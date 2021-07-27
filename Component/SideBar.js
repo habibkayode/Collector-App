@@ -78,7 +78,7 @@ const SideBar = (props) => {
                 blurRadius={20}
                 source={{
                   uri:
-                    "https://staging.scrapays.com/storage/profile_pictures/" +
+                    "https://api.scrapays.com/storage/profile_pictures/" +
                     userImageUrl,
                 }}
                 resizeMode="cover"
@@ -95,7 +95,7 @@ const SideBar = (props) => {
                   }}
                   source={{
                     uri:
-                      "https://staging.scrapays.com/storage/profile_pictures/" +
+                      "https://api.scrapays.com/storage/profile_pictures/" +
                       userImageUrl,
                   }}
                 />

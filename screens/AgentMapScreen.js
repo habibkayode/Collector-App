@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -8,23 +8,23 @@ import {
   ScrollView,
   Image,
   Alert,
-} from "react-native";
-import * as Animatable from "react-native-animatable";
-import Geolocation from "react-native-geolocation-service";
-import MapView, { Marker, Callout } from "react-native-maps";
+} from 'react-native';
+import * as Animatable from 'react-native-animatable';
+import Geolocation from 'react-native-geolocation-service';
+import MapView, { Marker, Callout } from 'react-native-maps';
 //import MapViewDirections from "react-native-maps-directions";
-import getDirections from "react-native-google-maps-directions";
-import Bgcover from "../Component/Bg/BackgroundCover";
-import { gettAllAgent } from "../Api/api";
-import { connect } from "react-redux";
-import { useRoute } from "@react-navigation/core";
+import getDirections from 'react-native-google-maps-directions';
+import Bgcover from '../Component/Bg/BackgroundCover';
+import { gettAllAgent } from '../Api/api';
+import { connect } from 'react-redux';
+import { useRoute } from '@react-navigation/core';
 
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import MapViewDirections from "react-native-maps-directions";
-import { getDistanceAndTime } from "../Api/locationApi";
+import MapViewDirections from 'react-native-maps-directions';
+import { getDistanceAndTime } from '../Api/locationApi';
 
-const GOOGLE_MAPS_APIKEY = "AIzaSyA3p7z6bSVFZ9qZWSB9BW8kmT6K50QTHb4";
+const GOOGLE_MAPS_APIKEY = 'AIzaSyA3p7z6bSVFZ9qZWSB9BW8kmT6K50QTHb4';
 
 const mapStateToProps = (state) => {
   return {
@@ -36,7 +36,6 @@ const AgentMapScreen = ({ navigation, agents, userLocation }) => {
   let [startingLocation, setStartingLocation] = useState({});
   let [distanceApart, setDistanceApart] = useState();
   let agentData = useRoute().params;
-  console.log(agentData.location, "agent location");
 
   useEffect(() => {
     getDistanceAndTime(userLocation, {
@@ -55,8 +54,8 @@ const AgentMapScreen = ({ navigation, agents, userLocation }) => {
     let granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       {
-        title: "Scrapays Location Permission",
-        message: "Scrapays App needs access to your location ",
+        title: 'Scrapays Location Permission',
+        message: 'Scrapays App needs access to your location ',
       }
     );
     if (granted) {
@@ -99,7 +98,6 @@ const AgentMapScreen = ({ navigation, agents, userLocation }) => {
   //     }
   //   };
   // }, []);
-  console.log(agentData, agentData.location.lng, "ppoooo");
 
   let handleGetDirections = () => {
     const data = {
@@ -113,12 +111,12 @@ const AgentMapScreen = ({ navigation, agents, userLocation }) => {
       },
       params: [
         {
-          key: "travelmode",
-          value: "walking", // may be "walking", "bicycling" or "transit" as well
+          key: 'travelmode',
+          value: 'walking', // may be "walking", "bicycling" or "transit" as well
         },
         {
-          key: "dir_action",
-          value: "navigate", // this instantly initializes navigation using the given travel mode
+          key: 'dir_action',
+          value: 'navigate', // this instantly initializes navigation using the given travel mode
         },
       ],
     };
@@ -130,7 +128,7 @@ const AgentMapScreen = ({ navigation, agents, userLocation }) => {
     getCurrentLocation();
   }, []);
   const redirectFunc = () => {
-    navigation.navigate("ProcessPickup", pickupData);
+    navigation.navigate('ProcessPickup', pickupData);
   };
 
   return (
@@ -168,7 +166,7 @@ const AgentMapScreen = ({ navigation, agents, userLocation }) => {
             >
               <Image
                 style={{ width: 30, height: 30 }}
-                source={require("../assets/srapays-logo.png")}
+                source={require('../assets/srapays-logo.png')}
               ></Image>
 
               {/* <MaterialCommunityIcons name="cart" color="blue" size={30} />
@@ -212,23 +210,23 @@ const AgentMapScreen = ({ navigation, agents, userLocation }) => {
       </View>
       <TouchableOpacity
         onPress={() => {
-          if (distanceApart.value < 5000) {
-            navigation.navigate("Received");
+          if (distanceApart.value < 1000) {
+            navigation.navigate('Received');
           } else {
-            Alert.alert("Info", "Please get to Agent location first");
+            Alert.alert('Info', 'Please get to Agent location first');
           }
         }}
         style={{
           paddingHorizontal: 30,
           paddingVertical: 10,
-          alignSelf: "flex-end",
-          backgroundColor: "#0A956A",
+          alignSelf: 'flex-end',
+          backgroundColor: '#0A956A',
           borderRadius: 10,
           marginTop: 20,
           marginBottom: 20,
         }}
       >
-        <Text style={{ color: "white", fontSize: 12, fontWeight: "bold" }}>
+        <Text style={{ color: 'white', fontSize: 12, fontWeight: 'bold' }}>
           Proceed
         </Text>
       </TouchableOpacity>

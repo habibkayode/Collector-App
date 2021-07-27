@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -12,20 +12,19 @@ import {
   UIManager,
   TouchableWithoutFeedback,
   Alert,
-} from "react-native";
-import Modal from "react-native-modal";
-import MultiSelect from "react-native-multiple-select";
-import { launchCamera, launchImageLibrary } from "react-native-image-picker";
+} from 'react-native';
+import Modal from 'react-native-modal';
+import MultiSelect from 'react-native-multiple-select';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
-import RNPickerSelect from "react-native-picker-select";
+import RNPickerSelect from 'react-native-picker-select';
 
-import { store } from "../Redux/store";
-import { getAllCoverageRegion, updateProfile } from "../Api/api";
-import { SafeAreaInsetsContext } from "react-native-safe-area-context";
-import { updateUserData } from "../Redux/actionCreator";
+import { store } from '../Redux/store';
+import { getAllCoverageRegion, updateProfile } from '../Api/api';
+import { updateUserData } from '../Redux/actionCreator';
 
 if (
-  Platform.OS === "android" &&
+  Platform.OS === 'android' &&
   UIManager.setLayoutAnimationEnabledExperimental
 ) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -35,8 +34,6 @@ const EditProfileModal = (props) => {
   let userData = store.getState().normal.userData;
   let coverageZoneObj = store.getState().normal.coverageZone;
 
-  let oo = [54, 74, 72];
-  let derivedLga;
   let userZones = userData.userable.coverage_zone_coordinates;
   // let userZones = [];
   //chage
@@ -63,12 +60,11 @@ const EditProfileModal = (props) => {
   let [lga, setLga] = useState(userZones[0]?.lga);
   console.log(
     userZones.map((i) => i.id),
-    "poiuyyy"
+    'poiuyyy'
   );
   let [zone, setZone] = useState(userZones.map((i) => i.name));
   let [sex, setSex] = useState(userData.userable.sex);
   let [age, setAge] = useState(userData.userable.age);
-
   let [imageResponse, setImageResponse] = useState();
   let [showError, setShowError] = useState(false);
   let [zoneChange, setZoneChange] = useState(false);
@@ -87,40 +83,41 @@ const EditProfileModal = (props) => {
 
   let handleSubmit = () => {
     let payload = new FormData();
-    payload.append("first_name", firstName);
-    console.log(firstName, "first name");
-    payload.append("last_name", lastName);
-    console.log(lastName, "last Name");
-    payload.append("email", email);
-    payload.append("sex", sex);
-    payload.append("age", age);
-    console.log(age, sex, "age in payload");
+    payload.append('first_name', firstName);
+    console.log(firstName, 'first name');
+    payload.append('last_name', lastName);
+    console.log(lastName, 'last Name');
+    payload.append('email', email);
+    payload.append('sex', sex);
+    if (age) {
+      payload.append('age', age);
+    }
+    console.log(age, sex, 'age in payload');
     if (zoneChange) {
       let newZone = zone.map((k) => {
         let actual = coverageZoneObj[lga].find((f) => f.name === k);
         return actual.id;
       });
-      console.log(newZone, "mkkkk");
-      payload.append("collection_coverage_zone", coverageZone);
+      console.log(newZone, 'mkkkk');
+      payload.append('collection_coverage_zone', coverageZone);
       newZone.forEach((i) => {
-        payload.append("coverage_zone_coordinates[]", i);
+        payload.append('coverage_zone_coordinates[]', i);
       });
 
-      console.log(zone, "coverage zone");
+      console.log(zone, 'coverage zone');
     } else {
-      payload.append("collection_coverage_zone", coverageZone);
+      payload.append('collection_coverage_zone', coverageZone);
       userZones.forEach((i) => {
-        console.log(i, "poiuy");
-        payload.append("coverage_zone_coordinates[]", i.id);
+        payload.append('coverage_zone_coordinates[]', i.id);
       });
 
-      console.log(coverageZone, "coverage zone");
+      console.log(coverageZone, 'coverage zone');
     }
 
     if (imageResponse) {
-      console.log("badd", imageResponse.type);
-      payload.append("avatar_image", {
-        name: "image1." + imageResponse.type.split("/")[1],
+      console.log('badd', imageResponse.type);
+      payload.append('avatar_image', {
+        name: 'image1.' + imageResponse.type.split('/')[1],
         type: imageResponse.type,
         uri: imageResponse.uri,
       });
@@ -128,9 +125,17 @@ const EditProfileModal = (props) => {
 
     updateProfile(payload)
       .then((resp) => {
-        console.log("finished", resp);
+        console.log('finished', resp);
         store.dispatch(updateUserData(resp.data));
-        Alert.alert("Info", "Your profile details have updated successfully");
+        Alert.alert('Info', 'Your profile details have updated successfully', [
+          {
+            text: 'Ok',
+            onPress: () => {
+              props.handleModalBackButton();
+            },
+            style: 'cancel',
+          },
+        ]);
       })
       .catch((e) => {
         console.log(e);
@@ -149,11 +154,11 @@ const EditProfileModal = (props) => {
   };
 
   const pickAnImage = () => {
-    launchImageLibrary({ mediaType: "photo" }, (res) => {
+    launchImageLibrary({ mediaType: 'photo' }, (res) => {
       if (res.didCancel) {
-        console.log("User cancelled image picker");
+        console.log('User cancelled image picker');
       } else if (res.error) {
-        console.log("ImagePicker Error: ", res.error);
+        console.log('ImagePicker Error: ', res.error);
       }
       if (res.uri) {
         console.log(res.uri);
@@ -201,7 +206,7 @@ const EditProfileModal = (props) => {
         <View>
           <ScrollView contentContainerStyle={styles.modalContainer}>
             <Text
-              style={{ fontWeight: "bold", fontSize: 20, marginBottom: 20 }}
+              style={{ fontWeight: 'bold', fontSize: 20, marginBottom: 20 }}
             >
               Edit Profile
             </Text>
@@ -210,7 +215,7 @@ const EditProfileModal = (props) => {
                 placeholder="First Name"
                 value={firstName}
                 onChangeText={(value) => setFirstName(value)}
-                style={{ fontWeight: "bold", fontSize: 16 }}
+                style={{ fontWeight: 'bold', fontSize: 16 }}
               />
             </View>
             <View style={styles.textInputWrapper}>
@@ -218,7 +223,7 @@ const EditProfileModal = (props) => {
                 placeholder="Last Name"
                 value={lastName}
                 onChangeText={(value) => setLastName(value)}
-                style={{ fontWeight: "bold", fontSize: 16 }}
+                style={{ fontWeight: 'bold', fontSize: 16 }}
               />
             </View>
             <View style={styles.textInputWrapper}>
@@ -227,14 +232,14 @@ const EditProfileModal = (props) => {
                 value={email}
                 keyboardType="email-address"
                 onChangeText={(value) => setEmail(value)}
-                style={{ fontWeight: "bold", fontSize: 16 }}
+                style={{ fontWeight: 'bold', fontSize: 16 }}
               />
             </View>
             <RNPickerSelect
               placeholder={{
-                label: "Age",
-                value: "default",
-                color: "#666666",
+                label: 'Age',
+                value: 'default',
+                color: '#666666',
               }}
               onValueChange={(value) => {
                 setAge(value);
@@ -242,40 +247,40 @@ const EditProfileModal = (props) => {
               style={{
                 viewContainer: {
                   borderWidth: 1,
-                  borderColor: "#F18921",
-                  borderStyle: "solid",
-                  width: "100%",
+                  borderColor: '#F18921',
+                  borderStyle: 'solid',
+                  width: '100%',
                   marginVertical: 10,
                   borderRadius: 10,
                   //paddingHorizontal: 0,
                 },
                 inputAndroid: {
-                  color: "black",
-                  fontWeight: "700",
+                  color: 'black',
+                  fontWeight: '700',
                   fontSize: 15,
                 },
                 placeholder: {
-                  color: "#666666",
+                  color: '#666666',
                 },
               }}
               value={age}
               items={[
-                { label: "18 - 22", value: "18 - 22", color: "black" },
-                { label: "23 - 27", value: "23 - 27", color: "black" },
-                { label: "28 - 32", value: "28 - 32", color: "black" },
-                { label: "33 - 40", value: "33 - 40", color: "black" },
+                { label: '18 - 22', value: '18 - 22', color: 'black' },
+                { label: '23 - 27', value: '23 - 27', color: 'black' },
+                { label: '28 - 32', value: '28 - 32', color: 'black' },
+                { label: '33 - 40', value: '33 - 40', color: 'black' },
                 {
-                  label: "40 and Above",
-                  value: "40 and Above",
-                  color: "black",
+                  label: '40 and Above',
+                  value: '40 and Above',
+                  color: 'black',
                 },
               ]}
             />
             <RNPickerSelect
               placeholder={{
-                label: "Sex",
-                value: "default",
-                color: "#666666",
+                label: 'Sex',
+                value: 'default',
+                color: '#666666',
               }}
               onValueChange={(value) => {
                 setSex(value);
@@ -283,26 +288,26 @@ const EditProfileModal = (props) => {
               style={{
                 viewContainer: {
                   borderWidth: 1,
-                  borderColor: "#F18921",
-                  borderStyle: "solid",
-                  width: "100%",
+                  borderColor: '#F18921',
+                  borderStyle: 'solid',
+                  width: '100%',
                   marginVertical: 10,
                   borderRadius: 10,
                   //paddingHorizontal: 0,
                 },
                 inputAndroid: {
-                  color: "black",
-                  fontWeight: "700",
+                  color: 'black',
+                  fontWeight: '700',
                   fontSize: 15,
                 },
                 placeholder: {
-                  color: "#666666",
+                  color: '#666666',
                 },
               }}
               value={sex}
               items={[
-                { label: "Male", value: "male", color: "black" },
-                { label: "Female", value: "female", color: "black" },
+                { label: 'Male', value: 'male', color: 'black' },
+                { label: 'Female', value: 'female', color: 'black' },
               ]}
             />
 
@@ -312,7 +317,7 @@ const EditProfileModal = (props) => {
                 // borderColor: "#F18921",
                 // borderStyle: "solid",
                 marginBottom: 20,
-                alignSelf: "stretch",
+                alignSelf: 'stretch',
                 paddingTop: 4,
                 //paddingLeft: 10,
               }}
@@ -332,43 +337,43 @@ const EditProfileModal = (props) => {
                 uniqueKey="name"
                 ref={lgaRef}
                 styleTextDropdown={{
-                  fontWeight: "bold",
-                  color: "black",
+                  fontWeight: 'bold',
+                  color: 'black',
                   paddingHorizontal: 20,
                 }}
                 onSelectedItemsChange={(items) => {
-                  console.log(items, "lga");
+                  console.log(items, 'lga');
                   setZone([]);
                   setZoneChange(true);
                   setLga(items);
                 }}
                 styleMainWrapper={{
                   //height: 200,
-                  alignSelf: "stretch",
+                  alignSelf: 'stretch',
                 }}
                 styleInputGroup={{
                   borderWidth: 1,
-                  borderColor: "#F18921",
-                  borderStyle: "solid",
+                  borderColor: '#F18921',
+                  borderStyle: 'solid',
                 }}
                 styleTextDropdownSelected={{
-                  color: "black",
-                  fontWeight: "bold",
+                  color: 'black',
+                  fontWeight: 'bold',
                   fontSize: 16,
                   paddingHorizontal: 20,
                 }}
                 styleDropdownMenuSubsection={{
                   borderWidth: 1,
-                  borderColor: "#F18921",
-                  borderStyle: "solid",
+                  borderColor: '#F18921',
+                  borderStyle: 'solid',
                   borderRadius: 10,
                 }}
-                styleListContainer={{ height: "100%" }}
+                styleListContainer={{ height: '100%' }}
                 // styleSelectorContainer={{ borderColor: "black", borderWidth: 1 }}
                 styleDropdownMenu={{ height: 50 }}
                 selectedItemIconColor="#F18921"
                 selectedItems={lga}
-                selectText={`${userZones[0]?.lga || "Select your L.G.A"}`}
+                selectText={`${userZones[0]?.lga || 'Select your L.G.A'}`}
                 searchInputPlaceholderText="Search your L.G.A"
                 onChangeInput={(text) => console.log(text)}
                 //          altFontFamily="ProximaNova-Light"
@@ -379,7 +384,7 @@ const EditProfileModal = (props) => {
                 selectedItemIconColor="#F18921"
                 itemTextColor="black"
                 displayKey="name"
-                searchInputStyle={{ color: "black" }}
+                searchInputStyle={{ color: 'black' }}
                 submitButtonColor="#CCC"
                 submitButtonText="Submit"
                 hideDropdown={true}
@@ -393,7 +398,7 @@ const EditProfileModal = (props) => {
                 // borderStyle: "solid",
                 // borderRadius: 10,
                 // marginBottom: 20,
-                alignSelf: "stretch",
+                alignSelf: 'stretch',
                 paddingTop: 4,
               }}
             >
@@ -411,7 +416,7 @@ const EditProfileModal = (props) => {
                         };
                       })
                     : {
-                        name: "",
+                        name: '',
                       }
                 }
                 fontSize={15}
@@ -419,36 +424,36 @@ const EditProfileModal = (props) => {
                 uniqueKey="name"
                 ref={zoneRef}
                 onSelectedItemsChange={(items, ok) => {
-                  console.log(items, "zone");
+                  console.log(items, 'zone');
                   if (items.length < 4) setZone(items);
                 }}
                 styleMainWrapper={{
                   //height: 200,
-                  alignSelf: "stretch",
+                  alignSelf: 'stretch',
                 }}
                 styleTextDropdown={{
-                  fontWeight: "bold",
-                  color: "black",
+                  fontWeight: 'bold',
+                  color: 'black',
                   paddingHorizontal: 20,
                 }}
                 styleInputGroup={{
                   borderWidth: 1,
-                  borderColor: "#F18921",
-                  borderStyle: "solid",
+                  borderColor: '#F18921',
+                  borderStyle: 'solid',
                 }}
                 styleTextDropdownSelected={{
-                  color: "black",
-                  fontWeight: "bold",
+                  color: 'black',
+                  fontWeight: 'bold',
                   fontSize: 16,
                   paddingHorizontal: 20,
                 }}
                 styleDropdownMenuSubsection={{
                   borderWidth: 1,
-                  borderColor: "#F18921",
-                  borderStyle: "solid",
+                  borderColor: '#F18921',
+                  borderStyle: 'solid',
                   borderRadius: 10,
                 }}
-                styleListContainer={{ height: "100%" }}
+                styleListContainer={{ height: '100%' }}
                 // styleSelectorContainer={{ borderColor: "black", borderWidth: 1 }}
                 styleDropdownMenu={{ height: 50 }}
                 selectedItemIconColor="#F18921"
@@ -464,7 +469,7 @@ const EditProfileModal = (props) => {
                 selectedItemIconColor="black"
                 itemTextColor="black"
                 displayKey="name"
-                searchInputStyle={{ color: "black" }}
+                searchInputStyle={{ color: 'black' }}
                 submitButtonColor="#CCC"
                 submitButtonText="Submit"
                 hideDropdown={true}
@@ -569,7 +574,7 @@ const EditProfileModal = (props) => {
                   source={{
                     uri: imageResponse
                       ? profileImage
-                      : "https://staging.scrapays.com/storage/profile_pictures/" +
+                      : 'https://api.scrapays.com/storage/profile_pictures/' +
                         profileImage,
                   }}
                   style={{
@@ -583,7 +588,7 @@ const EditProfileModal = (props) => {
             ) : (
               <TouchableOpacity onPress={pickAnImage}>
                 <Image
-                  source={require("../assets/upload_avatar.png")}
+                  source={require('../assets/upload_avatar.png')}
                   style={{ zIndex: -1 }}
                 />
               </TouchableOpacity>
@@ -595,17 +600,17 @@ const EditProfileModal = (props) => {
               onPress={handleSubmit}
               style={{
                 padding: 10,
-                backgroundColor: "#F18921",
+                backgroundColor: '#F18921',
                 borderRadius: 10,
-                width: "100%",
+                width: '100%',
               }}
             >
               <Text
                 style={{
-                  color: "white",
-                  fontWeight: "bold",
+                  color: 'white',
+                  fontWeight: 'bold',
                   fontSize: 22,
-                  textAlign: "center",
+                  textAlign: 'center',
                 }}
               >
                 Update Profile
@@ -620,41 +625,41 @@ const EditProfileModal = (props) => {
 
 const styles = StyleSheet.create({
   modal: {
-    justifyContent: "center",
+    justifyContent: 'center',
     margin: 0,
-    position: "absolute",
+    position: 'absolute',
     flex: 1,
-    height: "100%",
-    alignSelf: "center",
-    justifyContent: "center",
-    width: "100%",
+    height: '100%',
+    alignSelf: 'center',
+    justifyContent: 'center',
+    width: '100%',
   },
   modalContainer: {
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     padding: 20,
-    alignItems: "center",
+    alignItems: 'center',
     borderRadius: 20,
   },
   textAreaContainer: {
-    borderColor: "#F18921",
+    borderColor: '#F18921',
     borderWidth: 1,
     paddingHorizontal: 20,
     borderRadius: 10,
     marginBottom: 20,
-    width: "100%",
-    color: "black",
+    width: '100%',
+    color: 'black',
     //alignItems: "flex-start",
   },
 
   textInputWrapper: {
-    borderColor: "#F18921",
+    borderColor: '#F18921',
     borderWidth: 1,
-    borderStyle: "solid",
+    borderStyle: 'solid',
     paddingHorizontal: 20,
     borderRadius: 10,
     marginBottom: 20,
     height: 50,
-    alignSelf: "stretch",
+    alignSelf: 'stretch',
   },
 });
 

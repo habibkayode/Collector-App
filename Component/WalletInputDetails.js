@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   View,
   TextInput,
@@ -6,15 +6,18 @@ import {
   TouchableOpacity,
   Text,
   Alert,
-} from "react-native";
-import { getUserName } from "../Api/api";
-import RadioButtonRN from "radio-buttons-react-native";
+} from 'react-native';
+import { getUserName } from '../Api/api';
+import RadioButtonRN from 'radio-buttons-react-native';
+import { numberWithCommas } from '../helper/helper';
 
 const WalletDetailsInput = (props) => {
   const [pagaData, setPagaData] = useState({
-    phone: "",
-    amount: "",
-    type: "",
+    phone: '',
+    amount: '',
+    type: '',
+    displayAmount: '',
+    narration: '',
   });
   const [userDetails, setUserDetails] = useState({});
 
@@ -25,27 +28,27 @@ const WalletDetailsInput = (props) => {
     } catch (e) {
       console.log(e);
 
-      if (e.response.data.error === "Not Found.") {
+      if (e.response.data.error === 'Not Found.') {
         Alert.alert(
-          "Notice",
+          'Notice',
           `User with the phone number ${value} is currently not registered with Scrapays.Kindly confirm if you will like to proceed  to credit this User.`,
           [
             {
-              text: "Proceed",
+              text: 'Proceed',
               onPress: () => {
                 Alert.alert(
-                  "Notice",
-                  "No worries 😁, Transfers can be made to anyone and they will get a credit SMS with instructions to access the funds. "
+                  'Notice',
+                  'No worries 😁, Transfers can be made to anyone and they will get a credit SMS with instructions to access the funds. '
                 );
               },
-              style: "Cancel",
+              style: 'Cancel',
             },
             {
-              text: "No",
+              text: 'No',
               onPress: () => {
-                setPagaData((prev) => ({ ...prev, phone: "" }));
+                setPagaData((prev) => ({ ...prev, phone: '' }));
               },
-              style: "destructive",
+              style: 'destructive',
             },
           ],
           {
@@ -53,7 +56,7 @@ const WalletDetailsInput = (props) => {
           }
         );
       } else {
-        Alert.alert("Error", e.response.data.error);
+        Alert.alert('Error', e.response.data.error);
       }
     }
   };
@@ -64,16 +67,17 @@ const WalletDetailsInput = (props) => {
       amount: pagaData.amount,
       beneficiary: pagaData.phone,
       type: pagaData.type,
+      narration: pagaData.narration,
     };
     props.sendFunc(payload);
   };
 
   const radioData = [
     {
-      label: props.cog ? "Commission Account" : "Main Account",
+      label: props.cog ? 'Commission Account' : 'Main Account',
     },
     {
-      label: "Another Wallet",
+      label: 'Other Wallet',
     },
   ];
 
@@ -86,12 +90,12 @@ const WalletDetailsInput = (props) => {
           console.log(e, i);
           setPagaData((prev) => ({ ...prev, type: e.label }));
         }}
-        textStyle={{ fontWeight: "bold" }}
+        textStyle={{ fontWeight: 'bold' }}
       />
-      {pagaData.type === "Another Wallet" && (
+      {pagaData.type === 'Other Wallet' && (
         <View style={[styles.inputWrapper]}>
           <TextInput
-            placeholder="User Phone no"
+            placeholder="User Phone number"
             keyboardType="phone-pad"
             value={pagaData.phone}
             onChangeText={(value) => {
@@ -110,13 +114,13 @@ const WalletDetailsInput = (props) => {
                 }
               }
             }}
-            style={{ fontWeight: "bold", fontSize: 16 }}
+            style={{ fontWeight: 'bold', fontSize: 16 }}
           />
         </View>
       )}
-      {pagaData.type === "Another Wallet" && userDetails.Name && (
-        <View style={[styles.inputWrapper, { justifyContent: "center" }]}>
-          <Text style={{ textAlignVertical: "center", fontWeight: "bold" }}>
+      {pagaData.type === 'Other Wallet' && userDetails.Name && (
+        <View style={[styles.inputWrapper, { justifyContent: 'center' }]}>
+          <Text style={{ textAlignVertical: 'center', fontWeight: 'bold' }}>
             {userDetails.Name}
           </Text>
           {/* <TextInput
@@ -138,27 +142,70 @@ const WalletDetailsInput = (props) => {
         <TextInput
           placeholder="Amount"
           keyboardType="numeric"
-          value={pagaData.amount}
+          value={pagaData.displayAmount}
+          onFocus={() => {
+            setPagaData((prev) => {
+              return {
+                ...prev,
+                displayAmount: prev.amount,
+              };
+            });
+          }}
+          onEndEditing={() => {
+            setPagaData((prev) => {
+              return {
+                ...prev,
+
+                displayAmount: numberWithCommas(prev.amount),
+              };
+            });
+          }}
           onChangeText={(value) => {
+            let sp = value.split('.');
+            if ((sp.length > 1 && sp[1].length > 2) || sp.length > 2) {
+              return;
+            }
             setPagaData((prev) => {
               return {
                 ...prev,
                 amount: value,
+                displayAmount: value,
               };
             });
           }}
-          style={{ fontWeight: "bold", fontSize: 16 }}
+          style={{ fontWeight: 'bold', fontSize: 16 }}
         />
       </View>
-
-      <TouchableOpacity
-        style={styles.sendButton}
-        onPress={() => {
-          makeTransfer();
-        }}
-      >
-        <Text style={styles.sendButtonText}>Send</Text>
-      </TouchableOpacity>
+      <View style={[styles.textAreaWrapper]}>
+        <TextInput
+          placeholder="Narration"
+          value={pagaData.textAreaWrapper}
+          onChangeText={(value) => {
+            setPagaData((prev) => {
+              return {
+                ...prev,
+                narration: value,
+              };
+            });
+          }}
+          numberOfLines={5}
+          multiline={true}
+        ></TextInput>
+      </View>
+      {pagaData.amount &&
+      (pagaData.type === 'Main Account' ||
+      pagaData.type === 'Commission Account'
+        ? true
+        : pagaData.phone.length === 11) ? (
+        <TouchableOpacity
+          style={styles.sendButton}
+          onPress={() => {
+            makeTransfer();
+          }}
+        >
+          <Text style={styles.sendButtonText}>Send</Text>
+        </TouchableOpacity>
+      ) : null}
     </>
   );
 };
@@ -166,28 +213,37 @@ const WalletDetailsInput = (props) => {
 const styles = StyleSheet.create({
   sendButton: {
     height: 55,
-    backgroundColor: "#0A956A",
+    backgroundColor: '#0A956A',
     borderRadius: 10,
-    justifyContent: "center",
+    justifyContent: 'center',
     paddingHorizontal: 40,
     marginHorizontal: 20,
     marginTop: 40,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   sendButtonText: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: "white",
-    textAlign: "center",
+    fontWeight: 'bold',
+    color: 'white',
+    textAlign: 'center',
   },
   inputWrapper: {
-    borderColor: "#F18921",
+    borderColor: '#F18921',
     borderWidth: 1,
-    borderStyle: "solid",
+    borderStyle: 'solid',
     paddingHorizontal: 20,
     borderRadius: 10,
     // width: "47%",
     height: 50,
+    marginTop: 10,
+  },
+  textAreaWrapper: {
+    borderColor: '#F18921',
+    borderWidth: 1,
+    borderStyle: 'solid',
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    // width: "47%",
     marginTop: 10,
   },
 });

@@ -1,38 +1,39 @@
-const NETWORKCHANGES = "newtworkChanges";
-const SAVEUSERDATA = "saveUserData";
-const SAVETOKEN = "saveToken";
-const COLLECTORPICKUPREQUEST = "collectorPickUpRequest";
-const MATERIALTYPE = "materialType";
-const PICKUPANDIMAGETYPE = "pickupAndImageType";
-const UPDATEBLUETOOTHSTATE = "updateBluetoothState";
-const BONDEDTYPE = "bondedType";
-const DISCOVERINGTYPE = "discoveringType";
-const DISCOVERLISTYPE = "discoverListType";
-const UPDATESELECTEDTYPE = "updateSelectedtype";
-const CONNECTEDTYPE = "connectedType";
-const BLEMESSAGETYPE = "bleMessageType";
-const BLESTATUSTYPE = "bleStatusType";
-const NETWORK_LOADING_TYPE = "networkLoadingType";
-const MATERIAL_LOADED_TYPE = "materialLoadedType";
-const CONTENT_LOADING_TYPE = "contentLoadingType";
-const ACCEPTED_PICKUPREQUEST_TYPE = "acceptedPickupRequestType";
-const PENDING_COLLECTION = "pendingCollection";
-const SIDEBAR_TYPE = "sideBarType";
-const COMPOSITE_TYPE = "compositeType";
-const NOTIFICATION_TYPE = "notificationType";
-const COVERAGE_ZONE_TYPE = "coverageZone";
-const AGENT_TYPE = "agentType";
-const LATLNG_TYPE = "latLng";
-const ALL_COLLECTION = "allCollection";
-const LOGIN_TYPE = "loginType";
-const NEW_REQUEST_TYPE = "newRequestType";
-const NEW_NOTIFICATION_TYPE = "newNotificationType";
-const SAVEDATA_TYPE = "saveDataType";
-const BANK_TYPE = "bankType";
-const DEVICETOKEN = "deviceToken";
-
-const MESSAGEALERT = "messageAlert";
-const PICkUPALERT = "pickupAlert";
+const NETWORKCHANGES = 'newtworkChanges';
+const SAVEUSERDATA = 'saveUserData';
+const SAVETOKEN = 'saveToken';
+const COLLECTORPICKUPREQUEST = 'collectorPickUpRequest';
+const MATERIALTYPE = 'materialType';
+const PICKUPANDIMAGETYPE = 'pickupAndImageType';
+const UPDATEBLUETOOTHSTATE = 'updateBluetoothState';
+const BONDEDTYPE = 'bondedType';
+const DISCOVERINGTYPE = 'discoveringType';
+const DISCOVERLISTYPE = 'discoverListType';
+const UPDATESELECTEDTYPE = 'updateSelectedtype';
+const CONNECTEDTYPE = 'connectedType';
+const BLEMESSAGETYPE = 'bleMessageType';
+const BLESTATUSTYPE = 'bleStatusType';
+const NETWORK_LOADING_TYPE = 'networkLoadingType';
+const MATERIAL_LOADED_TYPE = 'materialLoadedType';
+const CONTENT_LOADING_TYPE = 'contentLoadingType';
+const ACCEPTED_PICKUPREQUEST_TYPE = 'acceptedPickupRequestType';
+const PENDING_COLLECTION = 'pendingCollection';
+const SIDEBAR_TYPE = 'sideBarType';
+const COMPOSITE_TYPE = 'compositeType';
+const NOTIFICATION_TYPE = 'notificationType';
+const COVERAGE_ZONE_TYPE = 'coverageZone';
+const AGENT_TYPE = 'agentType';
+const LATLNG_TYPE = 'latLng';
+const ALL_COLLECTION = 'allCollection';
+const LOGIN_TYPE = 'loginType';
+const NEW_REQUEST_TYPE = 'newRequestType';
+const NEW_NOTIFICATION_TYPE = 'newNotificationType';
+const SAVEDATA_TYPE = 'saveDataType';
+const BANK_TYPE = 'bankType';
+const DEVICETOKEN = 'deviceToken';
+const REDIRECT = 'redirect';
+const MESSAGEALERT = 'messageAlert';
+const PICkUPALERT = 'pickupAlert';
+const PICkUPALERTMODAL = 'pickupAlertModal';
 export {
   NEW_REQUEST_TYPE,
   NETWORKCHANGES,
@@ -68,4 +69,6 @@ export {
   DEVICETOKEN,
   PICkUPALERT,
   MESSAGEALERT,
+  PICkUPALERTMODAL,
+  REDIRECT,
 };

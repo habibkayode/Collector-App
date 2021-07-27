@@ -1,11 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { View, Image, Text, TouchableOpacity, ScrollView } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import SmallImage from "./SmallImage";
-import { acceptPickUp, rejectPickUp } from "../Api/api";
-import { timeDifference } from "../helper/timeHelper";
-import { getDistanceAndTime } from "../Api/locationApi";
-import { store } from "../Redux/store";
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Image,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Linking,
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import SmallImage from './SmallImage';
+import { acceptPickUp, rejectPickUp } from '../Api/api';
+import { timeDifference } from '../helper/timeHelper';
+import { getDistanceAndTime } from '../Api/locationApi';
+import { store } from '../Redux/store';
+
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const PickUpCard = ({ data }) => {
   let [timeToLocation, setTimeToLocation] = useState();
@@ -59,22 +68,22 @@ const PickUpCard = ({ data }) => {
   return (
     <View
       style={{
-        width: "100%",
-        backgroundColor: "#252525",
+        width: '100%',
+        backgroundColor: '#252525',
         padding: 20,
         paddingVertical: 10,
         borderRadius: 20,
         marginBottom: 10,
       }}
     >
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
         <Text
           style={{
-            fontWeight: "bold",
+            fontWeight: 'bold',
             fontSize: 18,
-            color: "white",
-            maxWidth: "80%",
-            overflow: "scroll",
+            color: 'white',
+            maxWidth: '80%',
+            overflow: 'scroll',
           }}
         >
           {data.producer_name}
@@ -108,55 +117,97 @@ const PickUpCard = ({ data }) => {
       <Text
         style={{
           marginTop: 5,
-          fontWeight: "bold",
+          fontWeight: 'bold',
           fontSize: 15,
-          color: "white",
+          color: 'white',
         }}
       >
         {data.address}
       </Text>
       <View
         style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
+          flexDirection: 'row',
+          justifyContent: 'space-between',
           marginTop: 10,
         }}
       >
-        <Text style={{ color: "white", fontSize: 15, fontWeight: "bold" }}>
+        <Text style={{ color: 'white', fontSize: 15, fontWeight: 'bold' }}>
           {data.producer.phone}
         </Text>
       </View>
+      <View style={{ flexDirection: 'row' }}>
+        <TouchableOpacity
+          style={{ flexDirection: 'row' }}
+          onPress={() => {
+            Linking.openURL(`tel:${data.producer.phone}`);
+          }}
+        >
+          <MaterialCommunityIcons name="phone" size={15} color="#72DFC5" />
+          <Text
+            style={{
+              color: 'grey',
+              fontSize: 12,
+              marginLeft: 5,
+              fontWeight: 'bold',
+            }}
+          >
+            Call
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={{ marginLeft: 15, flexDirection: 'row' }}
+          onPress={() => {
+            Linking.openURL(
+              `whatsapp://send?text=Hello   &phone=+234${data.producer.phone}`
+            );
+          }}
+        >
+          <MaterialCommunityIcons name="whatsapp" size={15} color="#72DFC5" />
+          <Text
+            style={{
+              color: 'grey',
+              fontSize: 12,
+              marginLeft: 5,
+              fontWeight: 'bold',
+            }}
+          >
+            Chat
+          </Text>
+        </TouchableOpacity>
+      </View>
+
       <View
         style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
+          flexDirection: 'row',
+          justifyContent: 'space-between',
           marginTop: 10,
         }}
       >
-        <Text style={{ color: "white", fontWeight: "bold" }}>
-          Distane Apart
+        <Text style={{ color: 'white', fontWeight: 'bold' }}>
+          Distance Apart
         </Text>
-        <Text style={{ color: "white", fontWeight: "bold" }}>
+        <Text style={{ color: 'white', fontWeight: 'bold' }}>
           Estimated Time
         </Text>
       </View>
       <View
         style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
+          flexDirection: 'row',
+          justifyContent: 'space-between',
           marginBottom: 10,
         }}
       >
-        <Text style={{ color: "white" }}>{distanceApart}</Text>
-        <Text style={{ color: "white" }}>{timeToLocation}</Text>
+        <Text style={{ color: 'white' }}>{distanceApart}</Text>
+        <Text style={{ color: 'white' }}>{timeToLocation}</Text>
       </View>
 
       <View
         style={{
           marginTop: 10,
-          flexDirection: "row",
-          justifyContent: "flex-end",
-          alignItems: "center",
+          flexDirection: 'row',
+          justifyContent: 'flex-end',
+          alignItems: 'center',
         }}
       >
         <ScrollView
@@ -164,7 +215,7 @@ const PickUpCard = ({ data }) => {
           horizontal={true}
           contentContainerStyle={{}}
         >
-          <View style={{ flexDirection: "row", flex: 1 }}>
+          <View style={{ flexDirection: 'row', flex: 1 }}>
             {data.homogeneous_materials.map((item) => (
               <SmallImage data={item} />
             ))}
@@ -173,10 +224,10 @@ const PickUpCard = ({ data }) => {
 
         <View
           style={{
-            flexDirection: "row",
+            flexDirection: 'row',
             marginLeft: 30,
-            width: "40%",
-            justifyContent: "flex-end",
+            width: '40%',
+            justifyContent: 'flex-end',
           }}
         >
           <View style={{ marginRight: 10 }}>
@@ -185,43 +236,43 @@ const PickUpCard = ({ data }) => {
                 width: 29,
                 height: 29,
                 borderRadius: 15,
-                backgroundColor: "#ED2C2C",
-                justifyContent: "center",
-                alignItems: "center",
+                backgroundColor: '#ED2C2C',
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
               onPress={() => {
                 rejectPickUp(data.id).then((data) => {
                   if (data.success) {
-                    console.log(data, "rejected");
-                    navigation.navigate("RejectPickup");
+                    console.log(data, 'rejected');
+                    navigation.navigate('RejectPickup');
                   }
                 });
               }}
             >
-              <Image source={require("../assets/close.png")} />
+              <Image source={require('../assets/close.png')} />
             </TouchableOpacity>
-            <Text style={{ color: "white", right: 5 }}>Reject</Text>
+            <Text style={{ color: 'white', right: 5 }}>Reject</Text>
           </View>
           <View style={{}}>
             <TouchableOpacity
               onPress={() => {
-                console.log(data.id, "in card");
+                console.log(data.id, 'in card');
                 acceptPickUp(data.id).then((data) => {
-                  if (data.success) navigation.navigate("AcceptPickup");
+                  if (data.success) navigation.navigate('AcceptPickup');
                 });
               }}
               style={{
                 width: 29,
                 height: 29,
                 borderRadius: 15,
-                backgroundColor: "#00B17B",
-                justifyContent: "center",
-                alignItems: "center",
+                backgroundColor: '#00B17B',
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
             >
-              <Image source={require("../assets/check.png")} />
+              <Image source={require('../assets/check.png')} />
             </TouchableOpacity>
-            <Text style={{ color: "white", right: 5 }}>Accept</Text>
+            <Text style={{ color: 'white', right: 5 }}>Accept</Text>
           </View>
         </View>
       </View>

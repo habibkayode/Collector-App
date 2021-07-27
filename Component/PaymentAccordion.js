@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef } from 'react';
 import {
   View,
   TouchableOpacity,
@@ -10,13 +10,13 @@ import {
   Image,
   Alert,
   Modal,
-} from "react-native";
-import Icon from "react-native-vector-icons/MaterialIcons";
-import { Colors } from "./color";
-import { useNavigation } from "@react-navigation/native";
-import moment from "moment";
-import { numberWithCommas } from "../helper/helper";
-import { acceptPayment, rejectPayment } from "../Api/api";
+} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { Colors } from './color';
+import { useNavigation } from '@react-navigation/native';
+import moment from 'moment';
+import { numberWithCommas } from '../helper/helper';
+import { acceptPayment, rejectPayment } from '../Api/api';
 
 let PaymentAccordion = (props) => {
   let navigation = useNavigation();
@@ -25,11 +25,11 @@ let PaymentAccordion = (props) => {
   const [confirm, setConfirm] = useState(false);
   const [notConfirm, setNotCofirm] = useState(false);
 
-  if (Platform.OS === "android") {
+  if (Platform.OS === 'android') {
     UIManager.setLayoutAnimationEnabledExperimental(true);
   }
 
-  console.log(props.commissions, "ppoiuyy");
+  console.log(props, 'ppoiuyy');
   const toggleExpand = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setExpanded(!expanded);
@@ -43,7 +43,7 @@ let PaymentAccordion = (props) => {
 
       setConfirm(true);
     } catch (error) {
-      Alert.alert("Error", error.response.data.error);
+      Alert.alert('Error', error.response.data.error);
     }
   };
 
@@ -52,7 +52,7 @@ let PaymentAccordion = (props) => {
       let response = await rejectPayment(id);
       setNotCofirm(true);
     } catch (error) {
-      Alert.alert("Error", error.response.data.error);
+      Alert.alert('Error', error.response.data.error);
     }
   };
 
@@ -60,19 +60,19 @@ let PaymentAccordion = (props) => {
     <View
       style={{
         marginBottom: 10,
-        borderColor: "#F18921",
+        borderColor: '#F18921',
         borderWidth: 1,
-        borderStyle: "solid",
+        borderStyle: 'solid',
         borderRadius: 10,
       }}
     >
       <View
         // ref={accordian}
-        style={[styles.row, { flexDirection: "row", padding: 10 }]}
+        style={[styles.row, { flexDirection: 'row', padding: 10 }]}
         //onPress={() => toggleExpand()}
       >
         <Text style={[styles.title, styles.font]}>
-          {moment(props.created_at).format("Do MMM YY , H:MM")}
+          {moment(props.created_at).format('Do MMM YY , H:MM')}
         </Text>
 
         <TouchableOpacity
@@ -83,8 +83,8 @@ let PaymentAccordion = (props) => {
           }}
         >
           <Icon
-            style={{ alignSelf: "center" }}
-            name={expanded ? "keyboard-arrow-up" : "keyboard-arrow-down"}
+            style={{ alignSelf: 'center' }}
+            name={expanded ? 'keyboard-arrow-up' : 'keyboard-arrow-down'}
             size={30}
             color={Colors.DARKGRAY}
           />
@@ -96,14 +96,14 @@ let PaymentAccordion = (props) => {
         <View style={styles.child}>
           <View style={{ marginHorizontal: 20 }}>
             <Text style={styles.mainHeading}>
-              Per-kilo Materials {" & "}Tonnage
+              Per-kilo Materials {' & '}Tonnage
             </Text>
             <View style={{}}>
               {props.collections.map((i) => {
                 return (
                   <>
                     {i.materials
-                      .filter((i) => i.pivot.material_type === "Homogeneous")
+                      .filter((i) => i.pivot.material_type === 'Homogeneous')
                       .map((i) => {
                         console.log(i.pivot);
                         return (
@@ -120,15 +120,15 @@ let PaymentAccordion = (props) => {
                           >
                             <View
                               style={{
-                                flexDirection: "row",
-                                justifyContent: "space-between",
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
                                 marginTop: 3,
                               }}
                             >
                               <Text
                                 style={{
                                   fontSize: 20,
-                                  color: "black",
+                                  color: 'black',
                                 }}
                               >
                                 {i.name}
@@ -137,7 +137,7 @@ let PaymentAccordion = (props) => {
                               <Text
                                 style={{
                                   fontSize: 15,
-                                  color: "black",
+                                  color: 'black',
                                 }}
                               >
                                 {i.pivot.tonnage}kg
@@ -145,30 +145,31 @@ let PaymentAccordion = (props) => {
                             </View>
                             <View
                               style={{
-                                flexDirection: "row",
-                                justifyContent: "space-between",
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
                                 marginTop: 3,
                               }}
                             >
                               <Text>Cost Price</Text>
                               <Text>
                                 {numberWithCommas(
-                                  Number(i.collector_commission) +
-                                    Number(i.producer_commission)
+                                  Number(i.producer_commission) *
+                                    Number(i.pivot.tonnage)
                                 )}
                               </Text>
                             </View>
                             <View
                               style={{
-                                flexDirection: "row",
-                                justifyContent: "space-between",
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
                                 marginTop: 3,
                               }}
                             >
                               <Text>Commission</Text>
                               <Text>
                                 {numberWithCommas(
-                                  Number(i.collector_commission)
+                                  Number(i.collector_commission) *
+                                    Number(i.pivot.tonnage)
                                 )}
                               </Text>
                             </View>
@@ -185,7 +186,7 @@ let PaymentAccordion = (props) => {
                 return (
                   <>
                     {i.materials
-                      .filter((i) => i.pivot.material_type === "Composite")
+                      .filter((i) => i.pivot.material_type === 'Composite')
                       .map((i) => {
                         return (
                           <View
@@ -202,30 +203,29 @@ let PaymentAccordion = (props) => {
                             <Text
                               style={{
                                 fontSize: 20,
-                                color: "black",
+                                color: 'black',
                               }}
                             >
                               {i.item}
                             </Text>
                             <View
                               style={{
-                                flexDirection: "row",
-                                justifyContent: "space-between",
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
                                 marginTop: 3,
                               }}
                             >
                               <Text>Cost Price</Text>
                               <Text>
                                 {numberWithCommas(
-                                  Number(i.collector_commission) +
-                                    Number(i.producer_commission)
+                                  Number(i.collector_commission)
                                 )}
                               </Text>
                             </View>
                             <View
                               style={{
-                                flexDirection: "row",
-                                justifyContent: "space-between",
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
                                 marginTop: 3,
                               }}
                             >
@@ -246,7 +246,7 @@ let PaymentAccordion = (props) => {
 
             <Text style={styles.mainHeading}>Estimated Commission</Text>
             <View style={styles.leftWrapper}>
-              <View style={{ flexDirection: "row" }}>
+              <View style={{ flexDirection: 'row' }}>
                 <Text style={{ fontSize: 15 }}>
                   {numberWithCommas(props.commissions.collector)}
                 </Text>
@@ -255,20 +255,17 @@ let PaymentAccordion = (props) => {
 
             <Text style={styles.mainHeading}>Estimated Cost of Goods</Text>
             <View style={styles.leftWrapper}>
-              <View style={{ flexDirection: "row" }}>
+              <View style={{ flexDirection: 'row' }}>
                 <Text style={{ fontSize: 15 }}>
-                  {numberWithCommas(
-                    Number(props.commissions.collector) +
-                      Number(props.commissions.producer)
-                  )}
+                  {numberWithCommas(Number(props.commissions.producer))}
                 </Text>
               </View>
             </View>
 
             <View
               style={{
-                flexDirection: "row",
-                justifyContent: "space-evenly",
+                flexDirection: 'row',
+                justifyContent: 'space-evenly',
                 marginTop: 30,
                 marginBottom: 20,
               }}
@@ -276,9 +273,9 @@ let PaymentAccordion = (props) => {
               <TouchableOpacity
                 style={{
                   height: 45,
-                  backgroundColor: "#0A956A",
+                  backgroundColor: '#0A956A',
                   borderRadius: 10,
-                  justifyContent: "center",
+                  justifyContent: 'center',
                   paddingHorizontal: 20,
                 }}
                 onPress={() => {
@@ -290,9 +287,9 @@ let PaymentAccordion = (props) => {
                 <Text
                   style={{
                     fontSize: 12,
-                    fontWeight: "bold",
-                    color: "white",
-                    textAlign: "center",
+                    fontWeight: 'bold',
+                    color: 'white',
+                    textAlign: 'center',
                   }}
                 >
                   Accept
@@ -301,9 +298,9 @@ let PaymentAccordion = (props) => {
               <TouchableOpacity
                 style={{
                   height: 45,
-                  backgroundColor: "#E50202",
+                  backgroundColor: '#E50202',
                   borderRadius: 10,
-                  justifyContent: "center",
+                  justifyContent: 'center',
                   paddingHorizontal: 20,
                 }}
                 onPress={() => {
@@ -315,9 +312,9 @@ let PaymentAccordion = (props) => {
                 <Text
                   style={{
                     fontSize: 12,
-                    fontWeight: "bold",
-                    color: "white",
-                    textAlign: "center",
+                    fontWeight: 'bold',
+                    color: 'white',
+                    textAlign: 'center',
                   }}
                 >
                   Reject
@@ -343,39 +340,39 @@ let PaymentAccordion = (props) => {
       >
         <View
           style={{
-            backgroundColor: "rgba(0, 0, 0, 0.8)",
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
             flex: 1,
-            justifyContent: "center",
+            justifyContent: 'center',
           }}
         >
           <View
             style={{
               width: 203,
               height: 203,
-              borderColor: "#0A956A",
+              borderColor: '#0A956A',
               borderWidth: 2,
-              marginLeft: "auto",
-              marginRight: "auto",
+              marginLeft: 'auto',
+              marginRight: 'auto',
               borderRadius: 110,
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "white",
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: 'white',
             }}
           >
             <Image
               style={{ marginTop: 30 }}
-              source={require("../assets/check-big.png")}
+              source={require('../assets/check-big.png')}
             />
           </View>
           <Text
             style={{
               marginTop: 20,
               paddingHorizontal: 30,
-              textAlign: "center",
+              textAlign: 'center',
               fontSize: 16,
               lineHeight: 18,
-              color: "white",
-              fontWeight: "bold",
+              color: 'white',
+              fontWeight: 'bold',
             }}
           >
             Payment Confirmed
@@ -397,49 +394,49 @@ let PaymentAccordion = (props) => {
       >
         <View
           style={{
-            backgroundColor: "rgba(0, 0, 0, 0.8)",
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
             flex: 1,
-            justifyContent: "center",
+            justifyContent: 'center',
           }}
         >
           <View
             style={{
               width: 203,
               height: 203,
-              borderColor: "#D10B0B",
+              borderColor: '#D10B0B',
               borderWidth: 2,
-              marginLeft: "auto",
-              marginRight: "auto",
+              marginLeft: 'auto',
+              marginRight: 'auto',
               borderRadius: 110,
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "white",
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: 'white',
             }}
           >
-            <Image style={{}} source={require("../assets/X.png")} />
+            <Image style={{}} source={require('../assets/X.png')} />
           </View>
           <Text
             style={{
               marginTop: 20,
               paddingHorizontal: 30,
-              textAlign: "center",
+              textAlign: 'center',
               fontSize: 16,
               lineHeight: 18,
-              color: "white",
-              fontWeight: "bold",
+              color: 'white',
+              fontWeight: 'bold',
             }}
           >
-            Payment Rejected{" "}
+            Payment Rejected{' '}
           </Text>
 
           <Text
             style={{
               marginTop: 40,
               paddingHorizontal: 30,
-              textAlign: "center",
+              textAlign: 'center',
               fontSize: 14,
               lineHeight: 18,
-              color: "white",
+              color: 'white',
             }}
           >
             *Please sort with agent or call support on 07088592037
@@ -453,12 +450,12 @@ let PaymentAccordion = (props) => {
 const styles = StyleSheet.create({
   title: {
     fontSize: 15,
-    fontWeight: "bold",
-    color: "black",
+    fontWeight: 'bold',
+    color: 'black',
   },
   row: {
     // flexDirection: 'row',
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
     //  height: 56,
     //paddingLeft: 25,
     // paddingRight: 18,
@@ -466,12 +463,12 @@ const styles = StyleSheet.create({
     //alignItems: 'center',
     //  backgroundColor: Colors.CGRAY,
   },
-  mainHeading: { fontSize: 15, fontWeight: "bold" },
+  mainHeading: { fontSize: 15, fontWeight: 'bold' },
 
   parentHr: {
     height: 1,
     color: Colors.WHITE,
-    width: "100%",
+    width: '100%',
   },
   child: {
     // backgroundColor: Colors.LIGHTGRAY,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from 'react';
 import {
   ScrollView,
   View,
@@ -11,14 +11,16 @@ import {
   Alert,
   ImageBackground,
   Image,
-} from "react-native";
-import * as Animatable from "react-native-animatable";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { checkEmail, checkPhone } from "../utils/check";
-import RNPickerSelect from "react-native-picker-select";
-import { connect } from "react-redux";
-import { getAllCoverageRegion } from "../Api/api";
-import MultiSelect from "react-native-multiple-select";
+} from 'react-native';
+import * as Animatable from 'react-native-animatable';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { checkEmail, checkPhone } from '../utils/check';
+import RNPickerSelect from 'react-native-picker-select';
+import { Dropdown } from 'react-native-material-dropdown';
+import { connect } from 'react-redux';
+import { getAllCoverageRegion } from '../Api/api';
+import MultiSelect from 'react-native-multiple-select';
+import { getAllSecurityQuestion } from '../Api/authApi';
 
 const mapStateToProps = (state) => {
   return {
@@ -27,16 +29,20 @@ const mapStateToProps = (state) => {
 };
 
 const SignUpScreen = ({ navigation, coverageZone }) => {
+  const [allSecurityQuestion, setAllSecurityQuestion] = useState([]);
+
   const [data, setData] = useState({
-    fname: "",
-    lname: "",
-    email: "",
-    phone: "",
-    age: "",
-    sex: "",
+    fname: '',
+    lname: '',
+    email: '',
+    phone: '',
+    age: '',
+    sex: '',
     lga: [],
     collection_zone: [],
-    password: "",
+    password: '',
+    securityQuestions: '',
+    securityQuestionsAnswer: '',
     secureTextEntry: true,
     isValidEmail: true,
     isValidFname: true,
@@ -53,9 +59,20 @@ const SignUpScreen = ({ navigation, coverageZone }) => {
   let lgaRef = useRef();
   let zoneRef = useRef();
 
+  let getAllSecurityQuestionWrapper = async () => {
+    try {
+      let response = await getAllSecurityQuestion();
+      setAllSecurityQuestion(response.data);
+    } catch (error) {
+      Alert.alert('Error', error.response.data.error);
+    }
+  };
+
   useEffect(() => {
     getAllCoverageRegion();
+    getAllSecurityQuestionWrapper();
   }, []);
+
   const emailChange = (val) => {
     if (checkEmail(val.trim())) {
       setData({
@@ -102,7 +119,7 @@ const SignUpScreen = ({ navigation, coverageZone }) => {
   };
 
   const nameChange = (val, name) => {
-    if (name === "fname") {
+    if (name === 'fname') {
       if (val.trim().length >= 3) {
         setData({
           ...data,
@@ -116,7 +133,7 @@ const SignUpScreen = ({ navigation, coverageZone }) => {
         });
       }
     }
-    if (name === "lname") {
+    if (name === 'lname') {
       if (val.trim().length >= 3) {
         setData({
           ...data,
@@ -156,8 +173,8 @@ const SignUpScreen = ({ navigation, coverageZone }) => {
       data.collection_zone.length == 0 ||
       data.collection_zone.lga == 0
     ) {
-      Alert.alert("Wrong Input!", "Please check input and try again", [
-        { text: "Okay" },
+      Alert.alert('Wrong Input!', 'Please check input and try again', [
+        { text: 'Okay' },
       ]);
       setShowError(true);
       return;
@@ -165,19 +182,19 @@ const SignUpScreen = ({ navigation, coverageZone }) => {
 
     //  Navivage to Pin Screen with State
     console.log(data);
-    navigation.navigate("SignUpPin", data);
+    navigation.navigate('SignUpPin', data);
   };
 
   return (
     <ImageBackground
-      source={require("../assets/background/bg2.jpg")}
-      style={{ height: "100%", width: "100%" }}
+      source={require('../assets/background/bg2.jpg')}
+      style={{ height: '100%', width: '100%' }}
     >
       <View
         style={{
           marginTop: StatusBar.currentHeight + 20,
-          flexDirection: "row",
-          justifyContent: "space-between",
+          flexDirection: 'row',
+          justifyContent: 'space-between',
           paddingHorizontal: 20,
         }}
       >
@@ -190,15 +207,15 @@ const SignUpScreen = ({ navigation, coverageZone }) => {
         </TouchableOpacity>
         <Image
           style={{
-            alignSelf: "flex-end",
+            alignSelf: 'flex-end',
           }}
-          source={require("../assets/logo-small.png")}
+          source={require('../assets/logo-small.png')}
         />
       </View>
 
       <StatusBar backgroundColor="#EF7700" barStyle="light-content" />
       <ScrollView
-        contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+        contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
       >
         <View style={styles.header}>
           <Text style={styles.text_header}>Create your account </Text>
@@ -211,7 +228,7 @@ const SignUpScreen = ({ navigation, coverageZone }) => {
               placeholderTextColor="#666666"
               style={[styles.textInput]}
               autoCapitalize="none"
-              onChangeText={(val) => nameChange(val, "fname")}
+              onChangeText={(val) => nameChange(val, 'fname')}
             />
           </View>
           {data.isValidFname ? null : (
@@ -226,7 +243,7 @@ const SignUpScreen = ({ navigation, coverageZone }) => {
               placeholderTextColor="#666666"
               style={[styles.textInput]}
               autoCapitalize="none"
-              onChangeText={(val) => nameChange(val, "lname")}
+              onChangeText={(val) => nameChange(val, 'lname')}
             />
           </View>
           {data.isValidLname ? null : (
@@ -299,15 +316,62 @@ const SignUpScreen = ({ navigation, coverageZone }) => {
             </Animatable.View>
           )}
 
+          <View style={{}}>
+            <Dropdown
+              fontSize={10}
+              placeholder="Security Questions"
+              inputContainerStyle={{
+                borderBottomColor: '#F18921',
+                borderBottomWidth: 1.5,
+              }}
+              onChangeText={(value) => {
+                setData((prev) => {
+                  return {
+                    ...prev,
+                    securityQuestions: value,
+                  };
+                });
+              }}
+              data={allSecurityQuestion.map((i) => ({
+                label: i.question,
+                value: i.id,
+                color: 'black',
+              }))}
+            />
+
+            {showError && data.securityQuestions.length === 0 && (
+              <Animatable.View animation="fadeInLeft" duration={500}>
+                <Text style={styles.errorMsg}>Pick one security question</Text>
+              </Animatable.View>
+            )}
+          </View>
+
+          <View style={styles.action}>
+            <TextInput
+              placeholder="Security Questions Answer"
+              placeholderTextColor="#666666"
+              style={styles.textInput}
+              autoCapitalize="none"
+              onChangeText={(val) => {
+                setData((prev) => ({ ...prev, securityQuestionsAnswer: val }));
+              }}
+            />
+          </View>
+          {showError && data.securityQuestionsAnswer.length < 3 && (
+            <Animatable.View animation="fadeInLeft" duration={500}>
+              <Text style={styles.errorMsg}>invalid answer</Text>
+            </Animatable.View>
+          )}
+
           <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
+            style={{ flexDirection: 'row', justifyContent: 'space-between' }}
           >
-            <View style={{ width: "40%" }}>
+            <View style={{ width: '40%' }}>
               <RNPickerSelect
                 placeholder={{
-                  label: "Age Range",
-                  value: "default",
-                  color: "#666666",
+                  label: 'Age Range',
+                  value: 'default',
+                  color: '#666666',
                 }}
                 onValueChange={(value) => {
                   setData((prev) => {
@@ -320,32 +384,32 @@ const SignUpScreen = ({ navigation, coverageZone }) => {
                 style={{
                   viewContainer: {
                     borderBottomWidth: 1,
-                    borderBottomColor: "#F18921",
-                    borderStyle: "solid",
+                    borderBottomColor: '#F18921',
+                    borderStyle: 'solid',
                     //marginBottom: 20,
-                    width: "100%",
+                    width: '100%',
                     marginTop: 5,
                     //paddingHorizontal: 0,
                   },
                   inputAndroid: {
-                    color: "black",
-                    fontWeight: "700",
+                    color: 'black',
+                    fontWeight: '700',
                     fontSize: 15,
                   },
                   placeholder: {
-                    color: "#666666",
+                    color: '#666666',
                   },
                 }}
                 value={data.age}
                 items={[
-                  { label: "18 - 22", value: "18 - 22", color: "black" },
-                  { label: "23 - 27", value: "23 - 27", color: "black" },
-                  { label: "28 - 32", value: "28 - 32", color: "black" },
-                  { label: "33 - 40", value: "33 - 40", color: "black" },
+                  { label: '18 - 22', value: '18 - 22', color: 'black' },
+                  { label: '23 - 27', value: '23 - 27', color: 'black' },
+                  { label: '28 - 32', value: '28 - 32', color: 'black' },
+                  { label: '33 - 40', value: '33 - 40', color: 'black' },
                   {
-                    label: "40 and Above",
-                    value: "40 and Above",
-                    color: "black",
+                    label: '40 and Above',
+                    value: '40 and Above',
+                    color: 'black',
                   },
                 ]}
               />
@@ -356,12 +420,12 @@ const SignUpScreen = ({ navigation, coverageZone }) => {
                 </Animatable.View>
               )}
             </View>
-            <View style={{ width: "45%" }}>
+            <View style={{ width: '45%' }}>
               <RNPickerSelect
                 placeholder={{
-                  label: "Sex",
-                  value: "default",
-                  color: "#666666",
+                  label: 'Sex',
+                  value: 'default',
+                  color: '#666666',
                 }}
                 onValueChange={(value) => {
                   setData((prev) => {
@@ -374,25 +438,25 @@ const SignUpScreen = ({ navigation, coverageZone }) => {
                 style={{
                   viewContainer: {
                     borderBottomWidth: 1,
-                    borderBottomColor: "#F18921",
-                    borderStyle: "solid",
-                    width: "100%",
+                    borderBottomColor: '#F18921',
+                    borderStyle: 'solid',
+                    width: '100%',
                     marginTop: 5,
                     //paddingHorizontal: 0,
                   },
                   inputAndroid: {
-                    color: "black",
-                    fontWeight: "700",
+                    color: 'black',
+                    fontWeight: '700',
                     fontSize: 15,
                   },
                   placeholder: {
-                    color: "#666666",
+                    color: '#666666',
                   },
                 }}
                 value={data.sex}
                 items={[
-                  { label: "Male", value: "male", color: "black" },
-                  { label: "Female", value: "female", color: "black" },
+                  { label: 'Male', value: 'male', color: 'black' },
+                  { label: 'Female', value: 'female', color: 'black' },
                 ]}
               />
 
@@ -424,18 +488,18 @@ const SignUpScreen = ({ navigation, coverageZone }) => {
                 paddingHorizontal: 20,
               }}
               onSelectedItemsChange={(items) => {
-                console.log(items, "lga");
+                console.log(items, 'lga');
                 setData((prev) => ({ ...prev, lga: items }));
               }}
               textInputProps={{ autoFocus: false }}
               styleMainWrapper={{
                 //height: 200,
-                alignSelf: "stretch",
+                alignSelf: 'stretch',
               }}
               styleInputGroup={{
                 borderBottomWidth: 1,
-                borderBottomColor: "#F18921",
-                borderStyle: "solid",
+                borderBottomColor: '#F18921',
+                borderStyle: 'solid',
               }}
               styleTextDropdownSelected={{
                 fontSize: 16,
@@ -443,9 +507,9 @@ const SignUpScreen = ({ navigation, coverageZone }) => {
               }}
               styleDropdownMenuSubsection={{
                 borderBottomWidth: 1,
-                borderBottomColor: "#F18921",
+                borderBottomColor: '#F18921',
               }}
-              styleListContainer={{ height: "100%" }}
+              styleListContainer={{ height: '100%' }}
               // styleSelectorContainer={{ borderColor: "black", borderWidth: 1 }}
               styleDropdownMenu={{ height: 50 }}
               selectedItemIconColor="#F18921"
@@ -461,7 +525,7 @@ const SignUpScreen = ({ navigation, coverageZone }) => {
               selectedItemIconColor="#F18921"
               itemTextColor="black"
               displayKey="name"
-              searchInputStyle={{ color: "black" }}
+              searchInputStyle={{ color: 'black' }}
               submitButtonColor="#CCC"
               submitButtonText="Submit"
               hideDropdown={true}
@@ -480,7 +544,7 @@ const SignUpScreen = ({ navigation, coverageZone }) => {
               // borderStyle: "solid",
               // borderRadius: 10,
               // marginBottom: 20,
-              alignSelf: "stretch",
+              alignSelf: 'stretch',
               paddingTop: 4,
             }}
           >
@@ -496,7 +560,7 @@ const SignUpScreen = ({ navigation, coverageZone }) => {
                       };
                     })
                   : {
-                      name: "",
+                      name: '',
                     }
               }
               fontSize={15}
@@ -505,7 +569,7 @@ const SignUpScreen = ({ navigation, coverageZone }) => {
               ref={zoneRef}
               textInputProps={{ autoFocus: false }}
               onSelectedItemsChange={(items) => {
-                console.log(items, "zone");
+                console.log(items, 'zone');
                 //let zone = data.collection_zone;
                 // zone.push(items);
                 if (items.length <= 3)
@@ -513,7 +577,7 @@ const SignUpScreen = ({ navigation, coverageZone }) => {
               }}
               styleMainWrapper={{
                 //height: 200,
-                alignSelf: "stretch",
+                alignSelf: 'stretch',
               }}
               styleTextDropdown={{
                 //fontWeight: "bold",
@@ -522,7 +586,7 @@ const SignUpScreen = ({ navigation, coverageZone }) => {
               }}
               styleInputGroup={{
                 borderBottomWidth: 1,
-                borderBottomColor: "#F18921",
+                borderBottomColor: '#F18921',
               }}
               styleTextDropdownSelected={{
                 // color: "black",
@@ -532,9 +596,9 @@ const SignUpScreen = ({ navigation, coverageZone }) => {
               }}
               styleDropdownMenuSubsection={{
                 borderBottomWidth: 1,
-                borderBottomColor: "#F18921",
+                borderBottomColor: '#F18921',
               }}
-              styleListContainer={{ height: "100%" }}
+              styleListContainer={{ height: '100%' }}
               // styleSelectorContainer={{ borderColor: "black", borderWidth: 1 }}
               styleDropdownMenu={{ height: 50 }}
               selectedItemIconColor="#F18921"
@@ -550,7 +614,7 @@ const SignUpScreen = ({ navigation, coverageZone }) => {
               selectedItemIconColor="black"
               itemTextColor="black"
               displayKey="name"
-              searchInputStyle={{ color: "black" }}
+              searchInputStyle={{ color: 'black' }}
               submitButtonColor="#CCC"
               submitButtonText="Submit"
               hideDropdown={true}
@@ -574,7 +638,7 @@ const SignUpScreen = ({ navigation, coverageZone }) => {
                 nextHandle(data, navigation);
               }}
             >
-              <Text style={{ color: "black", fontSize: 20, marginRight: 10 }}>
+              <Text style={{ color: 'black', fontSize: 20, marginRight: 10 }}>
                 Next
               </Text>
               <MaterialCommunityIcons
@@ -595,11 +659,11 @@ export default connect(mapStateToProps)(SignUpScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#009387",
+    backgroundColor: '#009387',
   },
   header: {
     flex: 1.5,
-    justifyContent: "flex-end",
+    justifyContent: 'flex-end',
     marginTop: 50,
     paddingHorizontal: 20,
     paddingBottom: 20,
@@ -610,49 +674,49 @@ const styles = StyleSheet.create({
     paddingVertical: 30,
   },
   text_header: {
-    color: "black",
-    fontWeight: "bold",
+    color: 'black',
+    fontWeight: 'bold',
     fontSize: 35,
   },
   text: {
-    color: "#05375a",
+    color: '#05375a',
     marginTop: 10,
     fontSize: 18,
   },
   action: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginTop: 20,
     borderBottomWidth: 1,
-    borderBottomColor: "#EF7700",
+    borderBottomColor: '#EF7700',
   },
   actionError: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginTop: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#FF0000",
+    borderBottomColor: '#FF0000',
     paddingBottom: 5,
   },
   textInput: {
     flex: 1,
-    marginTop: Platform.OS === "ios" ? 0 : -12,
+    marginTop: Platform.OS === 'ios' ? 0 : -12,
     paddingLeft: 10,
-    color: "#05375a",
+    color: '#05375a',
   },
   errorMsg: {
-    color: "#FF0000",
+    color: '#FF0000',
     fontSize: 14,
   },
   button: {
     marginTop: 30,
   },
   next: {
-    alignSelf: "flex-end",
-    flexDirection: "row",
-    alignItems: "center",
+    alignSelf: 'flex-end',
+    flexDirection: 'row',
+    alignItems: 'center',
     flex: 1,
   },
   textSign: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
 });

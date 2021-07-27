@@ -12,7 +12,11 @@ import {
 import LinearGradient from "react-native-linear-gradient";
 import * as Animatable from "react-native-animatable";
 import SmoothPinCodeInput from "react-native-smooth-pincode-input";
-import { registerCollector, changeUserType } from "../Api/authApi";
+import {
+  registerCollector,
+  changeUserType,
+  forgetPassword,
+} from "../Api/authApi";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { connect } from "react-redux";
 import ProcessPickUpScreen from "./ProcessPickUpScreen";
@@ -84,6 +88,11 @@ const SignUpPinScreen = ({ navigation, route, coverageZone }) => {
       age: data.age,
       sex: data.sex,
       pin: values.code,
+      security_question: {
+        question_id: data.securityQuestions,
+        question_answer: data.securityQuestionsAnswer,
+      },
+
       collection_coverage_zone: data.lga[0],
       coverage_zone_coordinates: data.collection_zone.map((i) => {
         let t = coverageZone[data.lga[0]].find((k) => k.name === i);
@@ -107,20 +116,25 @@ const SignUpPinScreen = ({ navigation, route, coverageZone }) => {
       if (
         e.response &&
         e.response.data.error.startsWith(
-          "The phone number has been registered as"
+          "The phone number has already been registered as a"
         )
       ) {
         let type = e.response.data.error.split(" ").slice(-1);
         console.log(type);
         Alert.alert(
           "Info",
-          `This particular phone number ${data.phone} is already register with scrapays as a(n) ${type} do you want to migrate to a Collector?`,
+          `This particular phone number ${data.phone} is already register with Scrapays as a(n) ${type} do you want to migrate to a Collector?`,
           [
             {
               text: "Yes",
-              onPress: () => {
-                // navigation.navigate("Splash");
-                handleChangeUserType();
+              onPress: async () => {
+                try {
+                  let response = await forgetPassword({ phone: data.phone });
+                  navigation.navigate("ChangeUserCode", { phone: data.phone });
+                  //handleChangeUserType();
+                } catch (error) {
+                  Alert("Error", error.response?.data.error);
+                }
               },
               style: "cancel",
             },
