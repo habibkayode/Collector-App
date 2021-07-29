@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,9 +7,9 @@ import {
   PermissionsAndroid,
   ActivityIndicator,
   TouchableOpacity,
-} from 'react-native';
-import Modal from 'react-native-modal';
-import { connect } from 'react-redux';
+} from "react-native";
+import Modal from "react-native-modal";
+import { connect } from "react-redux";
 import {
   updateBleCon,
   saveBonded,
@@ -17,11 +17,11 @@ import {
   saveDiscoveringState,
   updateConnected,
   updateSelectedDevice,
-} from '../../Redux/actionCreator';
-import RNBluetoothClassic from 'react-native-bluetooth-classic';
-import * as BLEapi from '../../Api/bluetoothApi';
-import { useNavigation } from '@react-navigation/native';
-import Button from '../../native-base-theme/components/Button';
+} from "../../Redux/actionCreator";
+import RNBluetoothClassic from "react-native-bluetooth-classic";
+import * as BLEapi from "../../Api/bluetoothApi";
+import { useNavigation } from "@react-navigation/native";
+import Button from "../../native-base-theme/components/Button";
 
 const mapStateToProps = (state) => {
   return {
@@ -36,7 +36,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     updateBleCon: (state) => {
-      console.log(state, 'bluetooth State');
+      console.log(state, "bluetooth State");
       dispatch(updateBleCon(state));
     },
     saveBonded: (list) => {
@@ -62,13 +62,13 @@ const BluetoothModal = (props) => {
   const [discoverList, setDiscoverList] = useState([]);
   const [connectionError, setConnectionError] = useState({
     value: false,
-    message: '',
+    message: "",
   });
 
   useEffect(() => {
-    console.log('about to connect', props.selectedDevice == true);
+    console.log("about to connect", props.selectedDevice == true);
     if (props.selectedDevice) {
-      console.log('connecting to ', props.selectedDevice.name);
+      console.log("connecting to ", props.selectedDevice.name);
       BLEapi.connect()
         .then(() => {
           setDiscoverList([]);
@@ -80,7 +80,7 @@ const BluetoothModal = (props) => {
 
   useEffect(() => {
     if (props.bluetoothState) {
-      console.log('i am discovring', props.bluetoothState);
+      console.log("i am discovring", props.bluetoothState);
       BLEapi.startDiscovery();
     }
 
@@ -89,30 +89,32 @@ const BluetoothModal = (props) => {
 
   useEffect(() => {
     if (props.discoverList.length > 0) {
-      console.log('checking for QH');
-      let fi = props.discoverList.filter((i) => i.name === 'QH');
+      console.log("checking for QH or JDY-23A-SPP");
+      let fi = props.discoverList.filter(
+				(i) => i.name === "QH" || i.name === "JDY-23A-SPP"
+			);
       setDiscoverList(fi);
-      console.log('found ', fi.length, 'QH');
+      console.log("found ", fi.length, "QH");
       if (fi.length > 0) {
         let bonded = fi.filter((k) => k.bonded === true);
         if (bonded.length > 0) {
-          console.log('connecting to bonded');
+          console.log("connecting to bonded");
           props.updateSelectedDevice(bonded[0]);
         } else {
-          console.log('connecting to the first scale');
+          console.log("connecting to the first scale");
           props.updateSelectedDevice(fi[0]);
         }
       } else {
-        console.log('no scale found');
+        console.log("no scale found");
       }
     }
   }, [props.discoverList]);
 
   let getBondedDevices = async (unloading) => {
-    console.log('DeviceListScreen::getBondedDevices');
+    console.log("DeviceListScreen::getBondedDevices");
     try {
       let bonded = await RNBluetoothClassic.getBondedDevices();
-      console.log('DeviceListScreen::getBondedDevices found', bonded);
+      console.log("DeviceListScreen::getBondedDevices found", bonded);
       setBondedList(bonded);
       props.saveBonded(bonded);
     } catch (error) {
@@ -138,20 +140,20 @@ const BluetoothModal = (props) => {
           <Text
             style={[
               styles.modalTitle,
-              { marginBottom: 20, color: 'white', fontWeight: 'bold' },
+              { marginBottom: 20, color: "white", fontWeight: "bold" },
             ]}
           >
             Connecting to the IOT Scale
           </Text>
           <Image
-            source={require('../../assets/scale.png')}
+            source={require("../../assets/scale.png")}
             style={{ marginBottom: 20 }}
           />
           {!props.bluetoothState && (
             <Text
-              style={[styles.modalText, { color: 'red', fontWeight: 'bold' }]}
+              style={[styles.modalText, { color: "red", fontWeight: "bold" }]}
             >
-              Please turn on your Bluetooth
+              Please On your Bluetooth
             </Text>
           )}
           {props.bluetoothState && props.discoveringStatus && (
@@ -159,15 +161,12 @@ const BluetoothModal = (props) => {
               <Text
                 style={[
                   styles.modalText,
-                  { color: 'white', fontWeight: 'bold' },
+                  { color: "white", fontWeight: "bold" },
                 ]}
               >
                 Scanning for IOT Scale
               </Text>
-              <Image
-                source={require('../../assets/loading-gif.gif')}
-                style={{ width: 50, height: 50, alignSelf: 'center' }}
-              ></Image>
+              <ActivityIndicator size="large" color="#EF7700" />
             </View>
           )}
           {props.bluetoothState &&
@@ -177,7 +176,7 @@ const BluetoothModal = (props) => {
                 <Text
                   style={[
                     styles.modalText,
-                    { color: 'white', fontWeight: 'bold' },
+                    { color: "white", fontWeight: "bold" },
                   ]}
                 >
                   IOT Scale not found
@@ -185,17 +184,17 @@ const BluetoothModal = (props) => {
                 <TouchableOpacity
                   onPress={retry}
                   style={{
-                    alignSelf: 'center',
+                    alignSelf: "center",
                     padding: 10,
-                    backgroundColor: '#EF7700',
+                    backgroundColor: "#EF7700",
                     borderRadius: 10,
                     paddingHorizontal: 20,
                   }}
                 >
                   <Text
                     style={{
-                      color: 'white',
-                      fontWeight: 'bold',
+                      color: "white",
+                      fontWeight: "bold",
                       fontSize: 20,
                     }}
                   >
@@ -212,7 +211,7 @@ const BluetoothModal = (props) => {
                 <Text
                   style={[
                     styles.modalText,
-                    { color: 'white', fontWeight: 'bold' },
+                    { color: "white", fontWeight: "bold" },
                   ]}
                 >
                   Connecting to an IOT Scale
@@ -232,40 +231,40 @@ const styles = StyleSheet.create({
   modal: {
     //justifyContent: "flex-end",
     margin: 0,
-    position: 'absolute',
+    position: "absolute",
     flex: 1,
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   modalContainer: {
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
     paddingHorizontal: 20,
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalTitle: {
     fontSize: 22,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   modalText: {
     fontSize: 18,
-    color: '#555',
+    color: "#555",
     marginTop: 14,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 10,
   },
   button: {
-    backgroundColor: '#000',
+    backgroundColor: "#000",
     paddingVertical: 12,
     paddingHorizontal: 16,
-    width: '100%',
-    alignItems: 'center',
+    width: "100%",
+    alignItems: "center",
     marginTop: 10,
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 20,
   },
 });
