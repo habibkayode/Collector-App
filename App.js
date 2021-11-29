@@ -43,9 +43,7 @@ import NetInfo from '@react-native-community/netinfo';
 import Echo from 'laravel-echo';
 import PusherNative from 'pusher-js/react-native';
 import { Notifications } from 'react-native-notifications';
-//import * as Pusher from "pusher";
-import firebase from 'react-native-firebase';
-//window.pusher = PusherNative;
+
 import {
 	savePickupAndImages,
 	updateNetWork,
@@ -78,6 +76,17 @@ import ForgetPassword from './screens/ForgetPassword';
 import ForgetPasswordCodePinScreen from './screens/ForgetPasswordCodePinScreen';
 import InputPassword from './screens/InputPasswordScreen';
 import changeUserTypeCode from './screens/ChangeUserTypeCode';
+import PersonalDetailsScreen from './screens/KYC/PersonalDetailsScreen';
+import FileUpload from './screens/KYC/FileUpload';
+import NextOfKin from './screens/KYC/NextOfKin';
+import BankDetails from './screens/KYC/BankDetails';
+import Summary from './screens/KYC/Summary';
+import SubmitPage from './screens/KYC/SubmitPage';
+import AssetPage from './screens/AssetAgreement/AssetPage';
+import OverlayNote from './Component/OverlayNote';
+import kycNoteModalComp from './Component/KycNoteModalComp';
+import KycN from './Component/KycN';
+import InternetErrorModal from './Component/InternetErrorModal';
 
 const mapStateToProps = (state) => {
 	return {
@@ -93,6 +102,8 @@ const mapStateToProps = (state) => {
 		messageAlert: state.normal.showMessageAlert,
 		pickupAlertModal: state.normal.pickupAlertModal,
 		redirect: state.normal.redirect,
+		userData: state.normal.userData,
+		internetError: state.normal.internetError,
 	};
 };
 
@@ -177,6 +188,50 @@ const WalletNavigator = () => {
 	);
 };
 
+const AssetNavigator = () => {
+	return (
+		<Stack.Navigator
+			screenOptions={{
+				headerShown: false,
+			}}
+		>
+			<Stack.Screen name='AssetPage' component={AssetPage} />
+		</Stack.Navigator>
+	);
+};
+
+const mapStateToPropsKyc = (state) => {
+	return {
+		kycNoteModal: state.normal.kycNoteModal,
+	};
+};
+
+const KycNavi = (props) => {
+	return (
+		<>
+			{props.kycNoteModal && <KycN />}
+			<Stack.Navigator
+				screenOptions={{
+					headerShown: false,
+				}}
+			>
+				<Stack.Screen
+					name='PersonalDetails'
+					component={PersonalDetailsScreen}
+				/>
+
+				<Stack.Screen name='FileUpload' component={FileUpload} />
+				<Stack.Screen name='NextOfKin' component={NextOfKin} />
+				<Stack.Screen name='BankDetails' component={BankDetails} />
+				<Stack.Screen name='Summary' component={Summary} />
+				<Stack.Screen name='SubmitPage' component={SubmitPage} />
+			</Stack.Navigator>
+		</>
+	);
+};
+
+let KycNavigator = connect(mapStateToPropsKyc)(KycNavi);
+
 const MainNavigator = () => {
 	let redirect = store.getState().normal.redirect;
 	return (
@@ -248,19 +303,12 @@ let TabsNavigator = ({
 	pickupAlert,
 	pickupAlertModal,
 	redirect,
+	userData,
 }) => {
 	console.log(messageAlert, 'piuuu');
 
 	let _watchId = useRef();
-	let getFcmToken = async () => {
-		const fcmToken = await firebase.messaging().getToken();
-		if (fcmToken) {
-			console.log(fcmToken);
-			console.log('Your Firebase Token is:', fcmToken);
-		} else {
-			console.log('Failed', 'No token received');
-		}
-	};
+
 	let requestUserPermission = async () => {
 		let authStatus = await firebase.messaging().requestPermission();
 
@@ -274,7 +322,7 @@ let TabsNavigator = ({
 			authStatus === firebase.messaging.AuthorizationStatus.AUTHORIZED ||
 			authStatus === firebase.messaging.AuthorizationStatus.PROVISIONAL;
 		if (enabled) {
-			getFcmToken(); //<---- Add this
+			//		getFcmToken(); //<---- Add this
 			console.log('Authorization status:', authStatus);
 		}
 	};
@@ -381,8 +429,10 @@ let TabsNavigator = ({
 		<>
 			{messageAlert && <NewMessage />}
 			{pickupAlert && <NewPickup />}
-			{pickupAlertModal.status && <PickupAlertModal></PickupAlertModal>}
-
+			{pickupAlertModal.status === true && (
+				<PickupAlertModal></PickupAlertModal>
+			)}
+			{userData.userable.kyc_status !== 'approved' && <OverlayNote />}
 			<Tab.Navigator
 				tabBarOptions={{ style: { height: 70 }, activeTintColor: 'black' }}
 			>
@@ -547,7 +597,7 @@ let TabsNavigator = ({
 
 TabsNavigator = connect(mapStateToProps)(TabsNavigator);
 
-const RootNavigator = ({ loggedIn, messageAlert, pickupAlert }) => {
+const RootNavigator = ({ loggedIn, messageAlert, pickupAlert, userData }) => {
 	return (
 		<Stack.Navigator
 			screenOptions={{
@@ -555,7 +605,17 @@ const RootNavigator = ({ loggedIn, messageAlert, pickupAlert }) => {
 			}}
 		>
 			{loggedIn ? (
-				<Stack.Screen name='Tab' component={TabsNavigator} />
+				userData.userable.kyc_status === 'pending' ||
+				//	userData.userable.kyc_status === 'submitted' ||
+				userData.userable.kyc_status === 'rejected' ? (
+					<Stack.Screen name='KycNavigator' component={KycNavigator} />
+				) : userData.userable.agreed_to_asset ? (
+					<Stack.Screen name='Tab' component={TabsNavigator} />
+				) : userData.userable.kyc_status === 'approved' ? (
+					<Stack.Screen name='AssetNavigator' component={AssetNavigator} />
+				) : (
+					<Stack.Screen name='Tab' component={TabsNavigator} />
+				)
 			) : (
 				<Stack.Screen name='Auth' component={AuthNavigator} />
 			)}
@@ -580,26 +640,29 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 const App = (props) => {
-	useEffect(() => {
-		const unsubscribe = NetInfo.addEventListener((state) => {
-			const offline = state.isConnected && state.isInternetReachable;
-			console.log('Connection type', state.type);
-			console.log('Is connected?', state.isConnected);
-			console.log(offline, 'state is changeng');
-			props.updateNetWork(offline);
-		});
+	// useEffect(() => {
+	// 	const unsubscribe = NetInfo.addEventListener((state) => {
+	// 		const offline = state.isConnected && state.isInternetReachable;
+	// 		console.log('Connection type', state.type);
+	// 		console.log('Is connected?', state.isConnected);
+	// 		console.log(offline, 'state is changeng');
+	// 		props.updateNetWork(offline);
+	// 	});
 
-		return () => unsubscribe();
-	}, []);
+	// 	return () => unsubscribe();
+	// }, []);
 
 	return (
 		<StyleProvider style={getTheme(material)}>
 			<>
-				{!props.connected && <NetworkModal />}
+				{
+					//	!props.connected && <NetworkModal />
+				}
 				{props.networkLoading && <NetworkLoading />}
+				{props.internetError && <InternetErrorModal />}
 
 				{/* <NavigationContainer> */}
-				<RootNavigator loggedIn={props.loggedIn} />
+				<RootNavigator loggedIn={props.loggedIn} userData={props.userData} />
 				{/* </NavigationContainer> */}
 			</>
 		</StyleProvider>

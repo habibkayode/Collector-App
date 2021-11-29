@@ -45,7 +45,7 @@ let getSingleCollectorPickUp = async (page = 1, refreshing = false) => {
 let getAllSingleCollectorPickUp = async () => {
 	try {
 		let userId = store.getState().normal.userData.id;
-		let url = `/collectors/${userId}/pickuprequests?collector_accepted=pending`;
+		let url = `/collectors/${userId}/pickuprequests?collector_accepted=null`;
 		console.log(url, 'all pending pickup request');
 		let response = await AxiosNoLoading.get(url);
 		if (response.status === 200) {
@@ -56,6 +56,24 @@ let getAllSingleCollectorPickUp = async () => {
 		}
 	} catch (e) {
 		console.log(e, 'in all pickup request');
+		throw e;
+	}
+};
+
+let getAllPickupWithInRadius = async () => {
+	try {
+		let userId = store.getState().normal.userData.id;
+		let url = `/pickuprequests/${userId}/radius`;
+		console.log(url, 'all pending pickup request with in radius');
+		let response = await AxiosNoLoading.get(url);
+		if (response.status === 200) {
+			console.log(response.data);
+			return response.data.data;
+		} else {
+			//
+		}
+	} catch (e) {
+		console.log(e, 'in all pickup radius');
 		throw e;
 	}
 };
@@ -126,7 +144,7 @@ let getAcceptedPickupRequst = async (page, refreshing = false) => {
 let getAllAcceptedPickupRequst = async () => {
 	let userId = store.getState().normal.userData.id;
 	try {
-		let url = `/collectors/${userId}/pickuprequests?collector_accepted=accepted&status=Pending&per_page=-1`;
+		let url = `/collectors/${userId}/pickuprequests?collector_accepted=accepted&status=pending&per_page=-1`;
 		let response = await AxiosNoLoading.get(url);
 		return response.data.data;
 	} catch (err) {
@@ -220,13 +238,18 @@ let getCOGbalance = async () => {
 	}
 };
 
-let getBankList = async () => {
+let getBankList = async (returnOnly) => {
 	let url = `/wallets/banks`;
 	try {
 		let response = await AxiosNoLoading.get(url);
 		console.log(response.data.data);
-		if (response.status === 200)
-			store.dispatch(savBankList(response.data.data));
+		if (response.status === 200) {
+			if (returnOnly) {
+				return response.data.data;
+			} else {
+				store.dispatch(savBankList(response.data.data));
+			}
+		}
 	} catch (e) {
 		console.log(e, 'inbank');
 
@@ -412,11 +435,11 @@ let gettAllAgent = async () => {
 					k.userable &&
 					k.userable.coordinates !== null &&
 					k.userable.coordinates?.lat !== null &&
-					k.userable.availability == true
+					k.userable.availability == true &&
+					k.userable.ready_for_work == 1
 			);
 
 			let cur = store.getState().location.coordinate;
-
 			for (let i = 0; i < data.length; i++) {
 				console.log(i, data.length, 'llll');
 				data[i]['distance'] = calculateDistance(
@@ -428,12 +451,15 @@ let gettAllAgent = async () => {
 				);
 			}
 
-			data.sort(function (a, b) {
+			let newData = data.filter((i) => i.distance < 4);
+
+			newData.sort(function (a, b) {
 				return a.distance - b.distance;
 			});
+			console.log(data, 'all agent');
 			//change
 
-			store.dispatch(saveAgent(data));
+			store.dispatch(saveAgent(newData));
 			return;
 		}
 	} catch (e) {
@@ -519,7 +545,7 @@ let getWalletHistory = async () => {
 	console.log(url);
 	try {
 		let response = await AxiosNoLoading.get(url);
-		console.log(response.data, 'histoy');
+		console.log(response.data, 'history');
 		return response.data;
 	} catch (e) {
 		console.log(e.response.data.error);
@@ -585,12 +611,14 @@ const bulkUpload = async (payload) => {
 	}
 };
 
-const updateDeviceToken = async (deviceId) => {
+const updateDeviceToken = async () => {
 	let id = store.getState().normal.userData.id;
+	let pushToken = store.getState().normal.devicePushToken;
+	console.log(pushToken, 'ppppp0000');
 	let url = `/auth/${id}/device-registration-id/update`;
 	try {
 		let response = await AxiosNoLoading.put(url, {
-			registration_id: deviceId,
+			registration_id: pushToken,
 		});
 	} catch (error) {
 		console.log(error);
@@ -712,6 +740,7 @@ export {
 	getAllAcceptedPickupRequst,
 	submitPickup,
 	verifyPhone,
+	getAllPickupWithInRadius,
 	sendVerificationCodeAgain,
 	transferFromAccount,
 	transferFromCommission,

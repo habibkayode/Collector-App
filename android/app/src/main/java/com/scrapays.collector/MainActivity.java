@@ -38,7 +38,9 @@ public class MainActivity extends ReactActivity {
             NotificationChannel channel = new NotificationChannel("alert", name, importance);
             channel.enableLights(true);
             channel.enableVibration(true);
-            channel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200,});
+          //  channel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200,});
+              channel.setVibrationPattern(new long[]{1000, 2000, 3000, 4000,5000,6000 });
+         
             channel.setSound(bellUri,audioAttributes);
             channel.setDescription(description);
             // Register the channel with the system; you can't change the importance

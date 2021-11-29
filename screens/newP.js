@@ -79,15 +79,12 @@ const ProcessPickupScreen = (props) => {
 	});
 	const [showHomogenousModal, setShowHomogenousModal] = useState(false);
 	const [selectIndex, setSelectIndex] = useState();
-	const [showAddNewCompositeModal, setShowAddNewCompositeModal] = useState(
-		false
-	);
+	const [showAddNewCompositeModal, setShowAddNewCompositeModal] =
+		useState(false);
 
 	useEffect(() => {
-		let {
-			enabledSubscription,
-			disabledSubscription,
-		} = BLEapi.stateChanegEvent();
+		let { enabledSubscription, disabledSubscription } =
+			BLEapi.stateChanegEvent();
 
 		BLEapi.checkBluetootEnabled();
 
@@ -131,7 +128,7 @@ const ProcessPickupScreen = (props) => {
 		setMaterialName(value);
 	};
 	let gettingValue = async () => {
-		return 5.7;
+		//return 5.7;
 		try {
 			let reading = await BLEapi.performRead();
 			console.log(reading, 'readingg');
@@ -143,7 +140,7 @@ const ProcessPickupScreen = (props) => {
 		}
 	};
 
-	//  if (!props.connected) return <BluetoothModal />;
+	if (!props.connected) return <BluetoothModal />;
 
 	return (
 		<Bgcover name='Process Pickup'>

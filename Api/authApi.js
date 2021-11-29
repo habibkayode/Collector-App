@@ -1,105 +1,120 @@
-import { AxiosNormal } from "./axios";
-import { store } from "../Redux/store";
+import { AxiosNormal, AxiosSecure } from './axios';
+import { store } from '../Redux/store';
 import {
-  updateNetWorkLoading,
-  updateLoggedIn,
-  saveUserData,
-} from "../Redux/actionCreator";
+	updateNetWorkLoading,
+	updateLoggedIn,
+	saveUserData,
+	updateUserData,
+} from '../Redux/actionCreator';
 
 const loginFun = async (payload) => {
-  try {
-    console.log(payload);
-    let response = await AxiosNormal.post("/auth/collector/login", {
-      ...payload,
-    });
+	try {
+		console.log(payload);
+		let response = await AxiosNormal.post('/auth/collector/login', {
+			...payload,
+		});
 
-    console.log(response.data);
-    store.dispatch(
-      saveUserData({
-        data: response.data.data.user,
-        token: response.data.data.access_token,
-      })
-    );
-    store.dispatch(updateLoggedIn(true));
-    return response.data;
-  } catch (error) {
-    store.dispatch(updateNetWorkLoading(false));
-    console.log(error, "in herr", error.response.data.error);
-    throw error;
-  }
+		console.log(response.data);
+		store.dispatch(
+			saveUserData({
+				data: response.data.data.user,
+				token: response.data.data.access_token,
+			})
+		);
+		store.dispatch(updateLoggedIn(true));
+		return response.data;
+	} catch (error) {
+		store.dispatch(updateNetWorkLoading(false));
+		console.log(error, 'in herr', error.response.data.error);
+		throw error;
+	}
 };
 
 let registerCollector = async (payload) => {
-  try {
-    let url = "/auth/collectors/register";
-    let response = await AxiosNormal.post(url, payload);
+	try {
+		let url = '/auth/collectors/register';
+		let response = await AxiosNormal.post(url, payload);
 
-    return response.data;
+		return response.data;
 
-    console.log(response.data.error, "errr in then");
-  } catch (e) {
-    store.dispatch(updateNetWorkLoading(false));
-    console.log(e.response.data.error, "error in catch");
-    throw e;
-  }
+		console.log(response.data.error, 'errr in then');
+	} catch (e) {
+		store.dispatch(updateNetWorkLoading(false));
+		console.log(e.response.data.error, 'error in catch');
+		throw e;
+	}
 };
 
 let forgetPassword = async (payload) => {
-  try {
-    let url = "/auth/password/forgot";
-    let response = await AxiosNormal.post(url, payload);
+	try {
+		let url = '/auth/password/forgot';
+		let response = await AxiosNormal.post(url, payload);
 
-    return response.data;
-  } catch (e) {
-    store.dispatch(updateNetWorkLoading(false));
-    console.log(e, "error in catch");
-    throw e;
-  }
+		return response.data;
+	} catch (e) {
+		store.dispatch(updateNetWorkLoading(false));
+		console.log(e, 'error in catch');
+		throw e;
+	}
 };
 
 let resetPassword = async (payload) => {
-  console.log(payload);
-  try {
-    let url = "/auth/password/reset";
-    let response = await AxiosNormal.post(url, payload);
-    return response.data;
-  } catch (e) {
-    store.dispatch(updateNetWorkLoading(false));
-    console.log(e, "error in catch");
-    throw e;
-  }
+	console.log(payload);
+	try {
+		let url = '/auth/password/reset';
+		let response = await AxiosNormal.post(url, payload);
+		return response.data;
+	} catch (e) {
+		store.dispatch(updateNetWorkLoading(false));
+		console.log(e, 'error in catch');
+		throw e;
+	}
 };
 
 let changeUserType = async (payload) => {
-  console.log(payload);
-  try {
-    let url = "/usertype-changes";
-    let response = await AxiosNormal.post(url, payload);
-    return response.data;
-  } catch (e) {
-    store.dispatch(updateNetWorkLoading(false));
-    //console.log(e, "error in catch");
-    throw e;
-  }
+	console.log(payload);
+	try {
+		let url = '/usertype-changes';
+		let response = await AxiosNormal.post(url, payload);
+		return response.data;
+	} catch (e) {
+		store.dispatch(updateNetWorkLoading(false));
+		//console.log(e, "error in catch");
+		throw e;
+	}
 };
 
 let getAllSecurityQuestion = async () => {
-  try {
-    let url = "/auth/securityquestions";
-    let response = await AxiosNormal.get(url);
-    return response.data;
-  } catch (e) {
-    store.dispatch(updateNetWorkLoading(false));
-    console.log(e, "error in catch");
-    throw e;
-  }
+	try {
+		let url = '/auth/securityquestions';
+		let response = await AxiosNormal.get(url);
+		return response.data;
+	} catch (e) {
+		store.dispatch(updateNetWorkLoading(false));
+		console.log(e, 'error in catch');
+		throw e;
+	}
+};
+
+let getUserDetails = async () => {
+	let url = `/auth/collectors/me`;
+	try {
+		let response = await AxiosSecure.get(url);
+		console.log(response.data.data, 'user update data');
+		store.dispatch(updateUserData(response.data.data));
+	} catch (error) {
+		store.dispatch(updateNetWorkLoading(false));
+		console.log(error, error.message, 'pppp');
+		throw error;
+	}
 };
 
 export {
-  loginFun,
-  registerCollector,
-  forgetPassword,
-  resetPassword,
-  changeUserType,
-  getAllSecurityQuestion,
+	loginFun,
+	registerCollector,
+	forgetPassword,
+	resetPassword,
+	changeUserType,
+	getAllSecurityQuestion,
+	getUserDetails,
 };

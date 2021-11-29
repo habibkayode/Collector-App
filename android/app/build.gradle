@@ -80,6 +80,8 @@ import com.android.build.OutputFile
 
 project.ext.react = [
     enableHermes: false,  // clean and rebuild if changing
+     bundleInRelease        : true,
+    resourcesDirRelease   : "src/release/res",
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
@@ -126,17 +128,22 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
+lintOptions { 
+    checkReleaseBuilds false
+}
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
     defaultConfig {
+        multiDexEnabled true
         applicationId "com.scrapays.collector"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 10
+        versionName "10"
     }
     splits {
         abi {
@@ -164,7 +171,8 @@ android {
 
     release {
             if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
-                storeFile file(MYAPP_UPLOAD_STORE_FILE)
+               // storeFile file(MYAPP_UPLOAD_STORE_FILE)
+                storeFile file('scrapays-key.jks')
                 storePassword MYAPP_UPLOAD_STORE_PASSWORD
                 keyAlias MYAPP_UPLOAD_KEY_ALIAS
                 keyPassword MYAPP_UPLOAD_KEY_PASSWORD
@@ -218,6 +226,7 @@ implementation 'com.facebook.fresco:animated-gif:2.0.0'
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+  implementation 'com.android.support:multidex:1.0.3'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'

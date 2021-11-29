@@ -17,7 +17,7 @@ import { rejectPickUp } from '../Api/api';
 import moment from 'moment';
 
 const CollectionLogCard = (props) => {
-	console.log(props);
+	console.log(props, 'plll');
 	let [timeToLocation, setTimeToLocation] = useState();
 	let [distanceApart, setDistanceApart] = useState();
 	let [currentLocation, setCurrentLocation] = useState({});
@@ -63,6 +63,31 @@ const CollectionLogCard = (props) => {
 		} catch (error) {
 			Alert.alert('Error', error.response?.data.error);
 		}
+	};
+
+	let rejectAlert = () => {
+		Alert.alert(
+			'Confirmation',
+			'Are you sure you want to Rejected this particular Pickup',
+			[
+				{
+					text: 'Yes',
+					onPress: () => {
+						rejectPickUpWrapper();
+					},
+					style: 'cancel',
+				},
+
+				{
+					text: 'No',
+					onPress: () => {},
+					style: 'cancel',
+				},
+			],
+			{
+				cancelable: false,
+			}
+		);
 	};
 
 	let allCompositeMaterial = props.data.composite_materials.map((i) => ({
@@ -289,7 +314,8 @@ const CollectionLogCard = (props) => {
 					{props.removeById && (
 						<TouchableOpacity
 							onPress={() => {
-								rejectPickUpWrapper();
+								//	rejectPickUpWrapper();
+								rejectAlert();
 							}}
 							style={{
 								borderRadius: 10,
