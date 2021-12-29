@@ -4,8 +4,6 @@ import {
 	Text,
 	Image,
 	StyleSheet,
-	StatusBar,
-	ImageBackground,
 	ScrollView,
 	TextInput,
 	TouchableOpacity,
@@ -13,9 +11,6 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import * as Animatable from 'react-native-animatable';
-import { Picker, Header, Button, Title } from 'native-base';
-import RNPickerSelect from 'react-native-picker-select';
-import RNBluetoothClassic from 'react-native-bluetooth-classic';
 import BluetoothModal from '../Component/Bluetooth/BluetoothModal';
 import * as BLEapi from '../Api/bluetoothApi';
 import CompositeModal_NEW from '../Component/CompositeModal_NEW';
@@ -26,15 +21,10 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import AddComposite from '../Component/AddCompositeModal';
 import { numberWithCommas } from '../helper/helper';
 
-const defaultMaterial = {
-	materialType: '',
-	toonage: '',
-};
-
 const mapStateToProps = (state) => {
 	return {
 		connected: state.bluetooth.connected,
-		selectedDevice: state.bluetooth.selecectedDevice,
+		selectedDevice: state.bluetooth.selectedDevice,
 		materials: state.normal.materials,
 		compositeMaterial: state.normal.compositeMaterial,
 		materialsObj: state.normal.materialsObj,
@@ -84,9 +74,9 @@ const ProcessPickupScreen = (props) => {
 
 	useEffect(() => {
 		let { enabledSubscription, disabledSubscription } =
-			BLEapi.stateChanegEvent();
+			BLEapi.stateChangeEvent();
 
-		BLEapi.checkBluetootEnabled();
+		BLEapi.checkBluetoothEnabled();
 
 		return () => {
 			console.log('about to remove');
@@ -128,7 +118,7 @@ const ProcessPickupScreen = (props) => {
 		setMaterialName(value);
 	};
 	let gettingValue = async () => {
-		//return 5.7;
+		return Math.floor(Math.random() * 11);
 		try {
 			let reading = await BLEapi.performRead();
 			console.log(reading, 'readingg');
@@ -140,7 +130,7 @@ const ProcessPickupScreen = (props) => {
 		}
 	};
 
-	if (!props.connected) return <BluetoothModal />;
+	//	if (!props.connected) return <BluetoothModal />;
 
 	return (
 		<Bgcover name='Process Pickup'>
@@ -200,7 +190,6 @@ const ProcessPickupScreen = (props) => {
 					console.log(selectIndex, 'indd');
 				}}
 				handleSubmit={() => {
-					//    console.log("heee", compositeObj, "PPP");
 					if (Number(selectIndex + 1)) {
 						console.log(selectIndex, 'index selected');
 						setArrayOfMaterial((prev) => {

@@ -37,7 +37,6 @@ const saveAcceptedPickUpRequest = (data, refreshing) => {
 };
 
 const saveMaterialTypes = (dataArray, dataObject) => {
-	// console.log(data, "material");
 	return {
 		type: TYPES.MATERIALTYPE,
 		payload: {

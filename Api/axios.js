@@ -6,12 +6,11 @@ import {
 	updateNetWorkLoading,
 } from '../Redux/actionCreator';
 import { Alert } from 'react-native';
+import config from '../utils/config';
 
-//export let imageUrl = 'https://staging.scrapays.com';
 export let imageUrl = 'https://api.scrapays.com';
 
-//export let baseURL = 'https://staging.scrapays.com/v1';
-export const baseURL = 'https://api.scrapays.com/v1';
+export const baseURL = config.configBaseServerUrl;
 
 let errFun = (error) => {
 	console.log(error, 'in error fun');
@@ -21,7 +20,8 @@ let errFun = (error) => {
 		throw error;
 	} else if (
 		error.response.status === 401 &&
-		error.response.data.error === 'Invalid token'
+		(error.response.data.error === 'Invalid token' ||
+			error.response.data.error === 'Token has expired')
 	) {
 		store.dispatch(updateLoggedIn(false));
 		store.dispatch(updateNetWorkLoading(false));
@@ -42,10 +42,9 @@ AxiosNormal.interceptors.request.use((config) => {
 	return config;
 });
 
-AxiosNormal.interceptors.response.use((repons) => {
+AxiosNormal.interceptors.response.use((response) => {
 	store.dispatch(updateNetWorkLoading(false));
-	// console.log(repons, "axios normal");
-	return repons;
+	return response;
 }, errFun);
 
 let AxiosSecure = axios.create({
@@ -59,9 +58,9 @@ AxiosSecure.interceptors.request.use((config) => {
 	return config;
 });
 
-AxiosSecure.interceptors.response.use((repons) => {
+AxiosSecure.interceptors.response.use((response) => {
 	store.dispatch(updateNetWorkLoading(false));
-	return repons;
+	return response;
 }, errFun);
 
 let AxiosNoLoading = axios.create({
@@ -74,9 +73,9 @@ AxiosNoLoading.interceptors.request.use((config) => {
 	return config;
 });
 
-AxiosNoLoading.interceptors.response.use((repons) => {
+AxiosNoLoading.interceptors.response.use((response) => {
 	store.dispatch(updateNetWorkLoading(false));
-	return repons;
+	return response;
 }, errFun);
 
 export { AxiosNormal, AxiosSecure, AxiosNoLoading };

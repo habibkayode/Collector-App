@@ -13,6 +13,7 @@ import {
 	savBankList,
 } from '../Redux/actionCreator';
 import { calculateDistance } from '../helper/locationHelper';
+import { fetchAllWrapper } from '../helper/helper';
 
 const convertArrayToObject = (array, key) => {
 	const initialValue = {};
@@ -78,23 +79,49 @@ let getAllPickupWithInRadius = async () => {
 	}
 };
 
-let getAllMaterial = async () => {
+let getAllCompositeMaterial = async () => {
 	try {
-		let url = '/materials?per_page=-1';
-		let response = await AxiosSecure(url);
-		console.log(url, response.status);
+		let url = '/materials?material_type=composite?per_page=-1';
+		let response = await AxiosNoLoading(url);
+		console.log(response, 'composite list');
 		if (response.status === 200) {
-			let dataObj = convertArrayToObject(
-				response.data.data.homogeneous,
-				'name'
-			);
-			store.dispatch(saveMaterialTypes(response.data.data.homogenous, dataObj));
+			store.dispatch(updateCompositeMaterial(response.data.data));
+			// fetchAllWrapper(response.data, [...response.data.data])
+			// 	.then((listData) => {
+			// 		console.log(listData, 'response in composite');
+			// 		store.dispatch(updateCompositeMaterial(listData));
+			// 	})
+			// 	.catch((error) => {
+			// 		console.log(error);
+			// 	});
+		}
+	} catch (e) {
+		console.log(e);
+	}
+};
 
-			store.dispatch(updateCompositeMaterial(response.data.data.composite));
+let getAllHomogenousMaterial = async () => {
+	try {
+		let url = '/materials';
+		let response = await AxiosNoLoading(url);
+		if (response.status === 200) {
+			fetchAllWrapper(response.data, [...response.data.data])
+				.then((listData) => {
+					console.log(listData, 'response in material');
+					let dataObj = convertArrayToObject(listData, 'name');
+					store.dispatch(saveMaterialTypes(listData, dataObj));
+				})
+				.catch((error) => {
+					console.log(error);
+				});
 		}
 	} catch (e) {
 		console.log(e, 'in material');
 	}
+};
+let getAllMaterial = () => {
+	getAllHomogenousMaterial();
+	getAllCompositeMaterial();
 };
 
 let acceptPickUp = async (id) => {
@@ -167,16 +194,21 @@ let getAllAcceptedPickupRequst = async () => {
 //   }
 // };
 
-let getAllCollection = async (page) => {
+let getAllCollection = async (query, link) => {
 	let userId = store.getState().normal.userData.id;
 	try {
-		let url = `/collectors/${userId}/collectedscraps?page=${page}`;
+		let url;
+		if (link) {
+			url = link;
+		} else {
+			url = `/collectors/${userId}/collectedscraps${query ? '?' + query : ''}`;
+		}
+
 		let response = await AxiosNoLoading.get(url);
 
 		if (response.status == 200) {
 			console.log('all collection');
-			console.log(response.data, 'collection s');
-			return response.data.data;
+			return response.data;
 		}
 	} catch (e) {
 		console.log(e.response.data.error, 'collection  errors');
@@ -199,7 +231,7 @@ let getAllPendingCollection = async () => {
 	}
 };
 
-let getComissionBalance = async () => {
+let getCommissionBalance = async () => {
 	let userId = store.getState().normal.userData.id;
 	let url = `/wallets/${userId}/balance`;
 	try {
@@ -211,7 +243,7 @@ let getComissionBalance = async () => {
 	}
 };
 
-let getPendingComissionBalance = async () => {
+let getPendingCommissionBalance = async () => {
 	let userId = store.getState().normal.userData.id;
 	let url = `/wallets/${userId}/pending-commission`;
 	try {
@@ -424,7 +456,7 @@ let getAllCoverageRegion = async () => {
 	}
 };
 
-let gettAllAgent = async () => {
+let getAllAgent = async () => {
 	let id = store.getState().normal.userData.id;
 	let url = `/agents?per_page=-1`;
 	try {
@@ -435,8 +467,8 @@ let gettAllAgent = async () => {
 					k.userable &&
 					k.userable.coordinates !== null &&
 					k.userable.coordinates?.lat !== null &&
-					k.userable.availability == true &&
-					k.userable.ready_for_work == 1
+					k.userable.availability == true
+				//	&&					k.userable.ready_for_work == 1
 			);
 
 			let cur = store.getState().location.coordinate;
@@ -450,8 +482,8 @@ let gettAllAgent = async () => {
 					'K'
 				);
 			}
-
-			let newData = data.filter((i) => i.distance < 4);
+			console.log(data, 'all agent f');
+			let newData = data.filter((i) => i.distance < 400);
 
 			newData.sort(function (a, b) {
 				return a.distance - b.distance;
@@ -464,7 +496,6 @@ let gettAllAgent = async () => {
 		}
 	} catch (e) {
 		console.log(e);
-		// console.log(e.response.data.error, 'in getting all agent');
 		// throw e;
 	}
 };
@@ -539,13 +570,12 @@ let getUserName = async (phone) => {
 	}
 };
 
-let getWalletHistory = async () => {
+let getWalletHistory = async (query) => {
 	let id = store.getState().normal.userData.id;
-	let url = `/wallets/${id}/history?per_page=-1`;
+	let url = `/wallets/${id}/history?${query ? '&' + query : ''}`;
 	console.log(url);
 	try {
 		let response = await AxiosNoLoading.get(url);
-		console.log(response.data, 'history');
 		return response.data;
 	} catch (e) {
 		console.log(e.response.data.error);
@@ -554,13 +584,14 @@ let getWalletHistory = async () => {
 	}
 };
 
-let getWalletHistoryCOG = async () => {
+let getWalletHistoryCOG = async (query) => {
 	let id = store.getState().normal.userData.id;
-	let url = `/wallets/${id}/history?wallet=cog&per_page=-1`;
+	let url = `/wallets/${id}/history?wallet=cog&sort_by=asc${
+		query ? '&' + query : ''
+	}`;
 	console.log(url);
 	try {
 		let response = await AxiosNoLoading.get(url);
-		console.log(response.data, 'histoy');
 		return response.data;
 	} catch (e) {
 		console.log(e.response.data.error);
@@ -730,12 +761,12 @@ export {
 	getAcceptedPickupRequst,
 	getAllPendingCollection,
 	getCOGbalance,
-	getComissionBalance,
+	getCommissionBalance,
 	updateLocation,
 	updateProfile,
 	getAllNofification,
 	getAllCoverageRegion,
-	gettAllAgent,
+	getAllAgent,
 	getAllSingleCollectorPickUp,
 	getAllAcceptedPickupRequst,
 	submitPickup,
@@ -753,7 +784,7 @@ export {
 	initializeFunding,
 	getWalletHistory,
 	getWalletHistoryCOG,
-	getPendingComissionBalance,
+	getPendingCommissionBalance,
 	getAccountName,
 	notifyAgent,
 	bulkUpload,

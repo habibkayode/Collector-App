@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 
 import MapView, { Marker, Callout } from 'react-native-maps';
-import { gettAllAgent } from '../Api/api';
+import { getAllAgent } from '../Api/api';
 import { connect } from 'react-redux';
 import Bgcover from '../Component/Bg/BackgroundCover';
 import Geolocation from 'react-native-geolocation-service';
@@ -61,7 +61,7 @@ const SearchAgentScreen = ({ navigation, agents, userLocation }) => {
 	};
 
 	useEffect(() => {
-		gettAllAgent().then(() => {
+		getAllAgent().then(() => {
 			setLoading(false);
 		});
 		getCurrentLocation();

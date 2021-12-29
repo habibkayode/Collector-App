@@ -38,7 +38,7 @@ const ForgetPasswordCodePinScreen = ({ navigation, data }) => {
 			<Animatable.View animation='fadeInUpBig' style={[styles.container]}>
 				<Image source={require('../assets/Phone.png')} />
 				<Text style={[styles.text, { marginTop: 30 }]}>
-					Check your Phone and Email
+					Check your Phone or Email
 				</Text>
 				<Text style={styles.smallText}>We sent a special code</Text>
 				<SmoothPinCodeInput

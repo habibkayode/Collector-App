@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Image, Alert } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
-import { NavigationContainer } from '@react-navigation/native';
 import { Text, TouchableOpacity, PermissionsAndroid } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import IntroScreen from './screens/IntroScreen';

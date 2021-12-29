@@ -4,17 +4,13 @@ import {
 	Text,
 	Image,
 	StyleSheet,
-	StatusBar,
-	ImageBackground,
-	ScrollView,
-	TextInput,
 	TouchableOpacity,
 	TouchableWithoutFeedback,
 	ActivityIndicator,
+	FlatList,
 } from 'react-native';
 import BgCover from '../Component/Bg/BackgroundCover';
 import { Pages } from 'react-native-pages';
-import dummyData from '../helper/dataMay-8-2021.json';
 import { Dropdown } from 'react-native-material-dropdown';
 import CalendarPicker from 'react-native-calendar-picker';
 import Modal from 'react-native-modal';
@@ -22,12 +18,13 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { numberWithCommas } from '../helper/helper';
 import {
 	getCOGbalance,
-	getComissionBalance,
+	getCommissionBalance,
 	getBankList,
 	getWalletHistory,
 	getWalletHistoryCOG,
 } from '../Api/api';
 import moment from 'moment';
+import { dateAgo } from '../utils/helpers';
 
 const WalletScreen = (props) => {
 	const [currentIndex, setCurrentIndex] = useState(0);
@@ -43,29 +40,30 @@ const WalletScreen = (props) => {
 		account: 0,
 	});
 	const [loading, setLoading] = useState(true);
-	const [WalletHistory, setWalletHistory] = useState([]);
-	let [obj, setObj] = useState({});
-	let [obj2, setObj2] = useState({});
-	let [variableObj, setVariableObj] = useState({});
 
-	let [variableObj2, setVariableObj2] = useState({});
-	const [dummyKey, setDummyKey] = useState([]);
-	const [dummyKey2, setDummyKey2] = useState([]);
-	const [varibleKey, setVariableKey] = useState([]);
-	const [varibleKey2, setVariableKey2] = useState([]);
+	let [obj, setObj] = useState({});
+	const [cogHistory, setCogHistory] = useState([]);
+	const [commissionHistory, setCommissionHistory] = useState([]);
+	const [commissionHistoryVariable, setCommissionHistoryVariable] = useState(
+		[]
+	);
+	const [cogHistoryVariable, setCogHistoryVariable] = useState([]);
+
 	let [loading2, setLoading2] = useState(true);
 	let pageRef = useRef();
 
 	let filterByDateRange = () => {
 		let newData;
 		if (currentIndex === 0) {
-			newData = dummyKey.filter((i) => moment(i).isBetween(startDate, endDate));
-			setVariableKey(newData);
-		} else if (currentIndex === 1) {
-			newData = dummyKey2.filter((i) =>
-				moment(i).isBetween(startDate, endDate)
+			newData = commissionHistory.filter((i) =>
+				moment(i.date).isBetween(startDate, endDate)
 			);
-			setVariableKey2(newData);
+			setCommissionHistoryVariable(newData);
+		} else if (currentIndex === 1) {
+			newData = cogHistory.filter((i) =>
+				moment(i.date).isBetween(startDate, endDate)
+			);
+			setCogHistoryVariable(newData);
 		}
 
 		//setVariableObj(newHistory);
@@ -82,28 +80,6 @@ const WalletScreen = (props) => {
 			setStartDate(date);
 		}
 	};
-
-	// useEffect(() => {
-	//   if (dateFilter) {
-	//     let newDummy = { ...dummyObj };
-	//     let newDate = new Date();
-	//     newDate.setDate(new Date().getDate() - dateFilter);
-	//     Object.keys(newDummy).forEach((ori) => {
-	//       console.log(newDate <= new Date(ori), "ckcki", newDate);
-	//       if (newDate <= new Date(ori)) {
-	//         console.log(
-	//           new Date(ori).toLocaleDateString(),
-	//           newDate.toLocaleDateString()
-	//         );
-	//       } else {
-	//         delete newDummy[ori];
-	//         console.log(Object.keys(newDummy).length, "lent");
-	//       }
-	//     });
-	//     setObj(newDummy);
-	//   }
-	//   setRefresh(!refresh);
-	// }, [dateFilter]);
 
 	useEffect(() => {
 		if (currentIndex === 0) {
@@ -124,73 +100,32 @@ const WalletScreen = (props) => {
 
 	let getBalance = async () => {
 		try {
-			let commissionResponse = await getComissionBalance();
-			console.log(commissionResponse, 'commission resopnse');
+			let commissionResponse = await getCommissionBalance();
 			let accountBalanceResponse = await getCOGbalance();
-			console.log(accountBalanceResponse, 'cog resopnse');
 			setBalance({
 				commission: commissionResponse.data.balance,
 				account: accountBalanceResponse.data.balance,
 			});
 			setLoading(false);
 		} catch (e) {
-			console.log(e, 'commm');
+			console.log(e, 'comma');
 		}
 	};
-	let getHistory = async () => {
-		try {
-			let historyResponse = await getWalletHistory();
-			let historyResponse2 = await getWalletHistoryCOG();
-			console.log(historyResponse.data);
-			setWalletHistory(historyResponse.data);
-			let dummyObj = {};
-			let dummyObj2 = {};
 
-			historyResponse.data.forEach((i) => {
-				let date = moment(i.date).toDate();
-				date.setHours(0, 0, 0, 0);
-				console.log(date, 'klko');
-				if (dummyObj.hasOwnProperty(date)) {
-					dummyObj[date].push(i);
-				} else {
-					dummyObj[date] = [i];
-				}
-			});
+	let getCOGHistory = async (query) => {
+		let historyResponse = await getWalletHistoryCOG(query);
+		setCogHistory(historyResponse.data);
+		setCogHistoryVariable(historyResponse.data);
+		setLoading2(false);
+	};
 
-			historyResponse2.data.forEach((i) => {
-				let date = moment(i.date).toDate();
-				date.setHours(0, 0, 0, 0);
-				console.log(date, 'klko');
-				if (dummyObj2.hasOwnProperty(date)) {
-					dummyObj2[date].push(i);
-				} else {
-					dummyObj2[date] = [i];
-				}
-			});
+	let getCommissionHistory = async (query) => {
+		let historyResponse = await getWalletHistory(query);
+		console.log(historyResponse, 'commission history');
+		setCommissionHistory(historyResponse.data);
+		setCommissionHistoryVariable(historyResponse.data);
 
-			setObj(dummyObj);
-			setObj2(dummyObj2);
-			console.log(dummyObj);
-			let sortedArray = Object.keys(dummyObj).sort(function (a, b) {
-				return new Date(b) - new Date(a);
-			});
-
-			let sortedArray2 = Object.keys(dummyObj2).sort(function (a, b) {
-				return new Date(b) - new Date(a);
-			});
-
-			setDummyKey(sortedArray);
-			setVariableKey(sortedArray);
-			setVariableObj(dummyObj);
-
-			setDummyKey2(sortedArray2);
-			setVariableKey2(sortedArray2);
-			setVariableObj2(dummyObj2);
-
-			setLoading2(false);
-		} catch (e) {
-			console.log(e);
-		}
+		setLoading(false);
 	};
 
 	React.useEffect(() => {
@@ -199,7 +134,10 @@ const WalletScreen = (props) => {
 			setLoading2(true);
 			getBalance();
 
-			getHistory();
+			//getHistory();
+
+			getCOGHistory();
+			getCommissionHistory();
 		});
 
 		// Return the function to unsubscribe from the event so it gets removed on unmount
@@ -209,6 +147,74 @@ const WalletScreen = (props) => {
 	React.useEffect(() => {
 		getBankList();
 	}, []);
+
+	const renderItem = ({ item, index }) => {
+		let dataArray = [];
+		if (currentIndex == 0) {
+			dataArray = commissionHistoryVariable;
+		} else {
+			dataArray = cogHistoryVariable;
+		}
+		let hold = item.Beneficiary.split('-')[0];
+		let hold2 = hold.split(' ');
+		let showHeader;
+		let beneficiary = hold2.length > 0 ? hold2[hold2.length - 1] : hold2[0];
+		if (index === 0) {
+			showHeader = true;
+		} else {
+			try {
+				let previousDate = dataArray[index - 1].date.split(' ');
+				let currentDate = item.date.split(' ');
+				showHeader = currentDate[0] === previousDate[0] ? false : true;
+			} catch (error) {
+				console.log(error, index);
+				console.log(index, 'oo');
+			}
+		}
+
+		return (
+			<>
+				{showHeader && (
+					<View
+						style={{
+							backgroundColor: '#E8E8E8',
+							padding: 10,
+						}}
+					>
+						<Text style={{ fontWeight: 'bold' }}>
+							{moment(item.date).format('Do MMM YY')}
+						</Text>
+					</View>
+				)}
+				<TouchableOpacity
+					style={{
+						flexDirection: 'row',
+						marginVertical: 2,
+						width: '100%',
+						paddingVertical: 5,
+						paddingHorizontal: 10,
+					}}
+					onPress={() => {
+						props.navigation.navigate('WalletDetail', item);
+					}}
+				>
+					<Text style={{ width: 20 }}>{index + 1}</Text>
+					<Image
+						style={{ marginLeft: 20 }}
+						source={require('../assets/money-new.png')}
+					/>
+					<Text style={{ flex: 1, textAlign: 'center' }}>{beneficiary}</Text>
+					<Text
+						style={{
+							color: item.type == 'Cr' ? 'green' : 'red',
+						}}
+					>
+						{numberWithCommas(item.amount)}
+					</Text>
+				</TouchableOpacity>
+			</>
+		);
+	};
 
 	return (
 		<BgCover name='Wallet'>
@@ -494,30 +500,34 @@ const WalletScreen = (props) => {
 										placeholderTextColor='grey'
 										onChangeText={(value) => {
 											if (value !== 'all') {
+												let pastDate = dateAgo(Number(value));
+
 												let newDummy = { ...obj };
 												let newDate = new Date();
 												newDate.setDate(new Date().getDate() - Number(value));
 												newDate.setHours(0, 0, 0, 0);
 												let newData;
 												if (currentIndex === 0) {
-													newData = dummyKey.filter(
-														(u) => new Date(u) >= newDate
+													newData = commissionHistory.filter(
+														(u) => new Date(u.date) >= newDate
 													);
-													setVariableKey(newData);
+													setCommissionHistoryVariable(newData);
 												}
 
 												if (currentIndex === 1) {
-													newData = dummyKey2.filter(
-														(u) => new Date(u) >= newDate
+													newData = cogHistory.filter(
+														(u) => new Date(u.date) >= newDate
 													);
-													setVariableKey2(newData);
+													setCogHistoryVariable(newData);
 												}
 												setRefresh(!refresh);
 												setDateFilter(Number(value));
 											} else {
-												if (currentIndex === 0) setVariableKey(dummyKey);
-
-												if (currentIndex === 1) setVariableKey2(dummyKey2);
+												if (currentIndex === 0) {
+													setCommissionHistoryVariable(commissionHistory);
+												} else {
+													setCogHistoryVariable(cogHistoryVariable);
+												}
 											}
 										}}
 										baseColor='grey'
@@ -586,156 +596,18 @@ const WalletScreen = (props) => {
 										]}
 									/>
 								</View>
-								<ScrollView
-									nestedScrollEnabled={true}
-									style={{ flex: 1 }}
-									contentContainerStyle={
-										{
-											//   height: 80,
-											//  flex: 1,
-										}
-									}
-								>
-									{currentIndex === 0 &&
-										varibleKey.map((each) => {
-											// console.log(each, "ppp");
-											return (
-												<View
-													style={{
-														marginHorizontal: 20,
-														//    backgroundColor: "green",
-														flex: 1,
-													}}
-												>
-													<View
-														style={{
-															backgroundColor: '#E8E8E8',
-															padding: 3,
-														}}
-													>
-														<Text style={{ fontWeight: 'bold' }}>
-															{moment(each).format('Do MMM YY')}
-														</Text>
-													</View>
-													<View style={{ flex: 1 }}>
-														{obj[each].map((ele, index) => {
-															let hold = ele.Beneficiary.split('-')[0];
-															let hold2 = hold.split(' ');
-															let beneficiary =
-																hold2.length > 0
-																	? hold2[hold2.length - 1]
-																	: hold2[0];
-															return (
-																<TouchableOpacity
-																	// style={{ flex: 1 }}
-																	style={{
-																		flexDirection: 'row',
-																		//  justifyContent: 'space-between',
-																		marginVertical: 2,
-																		//   flexGrow: 1,
-																	}}
-																	onPress={() => {
-																		props.navigation.navigate(
-																			'WalletDetail',
-																			ele
-																		);
-																	}}
-																>
-																	<Text style={{ width: 20 }}>{index + 1}</Text>
-																	<Image
-																		style={{ marginLeft: 20 }}
-																		source={require('../assets/money-new.png')}
-																	/>
-																	<Text
-																		style={{ flex: 1, textAlign: 'center' }}
-																	>
-																		{beneficiary}
-																	</Text>
-																	<Text
-																		style={{
-																			color: ele.type == 'Cr' ? 'green' : 'red',
-																		}}
-																	>
-																		{numberWithCommas(ele.amount)}
-																	</Text>
-																</TouchableOpacity>
-															);
-														})}
-													</View>
-												</View>
-											);
-										})}
 
-									{currentIndex === 1 &&
-										varibleKey2.map((each) => {
-											// console.log(each, "ppp");
-											return (
-												<View
-													style={{
-														marginHorizontal: 20,
-														//    backgroundColor: "green",
-														flex: 1,
-													}}
-												>
-													<View
-														style={{
-															backgroundColor: '#E8E8E8',
-															padding: 3,
-														}}
-													>
-														<Text style={{ fontWeight: 'bold' }}>
-															{moment(each).format('Do MMM YY')}
-														</Text>
-													</View>
-													<View style={{ flex: 1 }}>
-														{obj2[each].map((ele, index) => {
-															let hold = ele.Beneficiary.split('-')[0];
-															let hold2 = hold.split(' ');
-															let beneficiary =
-																hold2.length > 0
-																	? hold2[hold2.length - 1]
-																	: hold2[0];
-															return (
-																<TouchableOpacity
-																	// style={{ flex: 1 }}
-																	style={{
-																		flexDirection: 'row',
-																		//  justifyContent: 'space-between',
-																		marginVertical: 2,
-																		//   flexGrow: 1,
-																	}}
-																	onPress={() => {
-																		props.navigation.navigate(
-																			'WalletDetail',
-																			ele
-																		);
-																	}}
-																>
-																	<Text style={{ width: 20 }}>{index + 1}</Text>
-																	<Image
-																		style={{ marginLeft: 20 }}
-																		source={require('../assets/money-new.png')}
-																	/>
-																	<Text
-																		style={{ flex: 1, textAlign: 'center' }}
-																	>
-																		{beneficiary}
-																	</Text>
-																	<Text
-																		style={{
-																			color: ele.type == 'Cr' ? 'green' : 'red',
-																		}}
-																	>
-																		{numberWithCommas(ele.amount)}
-																	</Text>
-																</TouchableOpacity>
-															);
-														})}
-													</View>
-												</View>
-											);
-										})}
-								</ScrollView>
+								{currentIndex === 0 && (
+									<FlatList
+										extraData={currentIndex}
+										data={commissionHistoryVariable}
+										renderItem={renderItem}
+									/>
+								)}
+
+								{currentIndex === 1 && (
+									<FlatList data={cogHistoryVariable} renderItem={renderItem} />
+								)}
 							</View>
 						))}
 					</Pages>

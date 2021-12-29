@@ -33,7 +33,7 @@ const mapStateToProps = (state) => {
 	console.log(state.bluetooth.connected, 'bluetoothstate');
 	return {
 		connected: state.bluetooth.connected,
-		selectedDevice: state.bluetooth.selecectedDevice,
+		selectedDevice: state.bluetooth.selectedDevice,
 		materials: state.normal.materials,
 		compositeMaterial: state.normal.compositeMaterial,
 		materialsObj: state.normal.materialsObj,
@@ -63,15 +63,12 @@ const ProcessPickupScreen = (props) => {
 	const [bluetoothState, setBluetoothState] = useState(false);
 	const [showCompositeModal, setShowCompsiteModal] = useState(false);
 	const [selectIndex, setSelectIndex] = useState();
-	const [showAddNewCompositeModal, setShowAddNewCompositeModal] = useState(
-		false
-	);
+	const [showAddNewCompositeModal, setShowAddNewCompositeModal] =
+		useState(false);
 
 	useEffect(() => {
-		let {
-			enabledSubscription,
-			disabledSubscription,
-		} = BLEapi.stateChanegEvent();
+		let { enabledSubscription, disabledSubscription } =
+			BLEapi.stateChanegEvent();
 
 		BLEapi.checkBluetootEnabled();
 

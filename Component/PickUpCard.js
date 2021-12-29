@@ -231,7 +231,7 @@ const PickUpCard = ({ data }) => {
 						justifyContent: 'flex-end',
 					}}
 				>
-					<View style={{ marginRight: 10 }}>
+					{/* <View style={{ marginRight: 10 }}>
 						<TouchableOpacity
 							style={{
 								width: 29,
@@ -253,7 +253,7 @@ const PickUpCard = ({ data }) => {
 							<Image source={require('../assets/close.png')} />
 						</TouchableOpacity>
 						<Text style={{ color: 'white', right: 5 }}>Reject</Text>
-					</View>
+					</View> */}
 					<View style={{}}>
 						<TouchableOpacity
 							onPress={() => {
